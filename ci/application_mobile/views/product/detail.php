@@ -97,7 +97,7 @@
     </div>
 
     <?
-    /*구매시 주문서페이지에 들고갈 데이터*/
+    /*구매시 주문서페이지에 들고갈 데이터*/ 
     ?>
     <form name="product_order" id="product_order" method="post" >
         <input type="hidden" name="item_no" value="">
