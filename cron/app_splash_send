@@ -1,0 +1,213 @@
+#!/usr/bin/php -q
+<?php
+/**
+ * 스플래시이미지 푸시 보내기
+ * */
+
+set_time_limit(0);
+
+//공통함수
+require_once ("func.php");
+
+//중복실행 방지
+exec("/bin/ps ax | grep " . CRONHOME . "/app_splash_send | wc -l", $out, $err);
+if( $err ) {
+    exit;
+}
+if( !$err && $out[0] > 3 ) {
+    exit;
+}
+if( !$DB_STATUS ) {
+    exit;
+}
+
+
+//스플래시 정보
+$query = "
+    select
+        * 
+    from
+        app_splash_tb 
+    where
+        aps_ostype = '1'
+        and aps_usestate = 'Y'
+        and aps_state != '3'
+        and aps_image != ''
+    order by aps_num asc
+    limit 1
+";
+$splash_R = mysqli_fetch_array(mysqli_query($DB, $query), MYSQLI_ASSOC);
+
+if( empty($splash_R) ) {
+    exit;
+}
+
+//적용중으로 상태변경
+$query = "
+    update
+        app_splash_tb
+    set
+        aps_state = '2'
+    where
+        aps_num = '" . $splash_R['aps_num'] . "'
+";
+mysqli_query($DB, $query);
+
+
+//디바이스 loop (버전제한)
+$query = "
+    select
+        *
+    from
+        app_device_tb
+    where
+        dv_app_version_code >= '" . $SPLASH_APP_VERSIONCODE . "'
+";
+$dv_Q = mysqli_query($DB, $query);
+$dv_L = mysqli_num_rows($dv_Q);
+
+$regid_array = array();
+
+for($i = 0; $i < $dv_L; $i++ ) {
+    $dv_R = mysqli_fetch_array($dv_Q, MYSQLI_ASSOC);
+    $regid_array[] = $dv_R['dv_regid'];
+
+    //1000개씩 발송
+    if( $i != 0 && !($i % 1000) ) {
+        //스플래시 푸시 발송
+        $result_array = splash_push_send($regid_array, $splash_R);
+        //발송 결과 처리
+        push_send_result_proc($regid_array, $result_array);
+
+        $regid_array = array();
+    }
+}//end of for()
+
+//1000개씩 자른 나머지 디바이스에 스플래시 푸시 발송
+$result_array = splash_push_send($regid_array, $splash_R);
+//발송 결과 처리
+push_send_result_proc($regid_array, $result_array);
+
+
+//스플래시 적용완료로 업데이트
+$query = "
+    update
+        app_splash_tb
+    set
+        aps_state = '3'
+        , aps_procdatetime = '" . current_datetime() . "'
+    where
+        aps_num = '" . $splash_R['aps_num'] . "'
+";
+mysqli_query($DB, $query);
+
+
+
+/**
+ * 스플래시 푸시 발송 (멀티)
+ * @param $regid_array
+ * @param $splash_R
+ * @return bool|mixed
+ */
+function splash_push_send($regid_array, $splash_R) {
+    global $SERVER_KEY, $SERVER_HTTP;
+
+    if( empty($regid_array) ) {
+        return false;
+    }
+
+    // 헤더 부분
+    $headers = array(
+        'Content-Type:application/json',
+        'Authorization:key=' . $SERVER_KEY
+    );
+
+    //- registration_ids : array. 1~1000 개의 아이디가 들어갈 수 있다.
+    //- collapse_key : message type 을 grouping 하는 녀석으로, 해당 단말이 offline 일 경우 가장 최신 메세지만 전달되는 형태다.
+    //- data : key-value pair.
+    //- delay_while_idle : message 가 바로 전송되는 것이 아니라, phone 이 active 되었을 때 collapse_key 의 가장 마지막 녀석만 전송되도록. : false => 꺼져(잠겨)있어도 전송, true => 켜지면 전송
+    //- time_to_live : 단말이 offline 일 때 GCM storage 에서 얼마나 있어야 하는지를 설정함. collapse_key 와 반드시 함께 설정되야 한다.
+    //- dry_run : true=테스트, false=실제발송
+
+    $splash = json_encode_no_slashes(array(
+        'splash_num' => $splash_R['aps_num'],
+        'splash_img' => $splash_R['aps_image'],
+        'splash_regdatetime' => $splash_R['aps_regdatetime']
+    ));
+
+    // 푸시 내용, data 부분을 자유롭게 사용해 클라이언트에서 분기할 수 있음.
+    $arr = array();
+    $arr['data'] = array();
+    $arr['data']['notiType'] = "3";         //알림타입(1=소리, 2=무음, 3=알림없음(데이터전송만))
+    $arr['data']['badge'] = "N";            //뱃지올리기여부(Y/N)
+    $arr['data']['splash'] = $splash;       //스플래시 데이터
+    $arr['collapse_key'] = time() . substr(microtime(), 2, 3);
+    $arr['delay_while_idle'] = false;
+    $arr['registration_ids'] = $regid_array;
+    $arr['dry_run'] = false;                 //true=테스트용, false=서비스용
+
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $SERVER_HTTP);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+    curl_setopt($ch, CURLOPT_POSTFIELDS,json_encode($arr));
+    $response = curl_exec($ch);
+    curl_close($ch);
+
+    // 푸시 전송 결과 반환.
+    $result = json_decode($response, true);
+
+    return $result;
+}//end of splash_push_send()
+
+
+/**
+ * 푸시 발송 결과 처리 (디바이스 등록ID 관련 처리만)
+ * @param $regid_array
+ * @param $result_array
+ * @return bool
+ */
+function push_send_result_proc($regid_array, $result_array) {
+    global $DB;
+
+    if( empty($regid_array) || empty($result_array) ) {
+        return false;
+    }
+
+    foreach( $regid_array as $key => $regid ) {
+        $result = ( isset($result_array['results'][$key]) ) ? $result_array['results'][$key] : "";
+
+        if( empty($result) ) {
+            continue;
+        }
+
+        //발송성공일때
+        if( isset($result['message_id']) && !empty($result['message_id']) ) {
+            //등록 ID가 변경되었으면
+            if( isset($result['registration_id']) && !empty($result['registration_id']) ) {
+                $new_regid = $result['registration_id'];
+
+                $regid_row = mysqli_fetch_array(mysqli_query($DB, "select * from app_device_tb where dv_regid='" . $new_regid . "'"));
+                //변경된 등록ID의 디바이스가 있으면 => 기존 삭제
+                if( !empty($regid_row) ) {
+                    mysqli_query($DB, "delete from app_device_tb where dv_regid='" . $regid . "'");
+                }
+                //변경된 등록ID의 디바이스가 없으면 => 기존 변경
+                else {
+                    mysqli_query($DB, "update app_device_tb set dv_regid='" . $new_regid . "' where dv_regid='" . $regid . "'");
+                }
+            }//end of if()
+        }
+        //발송실패일때
+        else {
+            //앱이 삭제됐거나 잘못된 등록ID일때 디바이스 삭제함.
+            if( isset($result['error']) && ($result['error'] == "NotRegistered" || $result['error'] == "InvalidRegistration") ) {
+                mysqli_query($DB, "delete from app_device_tb where dv_regid='" . $regid . "'");
+            }
+        }
+    }//end of foreach()
+
+    return true;
+}//end of push_send_result_proc()

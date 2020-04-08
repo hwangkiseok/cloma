@@ -1,0 +1,6 @@
+#!/apps/php/bin/php -q
+<?
+echo 'test2';
+
+
+

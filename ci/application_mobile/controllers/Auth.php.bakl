@@ -1,0 +1,1815 @@
+<?php
+defined('BASEPATH') OR exit('No direct script access allowed');
+
+/**
+ * 로그인/로그아웃 관련 컨트롤러
+ * - 앱 : 카카오, 네이버
+ * - 웹 : 카카오 (Kakao.php)
+ */
+class Auth extends M_Controller {
+
+    var $join_path;
+
+    public function __construct() {
+        parent::__construct();
+
+        //model
+        $this->load->model('member_model');
+        $this->load->model('app_device_model');
+
+        //library
+        $this->load->library('encryption');
+        $this->load->library('user_agent');
+
+        //APP 접근일때
+
+        if( is_app_1() ) {
+            $this->join_path = "4";
+        }else if(is_app()){
+            $this->join_path = "1";
+        }
+        //아닐때
+        else {
+            if ( $this->agent->is_mobile() ) {
+                $this->join_path = "2";
+            }
+            else {
+                $this->join_path = "3";
+            }
+        }
+
+
+    }//end of __construct()
+
+    /**
+     * 복호화된 로그인 데이터를 배열로 만듦.
+     * @param $kuid_dec
+     * @return array
+     */
+    private function _get_kuid_info($kuid_dec) {
+        //str += System.currentTimeMillis();    0
+        //str += "|" + userId.toString();       1
+        //str += "|" + telephone;               2
+        //str += "|" + gAppVersionName;         3
+        //str += "|" + gAppVersionCode;         4
+        //str += "|" + Build.MODEL;             5
+        //str += "|" + Build.VERSION.RELEASE;   6
+        //str += "|" + nickname;                7
+        //str += "|" + profileImagePath;        8
+        //str += "|" + kakaoToken;              9
+        //str += "|" + email;                   10
+        //str += "|" + site;                    11
+        //str += "|" + regid;                   12
+        //str += "|" + uuid;                   13
+
+        $kuid_array = explode("|", $kuid_dec);
+
+        $info_array = array();
+        $info_array['mstimestamp'] = $kuid_array[0];
+        $info_array['sns_userid'] = $kuid_array[1];
+        $info_array['phone_number'] = (isset($kuid_array[2])) ? $kuid_array[2] : "";
+        $info_array['version_name'] = (isset($kuid_array[3])) ? $kuid_array[3] : "";
+        $info_array['version_code'] = (isset($kuid_array[4])) ? $kuid_array[4] : "";
+        $info_array['device_model'] = (isset($kuid_array[5])) ? $kuid_array[5] : "";
+        $info_array['os_version'] = (isset($kuid_array[6])) ? $kuid_array[6] : "";
+        $info_array['sns_nickname'] = (isset($kuid_array[7])) ? $kuid_array[7] : "";
+        $info_array['sns_profileImagePath'] = (isset($kuid_array[8])) ? $kuid_array[8] : "";
+        $info_array['sns_token'] = (isset($kuid_array[9])) ? $kuid_array[9] : "";
+        $info_array['sns_email'] = (isset($kuid_array[10])) ? $kuid_array[10] : "";
+        $info_array['sns_site'] = (isset($kuid_array[11])) ? $kuid_array[11] : "1";     //1=카카오, 2=네이버, 3=페이스북
+        $info_array['regid'] = (isset($kuid_array[12])) ? $kuid_array[12] : "";
+        $info_array['uuid'] = (isset($kuid_array[13])) ? $kuid_array[13] : "";
+
+        return $info_array;
+    }//end of _get_kuid_info()
+
+    /*
+    public function gourl() {
+        $req['backUrl'] = trim($this->input->post_get("backUrl", true));
+
+        $url = "/";
+
+        //backUrl이 있으면 그대로 넘겨줌 (main에서 처리함)
+        if( !empty($req['backUrl']) ) {
+
+            $url .= "?backUrl=" . urlencode($req['backUrl']);
+        }
+
+        alert("", $url);
+
+
+    }
+    */
+    /**
+     * 로그인 처리 (앱에서 SNS로그인 완료시 요청함)
+     */
+    public function login() {
+        //request
+        $req['kuId'] = trim($this->input->post_get("kuId", true));
+        $req['backUrl'] = trim($this->input->post_get("backUrl", true));
+
+        //if( member_login_status() || !is_app() ) {
+        //    if( !empty($req['backUrl']) ) {
+        //        alert("", urldecode($req['backUrl']));
+        //    }
+        //    else {
+        //        alert("", "/");
+        //    }
+        //}
+
+        //var_dump($req);
+        if($_SERVER['REMOTE_ADDR'] == "121.131.27.155"){
+            //print_r($req);
+            //exit;
+        }
+
+
+
+        if( empty($req['kuId']) ) {
+            redirect($this->config->item("error_url"));
+        }
+
+        //복호화
+        $kuid_dec = AES_Decode($req['kuId']);
+
+
+        $kuid_info = $this->_get_kuid_info($kuid_dec);
+        $mstimestamp = $kuid_info['mstimestamp'];
+        $sns_userid = $kuid_info['sns_userid'];
+        $sns_site = $kuid_info['sns_site'];
+
+        //var_dump($kuid_info);
+        //exit;
+
+        if( empty($sns_userid) ) {
+            alert("", $this->config->item("error_url"));
+        }
+
+        ////10초 이상 차이나면 잘못된 값으로 인지함.
+        //if( (time() - ($mstimestamp / 1000)) > 10 ) {
+        //    //alert(lang("site_error_invalid_id"), $this->config->item("error_url"));
+        //    alert("", $this->config->item("error_url"));
+        //}
+
+        //$this->session->set_userdata("session_sns_site", $sns_site);
+        //$this->session->set_userdata("session_sns_userid", $sns_userid);
+        //$this->session->set_userdata("session_kuid_dec", $kuid_dec);
+        $_SESSION['session_sns_site'] = $sns_site;
+        $_SESSION['session_sns_userid'] = $sns_userid;
+        $_SESSION['session_kuid_dec'] = $kuid_dec;
+        //session_write_close();
+
+        ////backurl이 있으면 쿠키에 저장함. (메인에서 처리하기 위함)
+        //if( !empty($req['backUrl']) ) {
+        //    set_cookie("cookie_backUrl", rawurldecode($req['backUrl']), 60);
+        ////    //$this->session->mark_as_flash("backUrl", rawurldecode($req['backUrl']));
+        ////    $this->session->set_userdata("session_backUrl", rawurldecode($req['backUrl']));
+        //}
+        //else {
+        //    delete_cookie("cookie_backUrl");
+        //}
+
+        $query_data = array();
+        $query_data['m_sns_site'] = $sns_site;
+        $query_data['m_sns_id'] = $sns_userid;
+
+
+        $member_row = $this->member_model->get_member_row($query_data);
+
+
+
+        if(zsDebug()){
+            log_message('ZS',$req['backUrl']);
+        }
+
+        //var_dump($member_row);
+        //exit;
+
+        //회원정보가 있으면
+        if( !empty($member_row) ) {
+
+
+            if (($member_row->m_state == "3" || $member_row->m_state == "4") && $member_row->m_login_chk == "N") {
+
+                $query_in = array();
+                $query_in['m_login_chk'] = "Y";
+                $this->member_model->update_login_chk($member_row->m_num, $query_in);
+                start_l();
+                exit;
+
+            }
+            if (($member_row->m_state == "3" || $member_row->m_state == "4") && $member_row->m_login_chk == "Y") {
+
+                $query_in = array();
+                $query_in['m_login_chk'] = "N";
+                $this->member_model->update_login_chk($member_row->m_num, $query_in);
+                $url = "";
+                if (!empty($req['backUrl'])) {
+                    $url .= "?return_url=" . urlencode($req['backUrl']);
+                }
+                redirect("/auth/join/" . $url);
+                exit;
+            }
+
+
+            /*
+            if($member_row->m_state == "3" || $member_row->m_state == "4") {
+                $url = "";
+                if( !empty($req['backUrl']) ) {
+                    $url .= "?return_url=" .urlencode($req['backUrl']);
+                }
+                redirect("/auth/join/".$url);
+                //alert("","/auth/join/".$url);
+            }
+            */
+
+
+            set_cookie("ck_join_path", $this->join_path,get_strtotime_diff("+1 years"));
+            //로그인 처리
+            if( $this->_login_proc() ) {
+
+                $url = "/";
+
+                ////backUrl 처리 (쿠키만 생성하고 메인에서 처리함)
+                //if( !empty($req['backUrl']) ) {
+                //    //$url = $req['backUrl'];
+                //    set_cookie("cookie_backUrl", $req['backUrl'], 0);
+                //}
+                //else if( get_cookie("cookie_backUrl") ) {
+                //    //$url = get_cookie("cookie_backUrl");
+                //    delete_cookie("cookie_backUrl");
+                //}
+
+                //backUrl이 있으면 그대로 넘겨줌 (main에서 처리함)
+                if( !empty($req['backUrl']) ) {
+
+                    $url .= "?backUrl=" . urlencode($req['backUrl']);
+                }
+
+                alert("", $url);
+
+            }
+            else {
+                //alert(lang("site_error_unknown"), $this->config->item("error_url"));
+                alert("", $this->config->item("error_url"));
+            }
+        }
+        //회원정보가 없으면 => 가입 페이지로 이동
+        else {
+
+            //일단 회원을 등록함.
+
+
+
+            $insert_result = $this->_insert_member();
+
+            if($insert_result['code'] == "200"){
+                echo "<script>alert('회원 가입에 실패했습니다.\\n확인 후 다시 시도해 주세요.');</script>";
+                start_l();
+                exit;
+            }
+
+
+            //앱혜택가 ref 처리
+            $ref_app_price_str = "ref=app_price";
+
+
+            if( strpos($req['backUrl'], $ref_app_price_str) !== false ) {
+                total_stat("install_app_price");
+
+
+                $req['backUrl'] = str_replace(array("?" . $ref_app_price_str, "&" . $ref_app_price_str), array("", ""), $req['backUrl']);
+            }
+
+            $url = "";
+
+            if( !empty($req['backUrl']) ) {
+                //임시주석.
+                $url .= "?return_url=" .urlencode($req['backUrl']);
+                //$url .= "?backUrl=" . urlencode($req['backUrl']);
+                //log_message('ZS','Auth Class :: Join Method_1 :: '.urldecode($url));
+
+
+            }
+
+            redirect("/auth/join/".$url);
+            //alert("", $url);
+
+
+            //redirect("/auth/join");
+        }
+    }//end of login()
+
+    /**
+     * 로그인 처리 (APP)
+     * @return bool
+     */
+    private function _login_proc() {
+        $sns_site = $_SESSION['session_sns_site'];
+        $sns_userid = $_SESSION['session_sns_userid'];
+        $kuid_dec = $_SESSION['session_kuid_dec'];
+        $kuid_info = $this->_get_kuid_info($kuid_dec);
+
+        if( empty($sns_userid) ) {
+            alert(lang("site_error_empty_id"), $this->config->item("error_url"));
+        }
+
+        //로그인 시도
+        $login_result = $this->member_model->get_login_sns($sns_site, $sns_userid);
+
+        if( $login_result['code'] == get_status_code('success') ) {
+            //회원정보
+            $member_row = $login_result['data'];
+
+            //회원 로그인 세션 생성
+            set_login_session($member_row);
+
+            $query_data = array();
+            if( !empty($kuid_info['regid']) ) {
+                $query_data['m_regid'] = $kuid_info['regid'];
+            }
+            if( !empty($kuid_info['uuid']) ) {
+                $query_data['m_uuid'] = $kuid_info['uuid'];
+            }
+            if( !empty($kuid_info['sns_email']) ) {
+                $query_data['m_email'] = $kuid_info['sns_email'];
+            }
+            if( !empty($_COOKIE['cookie_adid']) ) {
+                $query_data['m_adid'] = $_COOKIE['cookie_adid'];
+            }
+            if( !empty($kuid_info['sns_nickname']) ) {
+                /*
+                $pattern = '/([\xEA-\xED][\x80-\xBF]{2}|[a-zA-Z0-9]|[ #\&\+\-%@=\/\\\:;,\.\'\"\^`~\_|\!\?\*$#<>()\[\]\{\}])+/';
+                //log_message('error',$kuid_info['sns_nickname']);
+                preg_match_all($pattern, $kuid_info['sns_nickname'], $match);
+                $tmp_nickname = implode('', $match[0]);
+                */
+
+                $tmp_nickname = preg_replace("/\xF0[\x90-\xBF][\x80-\xBF]{2}|[\xF1-\xF3][\x80-\xBF]{3}|\xF4[\x80-\x8F][\x80-\xBF]{2}/", "", $kuid_info['sns_nickname']);
+                $tmp_nickname = preg_replace("/[ #\&\+\-%@=\/\\\:;,\.'\"\^`~\_|\!\?\*$#<>()\[\]\{\}]/i", "", $tmp_nickname);
+
+                if($tmp_nickname != ''){
+                    $query_data['m_sns_nickname'] = $tmp_nickname;
+                    if( empty($member_row->m_nickname) ) {
+                        $query_data['m_nickname'] = $tmp_nickname;
+                    }
+                }
+                //log_message('error',$query_data['m_nickname']);
+                //log_message('error',$query_data['m_sns_nickname']);
+            }
+            if( !empty($kuid_info['sns_profileImagePath']) ) {
+                if( $member_row->m_sns_profile_img != $kuid_info['sns_profileImagePath'] ) {
+                    $query_data['m_sns_profile_img'] = $kuid_info['sns_profileImagePath'];
+                    $query_data['m_sns_profile_img_thumb'] = "";
+                }
+            }
+            if( !empty($kuid_info['sns_token']) ) {
+                $query_data['m_sns_token'] = $kuid_info['sns_token'];
+            }
+            $query_data['m_login_ip'] = $this->input->ip_address();
+            $query_data['m_logindatetime'] = current_datetime();
+            $query_data['m_app_version'] = $kuid_info['version_name'];
+            $query_data['m_app_version_code'] = $kuid_info['version_code']?$kuid_info['version_code']:"0";
+            $query_data['m_device_model'] = $kuid_info['device_model'];
+            $query_data['m_os_version'] = $kuid_info['os_version'];
+            $query_data['m_join_path'] = $this->join_path;
+
+            //me2.do
+            if( !empty($member_row) ) {
+                //로그인시 태그 입력
+                $tag = trim($this->input->post_get("backUrl", true));
+
+                //가입태그가 없을때만
+                if( $member_row->m_tag == "" ) {
+                    $query_data['m_tag'] = get_join_tag($tag, $query_data['m_device_model']);
+                }
+
+                ////푸쉬 단축 url 디코딩이 안되기때문에 예외 처리
+                //if((strpos($tag, "https://goo.gl") !== false || strpos($tag, "http://bit.ly") !== false || strpos($tag, "http://me2.do") !== false) && $member_row->m_tag == "") {
+                //    $query_data['m_tag'] = "app_push";
+                //}
+                ////나머지 리퍼러 추출
+                //if(strpos($tag, "ref_site") !== false && $member_row->m_tag == "") {
+                //    if (strpos($tag, "&") !== false) {
+                //        preg_match_all("@ref_site=(.+?)&@", $tag, $chk_url, PREG_SET_ORDER);
+                //    }
+                //    else {
+                //        preg_match_all("@ref_site=(.*)@", $tag, $chk_url, PREG_SET_ORDER);
+                //    }
+                //
+                //    if($chk_url['0']['1']){
+                //        $query_data['m_tag'] = $chk_url['0']['1'];
+                //    }
+                //}
+                ////로그인시 태그 입력 끝
+
+                //30일 동안 로그인이 없었을때 만료재가입으로 변경(20190220/김홍주)
+                if( !empty($member_row->m_logindatetime) && $member_row->m_logindatetime < date("YmdHis", strtotime("-30 days")) ) {
+                    $m_memo_rejoin = "#[재가입]" . $member_row->m_regdatetime . ":" . $member_row->m_tag . "#";
+                    $query_data['m_memo'] = ( !empty($member_row->m_memo) ) ? $member_row->m_memo . "\n" . $m_memo_rejoin : $m_memo_rejoin;
+                    $query_data['m_regdatetime'] = current_datetime();
+                    $query_data['m_rejoin_yn'] = "Y";
+
+                    //가입태그 업데이트
+                    $query_data['m_tag'] = get_join_tag($tag, $query_data['m_device_model']);
+                }//endif;
+
+                $this->member_model->update_member($member_row->m_num, $query_data);
+            }//endif;
+
+
+            //업데이트된 회원정보
+            $member_row = $login_result['data'];
+
+            $regid = $kuid_info['regid'];
+
+
+            //기기정보에 회원번호 업데이트
+            if( !empty($regid) ) {
+                $device_row = $this->app_device_model->get_app_device_row(array('dv_regid' => $regid));
+
+                //있으면 수정
+                if ( !empty($device_row) ) {
+                    $query_data = array();
+                    $query_data['dv_member_num'] = $member_row->m_num;
+                    $query_data['dv_push_yn'] = $member_row->m_push_yn;
+                    $query_data['dv_app_version'] = $kuid_info['version_name'];
+                    $query_data['dv_uuid'] = $kuid_info['uuid'];
+                    $query_data['dv_app_version_code'] = $kuid_info['version_code'];
+
+                    $this->app_device_model->update_app_device($device_row->dv_num, $query_data);
+                }
+                //없으면 등록
+                else {
+                    $query_data = array();
+                    $query_data['dv_regid'] = $regid;
+                    $query_data['dv_member_num'] = $member_row->m_num;
+                    $query_data['dv_push_yn'] = $member_row->m_push_yn;
+                    $query_data['dv_deviceinfo'] = $kuid_info['device_model'] . "|" . $kuid_info['os_version'];
+                    $query_data['dv_useragent'] = $this->agent->agent_string();
+                    $query_data['dv_app_version'] = $kuid_info['version_name'];
+                    $query_data['dv_uuid'] = $kuid_info['uuid'];
+                    $query_data['dv_app_version_code'] = $kuid_info['version_code'];
+                    $this->app_device_model->insert_app_device($query_data);
+                }
+
+                ////회원의 나머지 기기정보는 삭제함
+                //$query = "delete from app_device_tb ";
+                //$query .= "where dv_member_num = '" . $member_row->m_num . "' ";
+                //$query .= "and dv_regid != '" . $regid . "' ";
+                //$this->db->query($query);
+            }//end of if()
+
+            ////로그인로그에 로그인성공으로 업데이트
+            //if( $_SESSION['session_lol_num'] ) {
+            //    $query = "update login_log_tb set ";
+            //    $query .= "lol_login_yn = 'Y', ";
+            //    $query .= "lol_proc_pos = '_login_proc:success' ";
+            //    $query .= "where lol_num = '" . $_SESSION['session_lol_num'] . "' ";
+            //    $this->db->query($query);
+            //}
+
+            //자동 로그인 쿠키 생성 : time()|m_loginid|m_password|m_division|m_sns_site|m_sns_id
+            $auto_login_enc =  $this->encryption->encrypt(current_mstime() . "|||2|" . $member_row->m_sns_site . "|" . $member_row->m_sns_id);
+            set_cookie('cookie_sal', $auto_login_enc, get_strtotime_diff("+1 years"));
+            //임시 세션 삭제
+            //$this->session->unset_userdata("session_sns_site");
+            ////session_sns_userid 임시주석
+            ////$this->session->unset_userdata("session_sns_userid");
+            //$this->session->unset_userdata("session_kuid_dec");
+            //$this->session->unset_userdata("session_insert_m_num");
+
+            //unset($_SESSION['session_sns_site']);
+            unset($_SESSION['session_kuid_dec']);
+            unset($_SESSION['session_insert_m_num']);
+            //session_write_close();
+
+            return true;
+        }
+        else {
+            return false;
+        }
+    }//end of _login_proc()
+
+
+    /**
+     * 가입 확인 페이지
+     */
+    public function join_web() {
+
+
+        //유효 키값 비교
+        $session_sns_site = $_SESSION['session_sns_site'];
+        $session_sns_userid = $_SESSION['session_sns_userid'];
+        $session_return_url = $_SESSION['session_return_url'];
+
+        if($session_sns_site == '' || $session_sns_userid == ''){ //오류
+            alert(lang("site_error_empty_id"), $this->config->item("error_url"));
+        }
+
+        $where_data['m_sns_site'] = $session_sns_site;
+        $where_data['m_sns_id'] = $session_sns_userid;
+        $member_row = $this->member_model->get_member_row($where_data);
+
+        if(empty($member_row)){ // 오류
+            alert(lang("site_error_empty_id"), $this->config->item("error_url"));
+        }
+
+        $this->_header(true);
+        $this->load->view('/auth/join', array( 'member_row' => $member_row , 'mode' => 'web' , 'return_url' => urlencode($session_return_url?$session_return_url:'/') ));
+        $this->_footer(true);
+
+    }
+
+    /**
+     * 가입 확인 페이지
+     */
+    public function join() {
+
+
+        /*
+        if( member_login_status(true) ) {
+            redirect('/');
+        }
+        */
+
+//        if(zsDebug()){
+//            zsView($_SESSION);
+//            exit;
+//        }
+
+        //SNS userid 세션이 없을때
+        if( !$_SESSION['session_sns_userid'] ) {
+
+            log_message('ZS','Auth Class :: Join Method :: '.lang("site_error_invalid_id"));
+            alert(lang("site_error_invalid_id"), $this->config->item("error_url"));
+        }
+
+
+        $kuid_info = $this->_get_kuid_info($_SESSION['session_kuid_dec']);
+
+        //$confirm_yn = 'N';
+        //$nickname = '';
+        //$profileImagePath = '';
+        //
+        ////카카오 닉네임이 중복이 아닐때만 동의 팝업 출력함
+        //if( isset($kuid_info['nickname']) && !empty($kuid_info['nickname']) ) {
+        //    $member_row = $this->member_model->get_member_row(array('m_nickname' => $kuid_info['nickname']));
+        //    if( empty($member_row) ) {
+        //        $confirm_yn = 'Y';
+        //
+        //        $nickname = $kuid_info['nickname'];
+        //        $profileImagePath = $kuid_info['profileImagePath'];
+        //        if( empty($profileImagePath) ) {
+        //            $profileImagePath = $this->config->item("member_profile_img_default");
+        //        }
+        //    }
+        //}
+
+        $this->_header(true);
+
+        $this->load->view('/auth/join', array(
+            //'confirm_yn'          => $confirm_yn,
+            //'nickname'            => $nickname,
+            //'profileImagePath'    => $profileImagePath
+        ));
+
+        /*
+        if(zsDebug()) {
+
+            $this->load->view('/auth/join_test', array(
+                //'confirm_yn'          => $confirm_yn,
+                //'nickname'            => $nickname,
+                //'profileImagePath'    => $profileImagePath
+            ));
+
+        }else{
+            $this->load->view('/auth/join', array(
+                //'confirm_yn'          => $confirm_yn,
+                //'nickname'            => $nickname,
+                //'profileImagePath'    => $profileImagePath
+            ));
+        }
+        */
+
+        $this->_footer(true);
+    }//end of join()
+
+    /**
+     * 카카오 프로필 확인 팝업창
+     */
+    public function join_confirm_pop() {
+        $kuid_info = $this->_get_kuid_info($_SESSION['session_kuid_dec']);
+
+        $nickname = "";
+        $profileImagePath = "";
+
+        //카카오 닉네임 중복 확인
+        if( isset($kuid_info['nickname']) && !empty($kuid_info['nickname']) ) {
+            $member_row = $this->member_model->get_member_row(array('m_nickname' => $kuid_info['nickname']));
+            if( empty($member_row) ) {
+                $nickname = $kuid_info['nickname'];
+                $profileImagePath = $kuid_info['profileImagePath'];
+                if( empty($profileImagePath) ) {
+                    $profileImagePath = $this->config->item("member_profile_img_default");
+                }
+            }
+        }
+
+        //var_dump($profileImagePath);
+
+        $this->load->view('/auth/join_confirm_pop', array(
+            'kuid_info'                 => $kuid_info,
+            'nickname'            => $nickname,
+            'profileImagePath'    => $profileImagePath,
+        ));
+    }//end of join_confirm_pop()
+
+    /**
+     * 카카오 프로필 사용 업데이트
+     */
+    public function join_profile_update_proc() {
+        $insert_m_num = $_SESSION['session_insert_m_num'];
+        $kuid_info = $this->_get_kuid_info($_SESSION['session_kuid_dec']);
+
+
+        if( !empty($insert_m_num) ) {
+            $member_row = $this->member_model->get_member_row(array('m_num' => $insert_m_num));
+        }
+        else if( !empty($kuid_info['userid']) ) {
+            $member_row = $this->member_model->get_member_row(array('m_sns_id' => $kuid_info['userid']));
+        }
+
+        if( empty($member_row) ) {
+            $insert_result = $this->_insert_member();
+            $member_row = $insert_result['data'];
+        }
+
+        if( !empty($member_row) ) {
+            //닉네임 중복체크
+            $nick_row = $this->member_model->get_member_row(array('m_nickname' => $kuid_info['nickname']));
+            //var_dump($nick_row);
+
+            if( !empty($nick_row) ) {
+                result_echo_json(get_status_code('error'), lang('site_member_update_nick_exist'), true, 'alert');
+            }
+
+            //수정
+            $query_data = array();
+            if ( !empty($kuid_info['nickname']) ) {
+                $query_data['m_nickname'] = $kuid_info['nickname'];
+            }
+            if ( !empty($kuid_info['profileImagePath']) ) {
+                $query_data['m_profile_img'] = $kuid_info['profileImagePath'];
+            }
+
+            if ( $this->member_model->update_member($member_row->m_num, $query_data, false) ) {
+                result_echo_json(get_status_code('success'), '', true);
+            }
+        }
+
+        result_echo_json(get_status_code('error'), '', true);
+    }//end of join_profile_update_proc()
+
+
+
+    /**
+     * 가입 완료처리 (Ajax)
+     */
+    public function join_web_proc() {
+
+
+        $m_num      = $this->input->post('m_num');
+        $return_url = $this->input->post('return_url');
+
+        //넘어온 회원번호가 없을때
+        if( empty($m_num) ) {
+            result_echo_json(get_status_code("error"), lang("site_error_invalid_id"), true, "alert", "", "", $this->config->item("error_url"));
+        }
+
+        /* m_state 변경 회원대기(4) -> 정상(1) */
+        $bRet = $this->member_model->set_user_activate($m_num);
+
+        if( $this->_login_proc() ) {
+            result_echo_json(get_status_code('success'), "", true, "", "", "", urldecode($return_url) );
+        } else {
+            result_echo_json(get_status_code('error'), lang("site_error_unknown"), true, "alert");
+        }
+
+    }
+
+
+    /**
+     * 가입 처리 (Ajax)
+     */
+    public function join_proc() {
+        ajax_request_check();
+        $session_sns_site = $_SESSION['session_sns_site'];
+        $session_sns_userid = $_SESSION['session_sns_userid'];
+
+
+
+        //SNS userid 세션이 없을때
+        if( empty($session_sns_site) || empty($session_sns_userid) ) {
+            log_message('ZS','Auth Class :: JoinProc Method :: '.lang("site_error_invalid_id").' :: Sess > '.json_encode($_SESSION));
+            result_echo_json(get_status_code("error"), lang("site_error_invalid_id"), true, "alert", "", "", $this->config->item("error_url"));
+        }
+
+        $kuid_info = $this->_get_kuid_info($_SESSION['session_kuid_dec']);
+        $regid = $kuid_info['regid'];
+
+        $where_data = array();
+        $where_data['m_sns_site'] = $session_sns_site;
+        $where_data['m_sns_id'] = $session_sns_userid;
+        $member_row = $this->member_model->get_member_row($where_data);
+
+        if( empty($member_row) ) {
+
+
+            //회원 등록
+            $insert_result = $this->_insert_member();
+
+            if( $insert_result['code'] === get_status_code('success') ) {
+                //회원정보
+                $member_row = $insert_result['data'];
+            }
+            else {
+                result_echo_json(get_status_code('error'), $insert_result['message'], true, "alert", "", "", "/");
+            }
+        }
+
+        //기기정보에 회원번호 업데이트
+
+        if( !empty($regid) ) {
+            $device_row = $this->app_device_model->get_app_device_row(array('dv_regid' =>$regid));
+
+            if( !empty($device_row) ) {
+                $query_data = array();
+                $query_data["dv_member_num"] = $member_row->m_num;
+                $this->app_device_model->update_app_device($device_row->dv_num, $query_data);
+            }
+        }
+
+        /* m_state 변경 회원대기(4) -> 정상(1) */
+        $bRet = $this->member_model->set_user_activate($member_row->m_num);
+
+        //바로 로그인
+        //$query_data = array();
+        //$query_data['m_login_ip'] = $this->input->ip_address();
+        //$query_data['m_logindatetime'] = current_datetime();
+        //$this->member_model->update_member($member_row->m_num, $query_data);
+        //
+        ////회원 로그인 세션 생성
+        //set_login_session($member_row);
+        if( $this->_login_proc() ) {
+            //total_stat("join");
+            //total_stat("join_total");
+            //result_echo_json(get_status_code('success'), "", true, "", "", "", get_cookie("cookie_backurl"));
+            //result_echo_json(get_status_code('success'), "", true, "", "", "", "/
+
+
+            if($_POST['return_url'] ==""){
+                $_POST['return_url'] = "/";
+            }
+            result_echo_json(get_status_code('success'), "", true, "", "", "", $_POST['return_url']);
+        }
+        else {
+
+            result_echo_json(get_status_code('error'), lang("site_error_unknown"), true, "alert");
+        }
+    }//end of join_proc()
+
+    /**
+     * 오류시 카카오 로그인 화면으로 돌아감
+     */
+    public function blank() {
+        //request
+        $req['backUrl'] = trim($this->input->post_get('backUrl', true));
+
+        $this->_header(true);
+
+        $this->load->view($this->config->item("error_url"), array(
+            'req'   => $req
+        ));
+
+        $this->_footer(true);
+    }//end of blank()
+
+    /**
+     * 고유 임시 닉네임 생성
+     * @param int $len
+     * @return string
+     */
+    private function _get_unique_nickname($len=7) {
+        $nickname = get_random_string($len);
+
+        $query_data = array();
+        $query_data['m_nickname'] = $nickname;
+        $member_row = $this->member_model->get_member_row($query_data);
+
+        if( !empty($member_row) ) {
+            $this->_get_unique_nickname();
+        }
+
+        return $nickname;
+    }//end of _get_unique_nickname()
+
+
+    /**
+     * 회원등록 (APP)
+     * @return mixed
+     */
+    private function _insert_member() {
+        $session_sns_site = $_SESSION['session_sns_site'];
+        $session_sns_userid = $_SESSION['session_sns_userid'];
+        $kuid_info = $this->_get_kuid_info($_SESSION['session_kuid_dec']);
+
+        $nickname = $kuid_info['sns_nickname'];
+
+        $tmp_nickname = preg_replace("/\xF0[\x90-\xBF][\x80-\xBF]{2}|[\xF1-\xF3][\x80-\xBF]{3}|\xF4[\x80-\x8F][\x80-\xBF]{2}/", "", $kuid_info['sns_nickname']);
+        $tmp_nickname = preg_replace("/[ #\&\+\-%@=\/\\\:;,\.'\"\^`~\_|\!\?\*$#<>()\[\]\{\}]/i", "", $tmp_nickname);
+
+
+        if( empty($tmp_nickname) ) {
+            $tmp_nickname = $kuid_info['sns_userid'];      //랜덤 닉네임
+        }
+
+        if($tmp_nickname == '' || $tmp_nickname == null ) $tmp_nickname = '';
+
+        //log_message('error','Auth Controller : session_sns_userid >>> '.$session_sns_userid.' ::: m_loginid >>> '.$nickname.' ::: tmp_nickname >>> '.$tmp_nickname);
+
+        //회원 등록
+        $query_data = array();
+        $query_data['m_key'] = $_SESSION['my_session_id'];
+        $query_data['m_division'] = "2";
+        /*
+        $query_data['m_nickname'] = str_replace(array("\"", "'"), array("˝", "´"), $tmp_nickname);
+        $query_data['m_loginid'] = str_replace(array("\"", "'"), array("˝", "´"), $tmp_nickname);
+        */
+        $query_data['m_nickname'] = $tmp_nickname;
+        $query_data['m_loginid'] = $tmp_nickname;
+
+
+
+        $query_data['m_sns_site'] = $session_sns_site;
+        $query_data['m_sns_id'] = $session_sns_userid;
+        $query_data['m_sns_token'] = $kuid_info['sns_token'];
+        $query_data['m_sns_profile_img'] = $kuid_info['sns_profileImagePath'];
+        $query_data['m_sns_nickname'] = str_replace(array("\"", "'"), array("˝", "´"), $tmp_nickname);
+        $query_data['m_email'] = $kuid_info['sns_email'];
+        $query_data['m_regid'] = $kuid_info['regid'];
+        //$query_data['m_adid'] = $_COOKIE['cookie_adid']?$_COOKIE['cookie_adid']:"";
+        $query_data['m_adid'] = $_COOKIE['cookie_adid']?$_COOKIE['cookie_adid']:"";
+        $query_data['m_uuid'] = $kuid_info['uuid'];
+        $query_data['m_join_ip'] = $this->input->ip_address();
+        $query_data['m_join_path'] = $this->join_path;
+        $query_data['m_state'] = '4';
+        //$query_data['m_state'] = '1';
+
+        ////신규추가
+        $query_data['m_login_ip'] = $this->input->ip_address();
+        $query_data['m_app_version'] = $kuid_info['version_name'];
+        $query_data['m_app_version_code'] = $kuid_info['version_code']?$kuid_info['version_code']:"0";
+        $query_data['m_device_model'] = $kuid_info['device_model'];
+        $query_data['m_os_version'] = $kuid_info['os_version'];
+
+//        $query_data['m_state'] = zsDebug()?4:1;
+
+        //var_dump($query_data);
+        //exit;
+
+        //회원가입시 태그입력.
+        $tag = trim($this->input->post_get("backUrl", true));
+
+        if(strpos($tag, "ref_site") !== false) {
+
+            if (strpos($tag, "&") !== false) {
+                preg_match_all("@ref_site=(.+?)&@", $tag, $chk_url, PREG_SET_ORDER);
+            } else {
+                preg_match_all("@ref_site=(.*)@", $tag, $chk_url, PREG_SET_ORDER);
+            }
+
+            if($chk_url['0']['1']){
+
+                $query_data['m_tag'] = $chk_url['0']['1'];
+
+            }
+        }
+        //회원가입시 태그입력끝.
+
+        $result = $this->member_model->insert_member($query_data);
+
+        if( $result['code'] == get_status_code('success') ) {
+            //$this->session->set_userdata("session_insert_m_num");
+            $_SESSION['session_insert_m_num'] = "";
+            //session_write_close();
+            //total_stat("join");
+            //total_stat("join_total");
+        }
+
+        ///토큰입력
+        $regid = $kuid_info['regid'];
+
+        if( !empty($regid) ) {
+
+            $login_result = $this->member_model->get_login_sns($session_sns_site, $session_sns_userid);
+
+            if( $login_result['code'] == get_status_code('success') ) {
+
+                $member_row = $login_result['data'];
+
+                $device_row = $this->app_device_model->get_app_device_row(array('dv_regid' => $regid));
+
+                //있으면 수정
+                if (!empty($device_row)) {
+                    $query_data = array();
+                    $query_data['dv_member_num'] = $member_row->m_num;
+                    $query_data['dv_push_yn'] = $member_row->m_push_yn;
+                    $query_data['dv_app_version'] = $kuid_info['version_name'];
+                    $query_data['dv_uuid'] = $kuid_info['uuid'];
+                    $query_data['dv_app_version_code'] = $kuid_info['version_code'];
+                    $this->app_device_model->update_app_device($device_row->dv_num, $query_data);
+                } //없으면 등록
+                else {
+                    $query_data = array();
+                    $query_data['dv_regid'] = $regid;
+                    $query_data['dv_push_yn'] = $member_row->m_push_yn;
+                    $query_data['dv_member_num'] = $member_row->m_num;
+                    $query_data['dv_deviceinfo'] = $kuid_info['device_model'] . "|" . $kuid_info['os_version'];
+                    $query_data['dv_useragent'] = $this->agent->agent_string();
+                    $query_data['dv_app_version'] = $kuid_info['version_name'];
+                    $query_data['dv_uuid'] = $kuid_info['uuid'];
+                    $query_data['dv_app_version_code'] = $kuid_info['version_code'];
+                    $this->app_device_model->insert_app_device($query_data);
+                }
+
+                ////회원의 나머지 기기정보는 삭제함
+                //$query = "delete from app_device_tb ";
+                //$query .= "where dv_member_num = '" . $member_row->m_num . "' ";
+                //$query .= "and dv_regid != '" . $regid . "' ";
+                //$this->db->query($query);
+            }
+        }//end of if()
+
+        /// 토큰입력끝
+
+        return $result;
+    }//end of _insert_member()
+
+
+
+    ///**
+    // * 로그인 팝업
+    // */
+    //public function login_pop() {
+    //    if( member_login_status() ) {
+    //        exit;
+    //    }
+    //
+    //    //request
+    //    $req['inType'] = $this->input->post_get('inType', true);
+    //    $req['backUrl'] = $this->input->post_get('backUrl', true);
+    //    $req['locType'] = $this->input->post_get('locType', true);
+    //
+    //    $this->load->view('/auth/login_pop', array(
+    //        'req'   => $req
+    //    ));
+    //}//end of logi_pop()
+
+    ///**
+    // * 로그인 처리
+    // */
+    //public function login_proc() {
+    //    ajax_request_check();
+    //
+    //    $this->load->library('form_validation');
+    //
+    //    //폼검증 룰 설정
+    //    $set_rules_array = array(
+    //        "lo_loginid" => array("field" => "lo_loginid", "label" => "이메일", "rules" => "required|valid_email|max_length[50]|" . $this->default_set_rules),
+    //        "lo_password" => array("field" => "lo_password", "label" => "비밀번호", "rules" => "required|max_length[50]|" . $this->default_set_rules),
+    //        //"save_id" => array("field" => "save_id", "label" => "아이디저장", "rules" => $this->default_set_rules),
+    //        //"auto_login" => array("field" => "auto_login", "label" => "로그인유지", "rules" => $this->default_set_rules)
+    //    );
+    //
+    //    $this->form_validation->set_rules($set_rules_array);
+    //
+    //    $form_error_array = array();
+    //
+    //    //폼 검증 성공시
+    //    if( $this->form_validation->run() === true ) {
+    //        $m_loginid  = $this->input->post('lo_loginid', true);
+    //        $m_password = $this->input->post('lo_password', true);
+    //        //$save_id    = get_yn_value($this->input->post('save_id', true));
+    //        //$auto_login = get_yn_value($this->input->post('auto_login', true));
+    //        $save_id    = 'Y';
+    //        $auto_login = 'Y';
+    //
+    //        if( empty($form_error_array) ) {
+    //            //로그인
+    //            $login_result = $this->member_model->get_login($m_loginid, $m_password);
+    //
+    //            if( $login_result['code'] == get_status_code('success') ) {
+    //                //회원정보
+    //                $member_row = $login_result['data'];
+    //
+    //                //회원 로그인 세션 생성
+    //                set_login_session($member_row);
+    //
+    //                //아이디 저장
+    //                if( $save_id == 'Y' ) {
+    //                    //아이디 저장 쿠키
+    //                    $save_id_enc = $this->encryption->encrypt(time() . "|" . $member_row->m_loginid);
+    //                    set_cookie('cookie_sid', $save_id_enc, get_strtotime_diff("+1 years"));
+    //                }
+    //                else {
+    //                    delete_cookie('cookie_sid');
+    //                }
+    //
+    //                //로그인 유지
+    //                if( $auto_login == 'Y' ) {
+    //                    //로그인 유지 쿠키
+    //                    //time()|m_loginid|m_password|m_division|m_sns_site|m_sns_id
+    //                    $auto_login_enc =  $this->encryption->encrypt(time() . "|" . $member_row->m_loginid . "|" . $m_password . "|1|0|");
+    //                    set_cookie('cookie_sal', $auto_login_enc, get_strtotime_diff("+1 years"));
+    //                }
+    //                else {
+    //                    delete_cookie('cookie_sal');
+    //                }
+    //
+    //                result_echo_json(get_status_code('success'), "", true, "");
+    //            }
+    //            else {
+    //                result_echo_json(get_status_code('error'), $login_result['message'], true, "alert");
+    //            }
+    //        }//end of if()
+    //    }//end of if(/폼 검증 성공 마침)
+    //
+    //    //뷰 출력용 폼 검증 오류메시지 설정
+    //    $form_error_array = set_form_error_from_rules($set_rules_array, $form_error_array);
+    //
+    //    result_echo_json(get_status_code('error'), "", true, "", $form_error_array);
+    //}//end of login_proc()
+
+    /**
+     * 로그아웃 (APP/웹)
+     * @param bool $exec_only
+     */
+    public function logout($exec_only=false) {
+        //자동로그인 쿠키 삭제
+        delete_cookie('cookie_sal');
+
+        if( is_app() ) {
+            $this->_logout_app($exec_only);
+        }
+        else {
+            $this->_logout_web($exec_only);
+        }
+    }//end of logout()
+
+    /**
+     * 로그아웃 (APP)
+     */
+    private function _logout_app($exec_only=false) {
+
+//        if(zsDebug()){
+//            $aInput = $_SESSION;
+//            $jInput = json_encode($aInput);
+//
+//            $jInput2 = json_encode($_SERVER);
+//
+//            log_message('ZS','err :: _logout_app aInput :: '.$jInput);
+//            log_message('ZS','err :: _logout_app _SERVER :: '.$jInput2);
+//
+//
+//        }
+
+        //$this->session->sess_destroy();
+        if(get_app_version_code() >= "62"){
+
+            if($_SESSION['session_m_num']) {
+                $query_data = array();
+                $query_data['new_log_chk'] = "N";
+
+                $this->member_model->update_member($_SESSION['session_m_num'], $query_data);
+
+
+            }
+        }
+
+
+        session_destroy();
+        session_unset();
+
+//        $_SESSION['session_m_num']='';
+//        $_SESSION['session_m_key']='';
+//        $_SESSION['session_m_division']='';
+//        $_SESSION['session_m_loginid']='';
+//        $_SESSION['session_m_sns_site']='';
+//        $_SESSION['session_m_sns_id'] ='';
+//        $_SESSION['session_m_authno'] ='';
+//        $_SESSION['session_m_logindatetime']='';
+//        $_SESSION['session_m_device_model'] ='';
+//        $_SESSION['session_m_nickname'] ='';
+//        $_SESSION['new_log_chk'] ='';
+//        $_SESSION['session_m_state'] ='';
+//        $_SESSION['m_app_version_code'] ='';
+//
+//        session_destroy();
+//        session_unset();
+
+//        if(zsDebug()){
+//            unset($_COOKIE['cookie_sal']);
+//            delete_cookie('cookie_sal');
+//        }
+
+        $this->_header(array('no_header' => true));
+
+        $this->load->view("/auth/logout", array());
+
+        $this->_footer(true);
+    }//end of _logout_app()
+
+    /**
+     * 로그아웃 (웹)
+     */
+    private function _logout_web($exec_only=false) {
+        //카카오 로그아웃
+        if( $_SESSION['kakao_access_token'] ) {
+            $this->load->library('Snoopy');
+
+            $url = "https://kapi.kakao.com/v1/user/logout";
+            $this->snoopy->rawheaders["Authorization"] = "Bearer " . $_SESSION['kakao_access_token'];
+            $this->snoopy->fetch($url);
+            $result = json_decode($this->snoopy->results);
+        }//end of if()
+
+        //TODO:네이버, 페이스북 로그아웃 처리 필요
+
+//        if(zsDebug()){
+//            $aInput = $_SESSION;
+//            $jInput = json_encode($aInput);
+//            log_message('ZS','err :: _logout_web :: '.$jInput);
+//        }
+
+        //$this->session->sess_destroy();
+        session_destroy();
+
+        if( !$exec_only ) {
+            redirect('/');
+        }
+    }//end of _logout_web()
+
+
+    /**
+     * 회원탈퇴 팝업 (APP)
+     */
+    public function withdraw_pop() {
+        if( !member_login_status() ) {
+            alert("");
+        }
+
+        $this->load->view("/auth/withdraw_pop", array());
+    }//end of withdraw_pop()
+
+    /**
+     * 회원탈퇴처리 (회원삭제함) (APP) (ajax)
+     */
+    public function withdraw_proc() {
+        ajax_request_check();
+        member_login_check(true);
+
+        //model
+        $this->load->model('member_withdraw_log_model');
+
+        $member_row = $this->_get_member_info();
+
+        $this->load->library('form_validation');
+
+        //$mwl_reason_etc_set_rules = $this->default_set_rules;
+        //if( $this->input->post('mwl_reason', true) == 99 ) {
+        //    $mwl_reason_etc_set_rules .= "|required";
+        //}
+
+        //폼검증 룰 설정
+        $set_rules_array = array(
+            "mwl_reason" => array("field" => "mwl_reason", "label" => "사유", "rules" => "required|in_list[" . get_config_item_keys_string('member_withdraw_reason') ."]|" . $this->default_set_rules),
+            //"mwl_reason_etc" => array("field" => "mwl_reason_etc", "label" => "사유입력", "rules" => $mwl_reason_etc_set_rules)
+        );
+
+        $this->form_validation->set_rules($set_rules_array);
+
+        $form_error_array = array();
+
+        //폼 검증 성공시
+        if( $this->form_validation->run() === true ) {
+            $mwl_reason = $this->input->post('mwl_reason', true);
+            $mwl_reason_etc = $this->input->post('mwl_reason_etc', true);
+
+            if( empty($form_error_array) ) {
+                //탈퇴처리
+                if( $this->member_model->withdraw_member($member_row->m_num) ) {
+
+                    //적립금 삭제
+                    $this->_deletePointMember($member_row->m_key);
+
+                    //쿠키, 세션 삭제
+
+                    if(zsDebug()){
+                        $aInput = $_SESSION;
+                        $jInput = json_encode($aInput);
+                        log_message('ZS','err :: withdraw_proc :: '.$jInput);
+                    }
+
+                    delete_cookie('cookie_sal');
+                    total_stat('join_del');
+                    //$this->session->sess_destroy();
+                    session_destroy();
+
+                    //탈퇴 로그 저장
+                    $query_data = array();
+                    $query_data['mwl_member_num'] = $member_row->m_num;
+                    $query_data['mwl_loginid'] = $member_row->m_loginid;
+                    $query_data['mwl_nickname'] = $member_row->m_nickname;
+                    $query_data['mwl_sns_site'] = $member_row->m_sns_site;
+                    $query_data['mwl_sns_id'] = $member_row->m_sns_id;
+                    $query_data['mwl_app_version'] = $member_row->m_app_version;
+                    $query_data['mwl_app_version_code'] = $member_row->m_app_version_code;
+                    $query_data['mwl_device_model'] = $member_row->m_device_model;
+                    $query_data['mwl_os_version'] = $member_row->m_os_version;
+                    $query_data['mwl_join_ip'] = $member_row->m_join_ip;
+                    $query_data['mwl_joindatetime'] = $member_row->m_regdatetime;
+                    $query_data['mwl_login_ip'] = $member_row->m_login_ip;
+                    $query_data['mwl_logindatetime'] = $member_row->m_logindatetime;
+                    $query_data['mwl_wish_count'] = $member_row->m_wish_count;
+                    $query_data['mwl_comment_count'] = $member_row->m_comment_count;
+                    $query_data['mwl_order_count'] = $member_row->m_order_count;
+                    $query_data['mwl_first_push_yn'] = $member_row->m_first_push_yn;
+                    $query_data['mwl_push_yn'] = $member_row->m_push_yn;
+                    $query_data['mwl_reason'] = (!empty($mwl_reason)) ? $mwl_reason : "";
+                    $query_data['mwl_reason_etc'] = (!empty($mwl_reason_etc)) ? $mwl_reason_etc : "";
+                    $query_data['mwl_reg_ip'] = $this->input->ip_address();
+                    $this->member_withdraw_log_model->insert_member_withdraw_log($query_data);
+
+                    result_echo_json(get_status_code('success'), lang('site_member_withdraw_success'), true, 'alert',array(),array(),"");
+                }
+                else {
+                    log_message('ZS','err :: withdraw_proc :: 탈퇴 DB 오류');
+
+                    result_echo_json(get_status_code('error'), lang('site_error_db'), true, 'alert');
+                }
+            }//end of if()
+        }//end of if(/폼 검증 성공 마침)
+
+        //뷰 출력용 폼 검증 오류메시지 설정
+        $form_error_array = set_form_error_from_rules($set_rules_array, $form_error_array);
+
+        result_echo_json(get_status_code('error'), "", true, "", $form_error_array);
+    }//end of withdraw_proc()
+
+    /**
+     * 회원탈퇴 (APP/웹)
+     */
+    public function withdraw() {
+        if( is_app() ) {
+            //회원탈퇴 완료 (앱링크해제)
+            $this->_withdraw_app();
+        }
+        else {
+            //회원탈퇴 처리
+            $this->_withdraw_web();
+        }
+    }//end of withdraw()
+
+    /**
+     * 회원탈퇴 완료 (APP)
+     */
+    private function _withdraw_app() {
+        $this->_header(array('no_header' => true));
+
+        $this->load->view("/auth/withdraw", array());
+
+        $this->_footer(true);
+    }//end of withdraw_app()
+
+    /**
+     * 회원탈퇴 (웹)
+     */
+    private function _withdraw_web() {
+        member_login_check();
+        ajax_request_check();
+
+        $m_num = $_SESSION['session_m_num'];
+
+        //회원정보
+        $query_data = array();
+        $query_data['m_num'] = $m_num;
+        $member_row = $this->member_model->get_member_row($query_data);
+
+        if( empty($member_row) ) {
+            result_echo_json(get_status_code("error"), lang("site_error_noauth"), true, "alert");
+        }
+
+        //탈퇴
+        $query_data = array();
+        $query_data['m_deldatetime'] = current_datetime();
+        $query_data['m_push_yn'] = "N";
+        $query_data['m_state'] = "3";
+        if( $this->member_model->update_member($m_num, $query_data) ) {
+
+            //적립금 삭제
+            $this->_deletePointMember($member_row->m_key);
+
+            //로그아웃
+            $this->logout(true);
+
+            total_stat("join_del");
+
+            result_echo_json(get_status_code("success"), lang("site_withdraw_complete"), true, "alert");
+        }
+        else {
+            result_echo_json(get_status_code("error"), lang("site_error_unknown"), true, "alert");
+        }
+    }//end of _withdraw_web()
+
+    private function _deletePointMember($m_key)
+    {
+        $this->load->model('point_model');
+        // 적립금 삭제
+        if($this->isApplyPoint) {
+            $this->point_model->deletePointmember($m_key);
+        }
+    }
+
+    ///**
+    // * 비밀번호 찾기
+    // */
+    //public function find_pass_pop() {
+    //    if( member_login_status() ) {
+    //        exit;
+    //    }
+    //
+    //    $this->load->view('/auth/find_pass_pop', array());
+    //}//end of find_pass()
+
+    //public function find_pass_proc() {
+    //    if( member_login_status() ) {
+    //        exit;
+    //    }
+    //
+    //    $this->load->library('form_validation');
+    //
+    //    //폼검증 룰 설정
+    //    $set_rules_array = array(
+    //        "fp_email" => array("field" => "fp_email", "label" => "이메일", "rules" => "required|valid_email|" . $this->default_set_rules)
+    //    );
+    //
+    //    $this->form_validation->set_rules($set_rules_array);
+    //
+    //    $form_error_array = array();
+    //
+    //    //폼 검증 성공시
+    //    if( $this->form_validation->run() === true ) {
+    //        $m_loginid = $this->input->post('fp_email', true);
+    //
+    //        $query_data = array();
+    //        $query_data['m_loginid'] = $m_loginid;
+    //        $query_data['m_state'] = 1;
+    //        $member_row = $this->member_model->get_member_row($query_data);
+    //
+    //        //var_dump($member_row);
+    //
+    //        if( empty($member_row) ) {
+    //            result_echo_json(get_status_code('error'), "존재하지 않는 회원입니다.", true, "alert");
+    //        }
+    //
+    //        //비밀번호 변경(6자리)
+    //        $new_password = substr(str_replace(array("0", "o"), array("8", "m"), strtolower(create_session_id())), 0, 6);
+    //
+    //        if( $this->member_model->update_member($member_row->m_num, array('m_password' => $new_password)) ) {
+    //            $email_subject = "[" . $this->config->item('site_name_kr') . "] 비밀번호가 초기화 되었습니다.";
+    //            //$email_content = "안녕하세요. 비밀번호 : <b>" . $new_password . "</b> 입니다.";
+    //            $email_content = str_replace(array("#PASSWORD#", "#REGDATE#", "#SITE_HELP_TEL#", "#SITE_HELP_EMAIL#"), array($new_password, get_datetime_format(current_datetime()), $this->config->item('site_help_tel'), $this->config->item('site_help_email')), $this->load->view('/mail_form/find_pass', '', true));
+    //
+    //            //#PASSWORD#
+    //            //#SITE_HELP_TEL#
+    //            //#SITE_HELP_EMAIL#
+    //            //#REGDATE#
+    //
+    //            //이메일 발송
+    //            $this->load->library('email');
+    //            $this->email->initialize(array('mailtype' => 'html'));
+    //            $this->email->from($this->config->item('site_help_email'), $this->config->item('site_name_kr'));
+    //            $this->email->to($m_loginid);
+    //            $this->email->subject($email_subject);
+    //            $this->email->message($email_content);
+    //
+    //            if( $this->email->send() ) {
+    //                result_echo_json(get_status_code('success'), "이메일을 발송하였습니다.", true, "alert");
+    //            }
+    //            else {
+    //                result_echo_json(get_status_code('error'), "이메일 발송에 실패하였습니다.", true, "alert");
+    //            }
+    //        }
+    //        else {
+    //            result_echo_json(get_status_code('error'), lang('site_error_unknown'), true, "alert");
+    //        }
+    //    }//end of if(/폼 검증 성공 마침)
+    //
+    //    //뷰 출력용 폼 검증 오류메시지 설정
+    //    $form_error_array = set_form_error_from_rules($set_rules_array, $form_error_array);
+    //
+    //    result_echo_json(get_status_code('error'), "", true, "", $form_error_array);
+    //}//end of find_pass_proc()
+
+    /**
+     * SMS 인증 팝업
+     */
+    function sms_auth_pop() {
+        $this->load->view("/auth/sms_auth_pop", array());
+    }//end of sms_auth_pop()
+
+    /**
+     * SMS 인증 (ajax)
+     */
+    function sms_auth() {
+        ajax_request_check();
+
+        //회원만
+        member_login_check();
+
+        //허용 mode
+        $allow_mode_array = array("req", "retry", "cert");
+
+        //request
+        $req['mode'] = $this->input->post_get('mode', true);            //req=요청, retry=재요청, cert=확인
+        $req['ph'] = $this->input->post_get('ph', true);                //휴대폰번호(요청시)
+        $req['no'] = $this->input->post_get('no', true);                //인증번호(확인시)
+        $req['no_save'] = $this->input->post_get('no_save', true);      //회원정보에저장하지않음(Y=저장안함|''/null=저장함)
+        $req['pass_chk'] = $this->input->post_get('pass_chk', true);      //회원인증페이지에서 처리되었는지 체크 Y
+        $req['before_chk'] = $this->input->post_get('before_chk', true);      //Y 일경우는 m_auth_no 가 아닌 m_auth_no_chk 필드에 업데이트
+
+        if( !in_array($req['mode'], $allow_mode_array) ) {
+            result_echo_json(get_status_code('error'), lang("site_error_default"), true, "alert");
+        }
+        if( ($req['mode'] == "req" || $req['mode'] == "retry") && empty($req['ph']) ) {
+            result_echo_json(get_status_code('error'), lang("site_error_empty_id"), true, "alert");
+        }
+        if( ($req['mode'] == "req" || $req['mode'] == "retry") && strlen(number_only($req['ph'])) < 10 ) {
+            result_echo_json(get_status_code('error'), "올바르지 않은 휴대폰번호입니다.\n확인 후 다시 시도해 주세요.", true, "alert");
+        }
+        if( $req['mode'] == "cert" && empty($req['no']) ) {
+            result_echo_json(get_status_code('error'), lang("site_error_empty_id"), true, "alert");
+        }
+
+        //회원정보
+        $member_row = $this->_get_member_info();
+
+
+        //이미 인증했으면
+        if( !empty($member_row->m_authno) ) {
+            result_echo_json(get_status_code('error'), "이미 본인인증하셨습니다.", true, "alert", "", array('reload' => "Y"));
+        }
+
+        $data = array();
+
+        //인증번호 요청
+        if( $req['mode'] == "req" ) {
+            //이미 본인인증에 사용된 휴대폰번호일때
+            $query = "select * from member_tb where m_authno = '" . number_only($req['ph']) . "' and m_division = '2'";
+
+            if($this->input->post('gubun') == 'member'){
+                $member_auth_row = $this->db->query($query)->row_array();
+            }else{
+                $member_auth_row = $this->db->query($query)->row();
+            }
+
+            if($_SESSION['session_m_num'] != "1") {
+
+                if (!empty($member_auth_row) && $req['pass_chk'] =="") {
+                    result_echo_json(get_status_code('error'), "이미 인증된 휴대폰번호입니다.", true, "alert", "", array('reload' => "Y", 'm_info' => $member_auth_row));
+                }else if(!empty($member_auth_row) && $req['pass_chk'] == "Y"){
+
+
+                    $data = sms_auth_req($this->config->item("order_cpid"), $member_row->m_key, $req['ph']);
+
+                    $data = array();
+                    $data['status'] = "000";
+                    $data['message'] = "";
+                    $data['before_chk'] = "Y";
+
+                    if( !empty($add_data) ) {
+                        $data = array_merge($data, $add_data);
+                    }
+
+                    echo json_encode_no_slashes($data);
+                    exit;
+
+                }else{
+
+                    $data = sms_auth_req($this->config->item("order_cpid"), $member_row->m_key, $req['ph']);
+                    echo $data;
+                    exit;
+
+                }
+
+            }else{
+
+                if (!empty($member_auth_row)) {
+                    result_echo_json(get_status_code('error'), "이미 인증된 휴대폰번호입니다.", true, "alert", "", array('reload' => "Y", 'm_info' => $member_auth_row));
+                }
+
+            }
+
+            $data = sms_auth_req($this->config->item("order_cpid"), $member_row->m_key, $req['ph']);
+            echo $data;
+            exit;
+        }
+        //재전송 요청
+        else if( $req['mode'] == "retry" ) {
+            //이미 본인인증에 사용된 휴대폰번호일때
+            $query = "select * from member_tb where m_authno = '" . number_only($req['ph']) . "' and m_division = '2'";
+            $member_auth_row = $this->db->query($query)->row();
+            if( !empty($member_auth_row) ) {
+                result_echo_json(get_status_code('error'), "이미 인증된 휴대폰번호입니다.", true, "alert", "", array('reload' => "Y"));
+            }
+
+            $data = sms_auth_req($this->config->item("order_cpid"), $member_row->m_key, $req['ph'], true);
+            echo $data;
+            exit;
+        }
+        //인증번호 확인
+        else if( $req['mode'] == "cert" ) {
+            $data = sms_auth_cert($this->config->item("order_cpid"), $member_row->m_key, $req['no']);
+            $data_json = json_decode($data);
+
+            //성공이면 회원정보 업데이트
+            if( $data_json->status == get_status_code('success') && !empty($data_json->ph) ) {
+                if( !empty($req['no_save']) ) {
+                    result_echo_json(get_status_code('success'), "정상적으로 인증되었습니다.", true, "alert");
+                }
+                if($req['before_chk'] == "Y") {
+                    $query = "update member_tb set m_authno_chk = '" . $data_json->ph . "' where m_num = '" . $member_row->m_num . "'";
+                    if (db1_query($query)) {
+
+                        result_echo_json(get_status_code('success'), "정상적으로 인증되었습니다.", true, "alert");
+                    } else {
+                        result_echo_json(get_status_code('error'), lang("site_error_db"), true, "alert");
+                    }
+                }else{
+                    $query = "update member_tb set m_authno = '" . $data_json->ph . "' where m_num = '" . $member_row->m_num . "'";
+                    if (db1_query($query)) {
+                        //출석체크 당첨 연락처 업데이트 정보가 있으면
+                        if ($_SESSION['session_ew_cmd'] == "update" && $_SESSION['session_ew_num']) {
+                            $query = "
+                            update event_winner_tb
+                            set
+                                ew_contact = '" . $data_json->ph . "'
+                                , ew_updatetime = '" . current_datetime() . "'
+                            where ew_num = '" . $_SESSION['session_ew_num'] . "'
+                        ";
+                            db1_query($query);
+
+                            $_SESSION['session_ew_cmd'];
+                            $_SESSION['session_ew_num'];
+                        }
+
+                        result_echo_json(get_status_code('success'), "정상적으로 인증되었습니다.", true, "alert");
+                    } else {
+                        result_echo_json(get_status_code('error'), lang("site_error_db"), true, "alert");
+                    }
+
+
+                }
+            }
+            else {
+                $msg = $data_json->message;
+                if( empty($msg) ) {
+                    $msg = lang("site_error_unknown");
+                }
+                result_echo_json(get_status_code('error'), $msg, true, "alert");
+            }
+        }//endif;
+
+        echo $data;
+    }//end of sms_auth()
+
+
+    /**
+     * SMS 인증 (비회원) 팝업
+     */
+    function sms_auth_nologin_pop() {
+        //request
+        $req['ret_call'] = $this->input->post_get("ret_call", true);
+        $req['silent'] = $this->input->post_get("silent", true);
+
+        //$this->_header(true);
+
+        $this->load->view("/auth/sms_auth_nologin_pop", array(
+            'req'   => $req
+        ));
+
+        //$this->_footer(true);
+
+    }//end of sms_auth_nologin_pop()
+
+    /**
+     * SMS 비회원 인증 (ajax)
+     */
+    function sms_auth_nologin() {
+        ajax_request_check();
+
+        //허용 mode
+        $allow_mode_array = array("req", "retry", "cert");
+
+        ////하루 최대 허용 횟수
+        //$day_max_limit = 5;
+
+        //request
+        $req['mode'] = $this->input->post_get('mode', true);        //req=요청, retry=재요청, cert=확인
+        $req['ph'] = $this->input->post_get('ph', true);            //휴대폰번호(요청시)
+        $req['no'] = $this->input->post_get('no', true);            //인증번호(확인시)
+        $req['silent'] = $this->input->post_get('silent', true);    //메시지출력없음(Y|null)
+
+        if( !in_array($req['mode'], $allow_mode_array) ) {
+            result_echo_json(get_status_code('error'), lang("site_error_default"), true, "alert");
+        }
+        if( ($req['mode'] == "req" || $req['mode'] == "retry") && empty($req['ph']) ) {
+            result_echo_json(get_status_code('error'), lang("site_error_empty_id"), true, "alert");
+        }
+        if( ($req['mode'] == "req" || $req['mode'] == "retry") && strlen(number_only($req['ph'])) < 10 ) {
+            result_echo_json(get_status_code('error'), "올바르지 않은 휴대폰번호입니다.\n확인 후 다시 시도해 주세요.", true, "alert");
+        }
+        if( $req['mode'] == "cert" && empty($req['no']) ) {
+            result_echo_json(get_status_code('error'), lang("site_error_empty_id"), true, "alert");
+        }
+
+        //if( get_cookie("cki_nologin_sms_cnt") >= $day_max_limit ) {
+        //    result_echo_json(get_status_code('error'), "1일 최대 " . $day_max_limit . "회까지만 요청이 가능합니다.", true, "alert", "", array('reload' => "Y"));
+        //}
+
+        $cur_sms_cnt = get_cookie("cki_nologin_sms_cnt");
+        if( empty($cur_sms_cnt) ) {
+            $cur_sms_cnt = 0;
+        }
+        $cur_sms_cnt++;
+        set_cookie("cki_nologin_sms_cnt", $cur_sms_cnt, get_strtotime_diff("+1 days"));
+
+        $data = array();
+
+        //인증번호 요청
+        if( $req['mode'] == "req" ) {
+            $data = sms_auth_req($this->config->item("order_cpid"), "", $req['ph']);
+            echo $data;
+            exit;
+        }
+        //재전송 요청
+        else if( $req['mode'] == "retry" ) {
+            $data = sms_auth_req($this->config->item("order_cpid"), "", $req['ph'], true);
+            echo $data;
+            exit;
+        }
+        //인증번호 확인
+        else if( $req['mode'] == "cert" ) {
+            $data = sms_auth_cert($this->config->item("order_cpid"), "", $req['no']);
+            $data_json = json_decode($data);
+
+            //성공이면
+            if( $data_json->status == get_status_code('success') && !empty($data_json->ph) ) {
+                if( empty($req['silent']) ) {
+                    result_echo_json(get_status_code('success'), "정상적으로 인증되었습니다.", true, "alert");
+                }
+                else {
+                    result_echo_json(get_status_code('success'), "", true);
+                }
+            }
+            else {
+                result_echo_json(get_status_code('error'), lang("site_error_unknown"), true, "alert");
+            }
+        }
+
+        echo $data;
+    }//end of sms_auth_nologin()
+
+    /**
+     * 로그인 팝업 (웹)
+     */
+    public function login_pop() {
+        if( member_login_status() ) {
+            exit;
+        }
+
+        //request
+        $req['inType'] = $this->input->post_get('inType', true);
+        $req['backUrl'] = $this->input->post_get('backUrl', true);
+        $req['locType'] = $this->input->post_get('locType', true);
+
+        $view_file = "/auth/login_pop";
+        if( current_date() >= $this->config->item("email_member_diable_date") ) {
+            $view_file = "/auth/login_pop_kakao";
+        }
+
+        $this->load->view($view_file, array(
+            'req'   => $req
+        ));
+    }//end of logi_pop()
+
+    /**
+     * 로그인 처리 (웹)
+     */
+    public function login_proc() {
+        ajax_request_check();
+
+        $this->load->library('form_validation');
+
+        //폼검증 룰 설정
+        $set_rules_array = array(
+            "lo_loginid" => array("field" => "lo_loginid", "label" => "이메일", "rules" => "required|valid_email|max_length[50]|" . $this->default_set_rules),
+            "lo_password" => array("field" => "lo_password", "label" => "비밀번호", "rules" => "required|max_length[50]|" . $this->default_set_rules),
+            //"save_id" => array("field" => "save_id", "label" => "아이디저장", "rules" => $this->default_set_rules),
+            //"auto_login" => array("field" => "auto_login", "label" => "로그인유지", "rules" => $this->default_set_rules)
+        );
+
+        $this->form_validation->set_rules($set_rules_array);
+
+        $form_error_array = array();
+
+        //폼 검증 성공시
+        if( $this->form_validation->run() === true ) {
+            $m_loginid  = $this->input->post('lo_loginid', true);
+            $m_password = $this->input->post('lo_password', true);
+            //$save_id    = get_yn_value($this->input->post('save_id', true));
+            //$auto_login = get_yn_value($this->input->post('auto_login', true));
+            $save_id    = 'Y';
+            $auto_login = 'Y';
+
+            if( empty($form_error_array) ) {
+                //로그인
+                $login_result = $this->member_model->get_login($m_loginid, $m_password);
+
+                if( $login_result['code'] == get_status_code('success') ) {
+                    //회원정보
+                    $member_row = $login_result['data'];
+
+                    //회원 로그인 세션 생성
+                    set_login_session($member_row);
+
+                    //아이디 저장
+                    if( $save_id == 'Y' ) {
+                        //아이디 저장 쿠키
+                        $save_id_enc = $this->encryption->encrypt(time() . "|" . $member_row->m_loginid);
+                        set_cookie('cookie_sid', $save_id_enc, get_strtotime_diff("+1 years"));
+                    }
+                    else {
+                        delete_cookie('cookie_sid');
+                    }
+
+                    //로그인 유지
+                    if( $auto_login == 'Y' ) {
+                        //로그인 유지 쿠키
+                        //time()|m_loginid|m_password|m_division|m_sns_site|m_sns_id
+                        $auto_login_enc =  $this->encryption->encrypt(time() . "|" . $member_row->m_loginid . "|" . $m_password . "|1|0|");
+                        set_cookie('cookie_sal', $auto_login_enc, get_strtotime_diff("+1 years"));
+                    }
+                    else {
+                        delete_cookie('cookie_sal');
+                    }
+
+                    result_echo_json(get_status_code('success'), "", true, "");
+                }
+                else {
+                    result_echo_json(get_status_code('error'), $login_result['message'], true, "alert");
+                }
+            }//end of if()
+        }//end of if(/폼 검증 성공 마침)
+
+        //뷰 출력용 폼 검증 오류메시지 설정
+        $form_error_array = set_form_error_from_rules($set_rules_array, $form_error_array);
+
+        result_echo_json(get_status_code('error'), "", true, "", $form_error_array);
+    }//end of login_proc()
+
+
+    public function compulsionLogout(){
+        $this->logout(true);
+    }
+
+    public function tstJoin(){
+
+        $this->_header();
+        $this->load->view('/auth/qna_insert');
+        $this->_footer();
+
+    }
+
+
+    public function chk_delivery_srh_proc(){
+        $this->_header(true);
+        $this->load->view('/auth/chk_delivery_srh_proc' , array('delivery_view' => $this->input->get('delivery_view')));
+        $this->_footer(true);
+    }
+
+
+
+
+}//end of class Auth

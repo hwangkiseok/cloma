@@ -1,0 +1,133 @@
+<!-- top rolling -->
+<div class="top-rolling">
+    <ul class="swiper-wrapper">
+        <? foreach ($aRollingLists as $k => $r) { ?>
+            <li class="swiper-slide"><a role="button" onclick="go_link('/exhibition/list?seq=<?=$r['seq']?>')"><img src="<?=IMG_HTTP.$r['banner_img']?>" alt="" style="width: 100%;"/></a></li>
+        <? } ?>
+    </ul>
+    <div class="clear"></div>
+</div>
+
+
+<? foreach ($aTop10Lists as $k => $r) {
+    $aListImage = json_decode($r['p_rep_image'],true)[0];
+    //$aListImage = $r['p_today_image'];
+?>
+
+<div class="main_product_list arrange_1 box">
+    <div class="box-in">
+
+        <div onclick="go_product('<?=$r['p_num']?>');" style="display: block" role="button">
+
+            <div class="tit">
+                <p class="p_name"><?=$r['p_name']?></p>
+                <?if(empty($r['p_summary']) == false){?><p class="p_summary"><?=nl2br($r['p_summary'])?></p><?}?>
+            </div>
+
+            <img src="<?=$aListImage?>" alt="<?=$r['p_name']?>" />
+            <div class="p_info">
+                <ul>
+                    <!--                   <li><b style="font-size: 16px;">--><?//=$r['p_name']?><!--</b></li>-->
+                    <!--<li>[<em class="no_font"><?=$r['p_discount_rate']?></em>]<em class="no_font"><?=$r['p_sale_price']?></em></li>-->
+                    <li class="price_info">
+                        <a><span>옷쟁이들 쇼핑가 <em class="no_font"><?=number_format($r['p_sale_price'])?></em></span>원</a>
+                        <div class="main_buy_btn_area"><button class="main_buy_btn">구매하기</button></div>
+                    </li>
+<!--                    <li class="delivery_info"><span class="f">무료배송</span></li>-->
+                </ul>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+<?}?>
+
+<div class="clear"></div>
+
+<div class="product_list_half box">
+    <div class="box-in">
+        <? foreach ($aThemaList1 as $k => $r) {
+        $aListImage = $r['p_today_image'];//json_decode($r['today_image'],true)[0];
+        ?>
+            <div class="product_part" onclick="go_product('<?=$r['p_num']?>');" role="button" <?if($k > 0){?>style="padding-top: 8px;" <?}?>>
+
+                <img src="<?=$aListImage?>" alt="<?=$r['p_name']?>" />
+
+                <div class="img_r">
+
+                    <ul>
+                        <li class="img_r_pname"><?=$r['p_name']?></li>
+                        <?if(empty($r['p_summary']) == false){?><li class="img_r_psummary"><?=nl2br($r['p_summary'])?></li><?}?>
+                        <li class="img_r_price_tit">
+                            <span class="tit">옷쟁이들 쇼핑가</span> <!--<span class="delivery_f">무료배송</span>-->
+                        </li>
+                        <li class="img_r_price">
+                            <em class="no_font"><?=number_format($r['p_sale_price'])?></em>원
+                        </li>
+                    </ul>
+
+                </div>
+
+                <div class="clear"></div>
+            </div>
+        <?}?>
+    </div>
+</div>
+
+<div class="clear"></div>
+
+<? foreach ($aThemaList2 as $k => $r) {
+    //$aListImage = json_decode($r['p_rep_image'],true)[0];
+    $aListImage = $r['p_today_image'];
+    ?>
+
+    <div class="main_product_list arrange_2 box">
+        <div class="box-in">
+
+            <div onclick="go_product('<?=$r['p_num']?>');" style="display: block" role="button">
+                <div class="tit">
+                    <p class="p_name"><?=$r['p_name']?></p>
+                    <?if(empty($r['p_summary']) == false){?><p class="p_summary"><?=nl2br($r['p_summary'])?></p><?}?>
+                </div>
+                <img src="<?=$aListImage?>" alt="<?=$r['p_name']?>" />
+                <div class="p_info">
+                    <ul>
+                        <!--<li>[<em class="no_font"><?=$r['p_discount_rate']?></em>]<em class="no_font"><?=$r['p_sale_price']?></em></li>-->
+                        <!--                            <li class="tit_2">-->
+                        <!--                                <p><b>[--><?//=$r['p_cate1']?><!--]</b></p>-->
+                        <!--                            </li>-->
+                        <li class="tit_2">
+                            <p class="p_name"><?=$r['p_name']?></p>
+                        </li>
+                        <li class="price_info">
+                            <a><span style="letter-spacing: -0.2px;"><em class="no_font"><?=number_format($r['p_sale_price'])?></em></span>원</a>
+                            <div class="main_buy_btn_area"><button class="main_buy_btn">구매하기</button></div>
+                        </li>
+                        <li class="delivery_info"><span class="f">무료배송</span></li>
+                    </ul>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+<?}?>
+
+<div class="clear"></div>
+
+
+<script type="text/javascript">
+
+    $(function(){
+        var mainRolling = new Swiper ('.top-rolling', {
+            loop: true
+        });
+    });
+
+</script>
+
+
+

@@ -1,0 +1,224 @@
+#!/usr/bin/php -q
+<?php
+/**
+ * GCM 푸시 보내기 #1
+ * */
+
+//크론 여러개 실행시 체크할 것!!
+$SEQ = 1;
+$MOD_VALUE = $SEQ - 1;
+$tb_t_title = "z_total_cnt_".$SEQ;
+$tb_title = "z_cnt_".$SEQ;
+
+set_time_limit(0);
+
+
+//공통함수
+require_once ("func_1.php");
+
+//중복실행 방지
+exec("/bin/ps ax | grep " . CRONHOME . "/app_push_send_" . $SEQ . " | wc -l", $out, $err);
+
+if( $err ) {
+    exit;
+}
+if( !$err && $out[0] > 3 ) {
+    exit;
+}
+
+
+if( !$DB_STATUS ) {
+    exit;
+}
+
+//푸시 정보
+$datetime = date("YmdHis", time());
+
+//$push_R = mysqli_fetch_array(mysqli_query($DB, "select * from app_push_tb where ap_num ='2294'"), MYSQLI_ASSOC);
+$push_R = mysqli_fetch_array(mysqli_query($DB, "select * from app_push_tb where ap_state != '3' and ap_reserve_datetime <= '" . $datetime ."' order by ap_num asc limit 1"), MYSQLI_ASSOC);
+
+if( empty($push_R) ) {
+    exit;
+}
+
+
+
+//발송중으로 상태변경
+mysqli_query($DB, "update app_push_tb set ap_state='2' where ap_num='" . $push_R['ap_num'] . "'");
+
+//예전 푸시 기준 datetime
+$push_check_datetime = ( !empty($push_R['ap_reserve_datetime']) ) ? $push_R['ap_reserve_datetime'] : $push_R['ap_regdatetime'];
+
+
+
+
+$query_chk = "
+    select * from app_push_cnt_tb
+    where z_push_num = '".$push_R['ap_num']."'
+";
+$result_chk = mysqli_query($DB, $query_chk);
+$row_chk = mysqli_fetch_array($result_chk, MYSQLI_ASSOC);
+
+if($row_chk[$tb_t_title] <= $row_chk[$tb_title] && $row_chk['z_num'] !="" && $row_chk[$tb_t_title] !="0"){
+    exit;
+}
+
+
+if($row_chk['z_num'] ==""){
+    mysqli_query($DB, "delete from app_device_tb where dv_regid=''");
+
+    $query_cnt = "
+        select count(*)
+        from app_device_tb
+        where MOD(dv_num, " . $MOD . ") = " . $MOD_VALUE . "
+            and dv_push_yn = 'Y'     
+    ";
+
+    $result_cnt = mysqli_query($DB, $query_cnt);
+    $t_cnt = mysqli_fetch_array($result_cnt);
+
+
+
+    $query_in = "
+    INSERT INTO app_push_cnt_tb SET
+      z_push_num = '".$push_R['ap_num']."'
+      ,$tb_t_title = '".$t_cnt['0']."'
+      ,z_start_datetime = '".date("YmdHis")."'
+     
+    ";
+    $result_in = mysqli_query($DB, $query_in);
+
+    $start_num = "0";
+    $end_num = "1000";
+}else if($row_chk['z_num'] && $row_chk[$tb_t_title] =="0"){
+    $query_cnt = "
+        select count(*)
+        from app_device_tb
+        where MOD(dv_num, " . $MOD . ") = " . $MOD_VALUE . "
+            and dv_push_yn = 'Y'     
+    ";
+
+    $result_cnt = mysqli_query($DB, $query_cnt);
+    $t_cnt = mysqli_fetch_array($result_cnt);
+
+    $query_in = "
+    update app_push_cnt_tb SET
+      z_push_num = '" . $push_R['ap_num'] . "'
+      ,$tb_t_title = '" . $t_cnt['0'] . "'
+     where z_push_num = '".$push_R['ap_num']."'
+     
+    ";
+    $result_in = mysqli_query($DB, $query_in);
+
+    $start_num = "0";
+    $end_num = "1000";
+}else{
+    $start_num = $row_chk[$tb_title];
+    $end_num = $start_num+1000;
+}
+
+//디바이스 loop (1000개)
+
+$query = "
+    select *
+    from app_device_tb
+    where MOD(dv_num, " . $MOD . ") = " . $MOD_VALUE . "
+        and dv_push_yn = 'Y'
+    limit $start_num,1000
+";
+
+/*
+$query = "
+    select 
+    m_regid as dv_regid 
+    from member_tb
+    where 1=1
+    and m_sns_id = '3335500'
+    #and m_sns_id = '507334515'
+    
+";
+*/
+
+
+$dv_Q = mysqli_query($DB, $query);
+$dv_L = mysqli_num_rows($dv_Q);
+
+
+
+$regid_array = array();
+$regid_array_i = array();
+
+for($i = 0; $i < $dv_L; $i++ ) {
+    $dv_R = mysqli_fetch_array($dv_Q, MYSQLI_ASSOC);
+
+    //푸시 받음만.
+
+    if( $dv_R['dv_push_yn'] != 'Y' ) {
+        continue;
+    }
+
+
+    ////예전 푸시는 보내지 않음.
+    //if( $dv_R['dv_last_push_num'] >= $push_R['ap_num'] ) {
+    //    continue;
+    //}
+
+    if (preg_match('/(iphone)/i', $dv_R['dv_deviceinfo'])) {
+        $regid_array_i[] = $dv_R['dv_regid'];
+    }else{
+        $regid_array[] = $dv_R['dv_regid'];
+    }
+}//end of for()
+
+//var_dump($regid_array);
+
+
+if($push_R['ap_new_push'] == 'Y'){ // 중간페이지 사용 / url @overwrite
+    $push_R['ap_target_url'] = "/push/?ref_site=app_push&ap_num={$push_R['ap_num']}";
+}
+
+
+
+$result_array = send_push_multi_1($regid_array_i, $push_R);
+
+//푸시 발송
+$result_array = send_push_multi($regid_array, $push_R);
+
+
+
+$query_in = "
+    update app_push_cnt_tb SET
+
+      $tb_title = '$end_num'
+
+      where z_push_num = '".$push_R['ap_num']."'
+
+    ";
+$result_in = mysqli_query($DB, $query_in);
+
+
+$query_chk = "
+    select * from app_push_cnt_tb
+    where z_push_num = '".$push_R['ap_num']."'
+";
+$result_chk = mysqli_query($DB, $query_chk);
+$row_chk = mysqli_fetch_array($result_chk, MYSQLI_ASSOC);
+
+if($row_chk['z_total_cnt_1'] <= $row_chk['z_cnt_1'] && $row_chk['z_total_cnt_2'] <= $row_chk['z_cnt_2']){
+    $com_chk = "ok";
+}
+
+//푸시 발송완료 변경
+$query = "update app_push_tb set ";
+if( !empty($com_chk) ) {
+    $query .= "ap_state = '3', ";
+}
+$query .= "ap_success_cnt = ap_success_cnt + " . $i . ", ";
+$query .= "ap_proc_datetime = '" . date("YmdHis", time()) . "' ";
+$query .= "where ap_num = '" . $push_R['ap_num'] . "'";
+
+mysqli_query($DB, $query);
+
+
+
+

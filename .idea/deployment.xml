@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="PublishConfigData" autoUpload="On explicit save action" serverName="server">
+    <serverData>
+      <paths name="server">
+        <serverdata>
+          <mappings>
+            <mapping deploy="/" local="$PROJECT_DIR$" web="/" />
+          </mappings>
+          <excludedPaths>
+            <excludedPath path="/log" />
+            <excludedPath path="/www/uploads/app_push" />
+            <excludedPath path="/www/uploads/app_splash" />
+            <excludedPath path="/www/uploads/category_md" />
+            <excludedPath path="/www/uploads/main_pop" />
+            <excludedPath path="/www/uploads/product" />
+            <excludedPath path="/www/uploads/proposal" />
+            <excludedPath path="/www/uploads/smarteditor" />
+            <excludedPath path="/www/uploads/prof_img" />
+          </excludedPaths>
+        </serverdata>
+      </paths>
+    </serverData>
+    <option name="myAutoUpload" value="ON_EXPLICIT_SAVE" />
+  </component>
+</project>

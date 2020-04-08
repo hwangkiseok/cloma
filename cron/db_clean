@@ -1,0 +1,27 @@
+#!/usr/bin/php -q
+<?php
+/**
+ * 정기적으로 DB 데이터 지우기
+ * */
+
+set_time_limit(0);
+
+//공통함수
+require_once ("func.php");
+
+//중복실행 방지
+exec("/bin/ps ax | grep " . CRONHOME . "/db_clean | wc -l", $out, $err);
+if( $err ) {
+    exit;
+}
+if( !$err && $out[0] > 3 ) {
+    exit;
+}
+if( !$DB_STATUS ) {
+    exit;
+}
+
+exec("/usr/bin/php " . HOMEPATH . "/www/index.php cli cron db_clean", $out);
+//print_r($out);
+?>
+

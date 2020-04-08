@@ -1,0 +1,26 @@
+#!/usr/bin/php -q
+<?php
+/**
+ * 다음달 테이블 생성 (매달 25일에 실행됨)
+ * */
+
+set_time_limit(0);
+
+//공통함수
+require_once ("func.php");
+
+//중복실행 방지
+exec("/bin/ps ax | grep " . CRONHOME . "/create_month_table | wc -l", $out, $err);
+if( $err ) {
+    exit;
+}
+if( !$err && $out[0] > 3 ) {
+    exit;
+}
+if( !$DB_STATUS ) {
+    exit;
+}
+
+exec("/usr/bin/php " . HOMEPATH . "/www/index.php cli cron create_month_table", $out);
+//print_r($out);
+?>

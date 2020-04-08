@@ -1,0 +1,28 @@
+<IfModule mod_rewrite.c>
+RewriteEngine On
+
+# m 붙이기 (m., admin. 이 아닐때)
+#RewriteCond %{HTTP_HOST} !^m\. [NC]
+#RewriteCond %{HTTP_HOST} !^m1\. [NC]
+#RewriteCond %{HTTP_HOST} !^m2\. [NC]
+#RewriteCond %{HTTP_HOST} !^m3\. [NC]
+#RewriteCond %{HTTP_HOST} !^m4\. [NC]
+#RewriteCond %{HTTP_HOST} !^m5\. [NC]
+#RewriteCond %{HTTP_HOST} !^m6\. [NC]
+#RewriteCond %{HTTP_HOST} !^admin\. [NC]
+#RewriteCond %{HTTP_HOST} !^admin5\. [NC]
+##RewriteCond %{HTTP_HOST} ^(.*)$ [NC]
+#RewriteRule ^(.*)$ "http://m.%1/$1" [L,R=301]
+
+# index.php 없애기
+RewriteBase /
+RewriteCond $1 !^(index\.php|images|captcha|include|uploads|robots\.txt)
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ /index.php/$1 [L]
+
+# admin 일때 disallow
+RewriteCond %{HTTP_HOST} ^admin\. [NC]
+RewriteCond %{HTTP_HOST} ^admin5\. [NC]
+RewriteRule ^robots\.txt$ robots-disallow.txt [L]
+</IfModule>
