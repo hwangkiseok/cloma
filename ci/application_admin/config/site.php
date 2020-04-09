@@ -248,7 +248,10 @@ $config['product_detail_image_max_count'] = 30;     //한번에 올릴 수 있�
 
 //상품 MD
 $config['product_md_division'][1] = "메인상품30";
-$config['product_md_division'][2] = "지금입기 좋은 아우터";
+//$config['product_md_division'][2] = "지금입기 좋은 아우터";
+$config['product_md_division'][3] = "편하고 이쁜 밴딩팬츠 맛집~";
+$config['product_md_division'][4] = "코디걱정 없는 상하의세트!";
+
 
 $config['product_option_buy_cnt_view']['Y'] = "노출함";
 $config['product_option_buy_cnt_view']['N'] = "노출안함";
