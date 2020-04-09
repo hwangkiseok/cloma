@@ -52,7 +52,6 @@ class Test extends M_Controller
 
     }//end of login()
 
-
     public function bitly_info(){
 
         $param   = array( 'bitlink_id' => 'bit.ly/36hnEi2' );
@@ -85,7 +84,6 @@ class Test extends M_Controller
         echo $output['long_url'];
 
     }
-
     public function rand(){
         $this->load->helper('string');
         zsView(random_string('all',29));
@@ -93,7 +91,6 @@ class Test extends M_Controller
     public function update_detail(){
 
 exit;
-
 
 //        $dir = "/data/shop1/www/uploads/suvin_n";
 //
@@ -150,35 +147,23 @@ exit;
 //        zsView('-------------------------------');
 //        zsView($aProductLists);
 
-
-
-
-
-
-
-        //$sql = "SELECT * FROM product_tb WHERE p_rep_image LIKE '%www.cloma%'; ";
-        $sql = "SELECT * FROM product_tb WHERE p_name IN ('줄무늬블리롱원피스','더끌려유넥가오리티셔츠','편하다후드롱원피스','코튼셔링롱원피스','남녀공용기본면티셔츠','매일편하게밴딩팬츠','레터링꼬임롱원피스','소매핀턱코튼티셔츠','잘록라인밴딩원피스','스타일자수밴딩팬츠','두줄레터링롱티셔츠','린넨브이롱원피스','더편하게상하의세트','플라밍고파우치3종세트','편하고예쁜체크팬츠1+1','누구나편하게밴딩팬츠','알록이원피스앞치마','예쁨만점나염원피스','봄처럼레이스블라우스','촉촉주름상하의세트','컬러풀밴딩팬츠','남성쿨링터치티셔츠','여성에어터치티셔츠','주름나염끈원피스','쉬폰러플롱원피스','시원하게입는나염팬츠','밴딩민소매점프수트','살랑와이드밴딩팬츠','두줄라인롱원피스','라이프투톤바람막이','언발포인트티셔츠','크로스언발스커트','골드시보리밴딩팬츠','플레어밴딩롱스커트','간편레이어드나시티셔츠','바삭코튼베이직남방','허리단시보리원피스','군살커버와이드팬츠','화사레이스티셔츠','반팔후드상하의세트');";
-        $oResult = $this->db->query($sql);
-        $aResult = $oResult->result_array();
-
-        foreach ($aResult as $r) {
-
-            $rep_image = array();
-            $rep_image[] = $rep_image[] = '/uploads/suvin_n/'.$r['p_easy_admin_code'].'.jpg';//str_replace('/suvin','/suvin_n',$rep_image[1]);
-
-            $rep_image_j = json_encode_no_slashes($rep_image);
-
-            $sql = "UPDATE product_tb SET p_rep_image = '{$rep_image_j}' WHERE p_num = '{$r['p_num']}'; ";
-            $this->db->query($sql);
-            zsView($sql);
-
-
-
-
-        }
-
-
-
+//        $sql = "SELECT * FROM product_tb WHERE p_rep_image LIKE '%www.cloma%'; ";
+//        $sql = "SELECT * FROM product_tb WHERE p_name IN ('줄무늬블리롱원피스','더끌려유넥가오리티셔츠','편하다후드롱원피스','코튼셔링롱원피스','남녀공용기본면티셔츠','매일편하게밴딩팬츠','레터링꼬임롱원피스','소매핀턱코튼티셔츠','잘록라인밴딩원피스','스타일자수밴딩팬츠','두줄레터링롱티셔츠','린넨브이롱원피스','더편하게상하의세트','플라밍고파우치3종세트','편하고예쁜체크팬츠1+1','누구나편하게밴딩팬츠','알록이원피스앞치마','예쁨만점나염원피스','봄처럼레이스블라우스','촉촉주름상하의세트','컬러풀밴딩팬츠','남성쿨링터치티셔츠','여성에어터치티셔츠','주름나염끈원피스','쉬폰러플롱원피스','시원하게입는나염팬츠','밴딩민소매점프수트','살랑와이드밴딩팬츠','두줄라인롱원피스','라이프투톤바람막이','언발포인트티셔츠','크로스언발스커트','골드시보리밴딩팬츠','플레어밴딩롱스커트','간편레이어드나시티셔츠','바삭코튼베이직남방','허리단시보리원피스','군살커버와이드팬츠','화사레이스티셔츠','반팔후드상하의세트');";
+//        $oResult = $this->db->query($sql);
+//        $aResult = $oResult->result_array();
+//
+//        foreach ($aResult as $r) {
+//
+//            $rep_image = array();
+//            $rep_image[] = $rep_image[] = '/uploads/suvin_n/'.$r['p_easy_admin_code'].'.jpg';//str_replace('/suvin','/suvin_n',$rep_image[1]);
+//
+//            $rep_image_j = json_encode_no_slashes($rep_image);
+//
+//            $sql = "UPDATE product_tb SET p_rep_image = '{$rep_image_j}' WHERE p_num = '{$r['p_num']}'; ";
+//            $this->db->query($sql);
+//            zsView($sql);
+//
+//        }
 
     }
 
@@ -245,26 +230,20 @@ exit;
     public function img_chk()
     {
 
-
-
-
-        echo urlencode('test++test1ddf#@#');
-
-
 //        $aResult = $this->db->query($sql)->result_array();
-
+//
 //        foreach ($aResult as $k => $r) {
 //            zsView($r['p_today_image']);
-
+//
 //            $img = '/data/shop1/www'.json_decode($r['p_rep_image'],true)[0];
 //            //zsView($img);
 //            $data = getimagesize($img);
 //            if($data[1] != '430') zsView($r['p_name'].'  ///  '.$r['p_num'].'  ///  '.$data[1]);
 //
 //        }
-
-
-
+//
+//
+//
 //        $sql = "SELECT * FROM product_tb where p_rep_image <> '' AND p_rep_image not like '%http%'  ";
 //        $aResult = $this->db->query($sql)->result_array();
 //
