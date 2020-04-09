@@ -561,18 +561,20 @@ class App_push extends A_Controller {
          * @modify 황기석
          * @desc 상품번호 추출 및 valid chk
          */
+
         $p_num = "0";
         if(empty($this->input->post('ap_target_url')) == false){
             $chkUrl = $this->input->post('ap_target_url');
-            if( preg_match("/\/goo.gl\//i", $chkUrl) == true) { //구글쇼트너인 경우
-                $resp = get_google_shorturl_info($chkUrl);
-                $url = $resp['longUrl'];
+
+            if( preg_match("/\/bit.ly\//i", $chkUrl) == true) { //비틀리쇼트너인 경우
+                $resp = get_bitly_shorturl_info($chkUrl);
+                $url = str_replace('http://m.cloma.co.kr','',$resp['long_url']);
             }else{ // 원문 URL 인경우
                 $url = $chkUrl;
             }
 
-
             preg_match_all('/product\/detail\/(.*)\/\?ref_site\=app_push/',$url, $o);
+
             $p_num = $o[1][0];
             if(empty($p_num) == true) $p_num = 0;
         }
