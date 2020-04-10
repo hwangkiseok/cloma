@@ -200,8 +200,6 @@ class Product_model extends W_Model {
                 {$limit_query}
             ";
 
-
-
             return $this->db->query($query)->result_array();
         }
     }//end of get_product_list()

@@ -260,6 +260,8 @@ class Main extends REST_Controller
     public function index_get()
     {
 
+        $top15_type = $this->get('top15_type',true);
+
         $this->load->model('product_model');
         $this->load->model('exhibition_model');
 
@@ -267,9 +269,9 @@ class Main extends REST_Controller
 
         $notin = array();
 
-        { // top30_top 상품은 최대 15개
+        $fix_cnt = 15;
 
-            $fix_cnt = 15;
+        if($top15_type == 1 || $top15_type == ''){ // top30_top 상품은 최대 15개
 
             //강제 노출
             $aInput = array();
@@ -290,6 +292,41 @@ class Main extends REST_Controller
 
             $aTop10Lists = $this->product_model->get_main_product($aInput, 0 , $e_limit);
             $aTopTheme  = array_merge($addProductList,$aTop10Lists);
+
+            foreach ($aTopTheme as $r)  $notin[] = $r['p_num'];
+
+        }else if($top15_type == 2){ //최근 본상품 + 마진높은 상품
+
+            $addProductList = get_recently_product();
+            if(empty($addProductList) == false){
+                foreach ($addProductList as $r) {
+                    $notin[] = $r['p_num'];
+                }
+            }
+
+            $e_limit    = $fix_cnt - count($addProductList);
+
+            if($e_limit > 0){
+
+                $aInput = array();
+                $aInput['where']['sale_state']  =  'Y';
+                $aInput['where']['stock_state'] =  'Y';
+                $aInput['where']['not_pnum']    =  $notin;
+                $aInput['orderby']              = ' p_margin_price DESC ';
+                $aTop10Lists = $this->product_model->get_product_list($aInput , 0 , $e_limit) ;
+                $aTopTheme  = array_merge($addProductList,$aTop10Lists);
+
+                foreach ($aTopTheme as $r)  $notin[] = $r['p_num'];
+
+            }
+
+        }else if($top15_type == 3){ //최근 2주간 잘판린 상품
+
+            $aInput = array();
+            $aInput['where']['sale_state']  =  'Y';
+            $aInput['where']['stock_state'] =  'Y';
+            $aInput['orderby']              = ' p_order_count_week+p_order_count_last_week DESC ';
+            $aTopTheme = $this->product_model->get_product_list($aInput) ;
 
             foreach ($aTopTheme as $r)  $notin[] = $r['p_num'];
 
