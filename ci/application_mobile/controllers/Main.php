@@ -160,18 +160,35 @@ class Main extends M_Controller
 
         }
 
-        { // 테마 - 지금입기 좋은 아우터
+        { // 테마 - 편하고 이쁜 밴딩팬츠 맛집~
 
             //강제 노출
             $aInput = array();
-            $aInput['where']['md_div']      =  '2';
+            $aInput['where']['md_div']      =  '3';
             $aInput['where']['sale_state']  =  'Y';
             $aInput['where']['stock_state'] =  'Y';
             $aInput['where']['not_pnum']    =  $notin;
             $aInput['orderby']              = ' pmd_order ASC ';
-            $aTmpTheme2 = $this->product_model->get_product_list($aInput) ;
+            $aTmpTheme2_1 = $this->product_model->get_product_list($aInput, 0 , 8) ;
 
-            foreach ($aTmpTheme2 as $r) {
+            foreach ($aTmpTheme2_1 as $r) {
+                $notin[] = $r['p_num'];
+            }
+
+        }
+
+        { // 테마 - 코디걱정 없는 상하의세트!
+
+            //강제 노출
+            $aInput = array();
+            $aInput['where']['md_div']      =  '4';
+            $aInput['where']['sale_state']  =  'Y';
+            $aInput['where']['stock_state'] =  'Y';
+            $aInput['where']['not_pnum']    =  $notin;
+            $aInput['orderby']              = ' pmd_order ASC ';
+            $aTmpTheme2_2 = $this->product_model->get_product_list($aInput, 0 , 8) ;
+
+            foreach ($aTmpTheme2_2 as $r) {
                 $notin[] = $r['p_num'];
             }
 
@@ -208,15 +225,24 @@ class Main extends M_Controller
         else $aTopTheme = array();
         if(empty($aTopTheme2) == false) $aTopTheme2 = self::clearProductField($aTopTheme2 , array('campaign' => 'top30_b'));
         else $aTopTheme2 = array();
-        if(empty($aTmpTheme2) == false) $aTmpTheme2 = self::clearProductField($aTmpTheme2 , array('campaign' => 'thema_outer'));
-        else $aTmpTheme2 = array();
         if(empty($aTmpTheme3) == false) $aTmpTheme3 = self::clearProductField($aTmpTheme3 , array('campaign' => 'thema_new_ctgr'));
         else $aTmpTheme3 = array();
 
-        $aTheme1 = array(
-            'title' => '지금 입기 좋은 아우터'
+        if(empty($aTmpTheme2_1) == false) $aTmpTheme2_1 = self::clearProductField($aTmpTheme2_1 , array('campaign' => ''));
+        else $aTmpTheme2_1 = array();
+        if(empty($aTmpTheme2_2) == false) $aTmpTheme2_2 = self::clearProductField($aTmpTheme2_2 , array('campaign' => ''));
+        else $aTmpTheme2_2 = array();
+
+        $aTheme2_1 = array(
+            'title' => '편하고 이쁜 밴딩팬츠 맛집~'
         ,   'view_type' => 'B'
-        ,   'aLists' => $aTmpTheme2
+        ,   'aLists' => $aTmpTheme2_1
+        );
+
+        $aTheme2_2 = array(
+            'title' => '코디걱정 없는 상하의세트!'
+        ,   'view_type' => 'B'
+        ,   'aLists' => $aTmpTheme2_2
         );
 
         $aTheme2 = array(
@@ -232,7 +258,7 @@ class Main extends M_Controller
         );
 
         $this->load->view('/main/main_btm_thema', array(
-            'aTheme' => array ($aTheme1, $aTheme2 ,$aTheme3) //테마 리스트
+            'aTheme' => array ( $aTheme2_1, $aTheme2 , $aTheme2_2 ,  $aTheme3 ) //테마 리스트
         ) );
 
     }

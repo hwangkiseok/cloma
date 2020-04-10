@@ -321,7 +321,7 @@ class Main extends REST_Controller
 
         }
 
-        { // 테마 - 지금입기 좋은 아우터
+        { // 테마 - 편하고 이쁜 밴딩팬츠 맛집~
 
             //강제 노출
             $aInput = array();
@@ -338,7 +338,7 @@ class Main extends REST_Controller
 
         }
 
-        { // 테마 - 지금입기 좋은 아우터
+        { // 테마 - 코디걱정 없는 상하의세트!
 
             //강제 노출
             $aInput = array();
@@ -407,26 +407,18 @@ class Main extends REST_Controller
         else $aTopTheme = array();
         if(empty($aTopTheme2) == false) $aTopTheme2 = self::clearProductField($aTopTheme2 , array('campaign' => 'top30_b'));
         else $aTopTheme2 = array();
-
-
-        $config['product_md_division'][3] = "편하고 이쁜 밴딩팬츠 맛집~";
-        $config['product_md_division'][4] = "코디걱정 없는 상하의세트!";
-
-
+        if(empty($aTmpTheme3) == false) $aTmpTheme3 = self::clearProductField($aTmpTheme3 , array('campaign' => 'thema_new_ctgr'));
+        else $aTmpTheme3 = array();
 
         if(empty($aTmpTheme2_1) == false) $aTmpTheme2_1 = self::clearProductField($aTmpTheme2_1 , array('campaign' => ''));
         else $aTmpTheme2_1 = array();
         if(empty($aTmpTheme2_2) == false) $aTmpTheme2_2 = self::clearProductField($aTmpTheme2_2 , array('campaign' => ''));
         else $aTmpTheme2_2 = array();
 
-        if(empty($aTmpTheme3) == false) $aTmpTheme3 = self::clearProductField($aTmpTheme3 , array('campaign' => 'thema_new_ctgr'));
-        else $aTmpTheme3 = array();
-
-
         $aTheme2_1 = array(
             'title' => '편하고 이쁜 밴딩팬츠 맛집~'
         ,   'view_type' => 'B'
-        ,   'aLists' => $aTmpTheme2_2
+        ,   'aLists' => $aTmpTheme2_1
         );
 
         $aTheme2_2 = array(
