@@ -394,14 +394,14 @@ class Product extends REST_Controller
         if( empty($p_num) ) {
 
             $this->set_response(
-                result_echo_rest_json(get_status_code("error"), "해당상품이 존재하지 않습니다.[empty p_num]", true, "", "", ""
+                result_echo_rest_json(get_status_code("error"), "해당상품이 존재하지 않습니다.[EN]", true, "", "", ""
                 ), REST_Controller::HTTP_OK
             ); // NOT_FOUND (404) being the HTTP response code
 
         }else if( empty($aProductInfo) ) {
 
             $this->set_response(
-                result_echo_rest_json(get_status_code("error"), "해당상품이 존재하지 않습니다.[empty data]", true, "", "", ""
+                result_echo_rest_json(get_status_code("error"), "해당상품이 존재하지 않습니다.[EP]", true, "", "", ""
                 ), REST_Controller::HTTP_OK
             ); // NOT_FOUND (404) being the HTTP response code
 
@@ -484,8 +484,8 @@ class Product extends REST_Controller
 
             if(empty($aOrgRelationProduct) == false){
 
-                $aRelationProduct       = self::clearRelField($aOrgRelationProduct,'relation');
-                $aRelation = array(
+                $aRelationProduct   = self::clearRelField($aOrgRelationProduct,'relation');
+                $aRelation          = array(
                     'title'     => '연관상품'
                 ,   'aLists'    => $aRelationProduct
                 );
@@ -496,8 +496,8 @@ class Product extends REST_Controller
 
             if(empty($aOrgRelationProduct) == false){
 
-                $aWithProduct           = self::clearRelField($aOrgRelationProduct,'with');
-                $aWith = array(
+                $aWithProduct   = self::clearRelField($aOrgRelationProduct,'with');
+                $aWith          = array(
                     'title'     => '함께 구매한 상품'
                 ,   'aLists'    => $aWithProduct
                 );
