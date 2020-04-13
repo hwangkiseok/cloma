@@ -2972,7 +2972,8 @@ function get_recently_product($limit="", $banner="",$bMainRolling=false) {
         $recently_array = json_decode($recently_cookie, true);
 
         foreach($recently_array as $key => $p_num) {
-            $product_row = $CI->product_model->get_product_row($p_num, true);   //판매종료 제외
+
+            $product_row = $CI->product_model->get_product_row(array('p_num' => $p_num));   //판매종료 제외
 
             //상품정보 없으면 제외
             if( empty($product_row) ) {
@@ -2980,34 +2981,28 @@ function get_recently_product($limit="", $banner="",$bMainRolling=false) {
                 continue;
             }
             //판매종료, 품절 제외
-            if( $product_row->p_sale_state != "Y" || $product_row->p_display_state != "Y" || $product_row->p_stock_state != "Y" ) {
-                unset($recently_array[$key]);
-                continue;
-            }
-
-            //메인페이지호출 / 강제 메인 노출상품 제외
-            if( $product_row->p_main_banner_view == "Y" && $bMainRolling == true ) {
+            if( $product_row['p_sale_state'] != "Y" || $product_row['p_display_state'] != "Y" || $product_row['p_stock_state'] != "Y" ) {
                 unset($recently_array[$key]);
                 continue;
             }
 
             //배너이미지 확인시
-            if( !empty($banner) && empty($product_row->p_banner_image) ) {
-                continue;
-            }
+//            if( !empty($banner) && empty($product_row['p_banner_image']) ) {
+//                continue;
+//            }
 
-            $product_row->p_rep_image_array = json_decode($product_row->p_rep_image, true);
-            $product_row->p_display_info_array = json_decode($product_row->p_display_info, true);
-            $product_row->p_display_info_1_text = "";
+            $product_row['p_rep_image_array'] = json_decode($product_row['p_rep_image'], true);
+            $product_row['p_display_info_array'] = json_decode($product_row['p_display_info'], true);
+            $product_row['p_display_info_1_text'] = "";
 
-            foreach($CI->config->item('product_display_info1') as $iKey => $iItem) {
-                if( $product_row->p_display_info_array[$iKey] == 'Y' ) {
-                    $product_row->p_display_info_1_text = $iItem;
-                }
-            }
+//            foreach($CI->config->item('product_display_info1') as $iKey => $iItem) {
+//                if( $product_row['p_display_info_array'][$iKey] == 'Y' ) {
+//                    $product_row['p_display_info_1_text'] = $iItem;
+//                }
+//            }
 
-            $product_row->p_review_count_str    = number_format($product_row->p_review_count);
-            $product_row->p_tot_order_count_str = product_count($product_row->p_tot_order_count);
+            $product_row['p_review_count_str']    = number_format($product_row['p_review_count']);
+            $product_row['p_tot_order_count_str'] = product_count($product_row['p_tot_order_count']);
 
             $recently_list[] = $product_row;
         }//end of foreach()
@@ -3025,6 +3020,7 @@ function get_recently_product($limit="", $banner="",$bMainRolling=false) {
     }//end of if()
 
     return $recently_list;
+
 }//end of get_recently_product()
 
 /**
