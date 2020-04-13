@@ -127,7 +127,6 @@ class Product_model extends W_Model {
 
         }
 
-
         //limit 절
         $limit_query = "";
         if( $start !== "" && $end !== "" ) {
@@ -223,6 +222,52 @@ class Product_model extends W_Model {
         return $product_list;
     }//end of get_product_list_from_query()
 
+
+    /**
+     * 앱 닫기시 노출 상품 2개
+     */
+    public function get_close_product($arrayParams) {
+
+        $whereQueryString = '';
+
+        if(empty($arrayParams['not_in']) == false){
+
+            $not_in = array();
+
+            if(is_array($arrayParams['not_in']) == true){
+                foreach ($arrayParams['not_in'] as $r)  $not_in[] = $r['p_num'];
+                $whereQueryString .= " AND p_num NOT IN (". implode(',',$not_in) .")";
+            }else{
+                $whereQueryString .= " AND p_num <> '{$arrayParams['not_in']}' ";
+            }
+
+        }
+
+        $sql = "SELECT 
+                * 
+                FROM (
+                    SELECT 
+                    *
+                    FROM product_tb
+                    WHERE p_display_state = 'Y'
+                    AND p_sale_state = 'Y'
+                    AND p_stock_state = 'Y' 
+                    {$whereQueryString}
+                    ORDER BY p_order_count_twoday DESC
+                    LIMIT 20
+                ) T
+                ORDER BY T.p_margin_price DESC 
+                LIMIT 2;
+        ";
+
+        $oResult = $this->db->query($sql);
+        $product_list = $oResult->result_array();
+
+        return $product_list;
+    }//end of get_product_list_from_query()
+
+
+
     /**
      * 상품 조회
      * @param array
@@ -260,7 +305,7 @@ class Product_model extends W_Model {
         $aResult = $oResult->row_array();
 
         //사용자단에는 필요없는 필드 삭제함
-        $aResult = $this->_unset_security_field($aResult);
+        //$aResult = $this->_unset_security_field($aResult);
 
         return $aResult;
     }//end of get_product_row()

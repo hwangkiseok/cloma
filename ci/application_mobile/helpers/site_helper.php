@@ -3028,9 +3028,9 @@ function get_recently_product($limit="", $banner="",$bMainRolling=false) {
 //                continue;
 //            }
 
-            $product_row['p_rep_image_array'] = json_decode($product_row['p_rep_image'], true);
-            $product_row['p_display_info_array'] = json_decode($product_row['p_display_info'], true);
-            $product_row['p_display_info_1_text'] = "";
+//            $product_row['p_rep_image_array'] = json_decode($product_row['p_rep_image'], true);
+//            $product_row['p_display_info_array'] = json_decode($product_row['p_display_info'], true);
+//            $product_row['p_display_info_1_text'] = "";
 
 //            foreach($CI->config->item('product_display_info1') as $iKey => $iItem) {
 //                if( $product_row['p_display_info_array'][$iKey] == 'Y' ) {
@@ -3038,8 +3038,8 @@ function get_recently_product($limit="", $banner="",$bMainRolling=false) {
 //                }
 //            }
 
-            $product_row['p_review_count_str']    = number_format($product_row['p_review_count']);
-            $product_row['p_tot_order_count_str'] = product_count($product_row['p_tot_order_count']);
+//            $product_row['p_review_count_str']    = number_format($product_row['p_review_count']);
+//            $product_row['p_tot_order_count_str'] = product_count($product_row['p_tot_order_count']);
 
             $recently_list[] = $product_row;
         }//end of foreach()

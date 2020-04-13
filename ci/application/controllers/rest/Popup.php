@@ -58,6 +58,15 @@ class Popup extends REST_Controller
 
             }
 
+            $this->load->model('product_model');
+
+            $aClosePopup_1 = get_recently_product(2);
+            $aClosePopup_2 = $this->product_model->get_close_product( array('not_in' => $aClosePopup_1 ));
+
+            $aClosePopup = array();
+            $aClosePopup = array_merge($aClosePopup_1,$aClosePopup_2);
+            $aClosePopup = $this->core->clearProductField($aClosePopup);
+
             //마지막 등록된 팝업의 정보로 팝업사이즈와 버튼액션 결정
             //sort가 최신순으로 처리가되어 있어 0번배열로 처리
             $apo_size_type = $aTodayPopup[0]['apo_size_type'];
@@ -65,24 +74,17 @@ class Popup extends REST_Controller
 
             $aTodayPopup = self::clearPopupData($aTodayPopup);
 
-            if(empty($aTodayPopup) == true){
+            if(empty($aTodayPopup) == true) $aTodayPopup = array();
 
-                $this->set_response(
-                    result_echo_rest_json(get_status_code("error"), lang('site_error_empty_data'), true , '' , '' , ''
-                    ), REST_Controller::HTTP_OK
-                );
+            $this->set_response(
+                result_echo_rest_json(get_status_code("success"), "", true , '' , '' , array(
+                        'aPopupList'       => $aTodayPopup
+                    ,   'aClosePopup'      => $aClosePopup
+                    ,   'popup_size_type'  => $apo_size_type
+                    ,   'popup_btn_type'   => $apo_btn_type
+                )), REST_Controller::HTTP_OK
+            );
 
-            }else{
-
-                $this->set_response(
-                    result_echo_rest_json(get_status_code("success"), "", true , '' , '' , array(
-                            'aPopupList'       => $aTodayPopup
-                        ,   'popup_size_type'  => $apo_size_type
-                        ,   'popup_btn_type'   => $apo_btn_type
-                    )), REST_Controller::HTTP_OK
-                );
-
-            }
 
         }
 
@@ -162,6 +164,8 @@ class Popup extends REST_Controller
                 unset($aPopup[$k]['apo_btn_type']);
                 unset($aPopup[$k]['apo_back_close_yn']);
                 unset($aPopup[$k]['apo_os_type']);
+                unset($aPopup[$k]['apo_display_count']);
+                unset($aPopup[$k]['apo_view_count']);
 
             }
 
@@ -183,6 +187,8 @@ class Popup extends REST_Controller
             unset($aPopup['apo_btn_type']);
             unset($aPopup['apo_back_close_yn']);
             unset($aPopup['apo_os_type']);
+            unset($aPopup['apo_display_count']);
+            unset($aPopup['apo_view_count']);
 
         }
 

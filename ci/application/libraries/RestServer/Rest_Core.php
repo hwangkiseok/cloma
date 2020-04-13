@@ -142,6 +142,190 @@ class Rest_Core  {
         );
     }//end of _paging()
 
+    public function clearProductField($arr, $add_f = array()){
 
+        if(empty($arr[0]['p_num']) == true){ //단일배열
+
+            if(empty($add_f) == false ) {
+                foreach ($add_f as $kk => $vv) $arr[$kk] = $vv;
+            }
+            $arr['p_rep_image'] = json_decode($arr['p_rep_image'],true)[0];
+
+            unset($arr['p_banner_image']);
+            unset($arr['p_category']);
+            unset($arr['p_order_link']);
+            unset($arr['p_app_price_yn']);
+            unset($arr['p_app_price']);
+            unset($arr['p_price_second_yn']);
+            unset($arr['p_price_second']);
+            unset($arr['p_price_third_yn']);
+            unset($arr['p_price_third']);
+            unset($arr['p_hotdeal_condition_1']);
+            unset($arr['p_hotdeal_condition_2']);
+            unset($arr['total_margin']);
+            unset($arr['total_margin_twoday']);
+            unset($arr['p_display_info']);
+            unset($arr['p_termlimit_yn']);
+            unset($arr['p_termlimit_datetime1']);
+            unset($arr['p_termlimit_datetime2']);
+            unset($arr['p_view_count']);
+            unset($arr['p_view_3day_count']);
+            unset($arr['p_view_yesterday_count']);
+            unset($arr['p_view_today_count']);
+            unset($arr['p_click_count']);
+            unset($arr['p_click_yesterday_count']);
+            unset($arr['p_click_today_count']);
+            unset($arr['p_click_count_week']);
+            unset($arr['p_click_count_last_week']);
+            unset($arr['p_comment_count']);
+            unset($arr['p_review_count']);
+            unset($arr['p_order_count']);
+            unset($arr['p_order_count_3h']);
+            unset($arr['p_order_count_twoday']);
+            unset($arr['p_order_count_week']);
+            unset($arr['p_order_count_month']);
+            unset($arr['p_order_count_twomonth']);
+            unset($arr['p_order_count_last_week']);
+            unset($arr['p_regdatetime']);
+            unset($arr['p_order']);
+            unset($arr['p_display_state']);
+            unset($arr['p_sale_state']);
+            unset($arr['p_stock_state']);
+            unset($arr['p_top_desc']);
+            unset($arr['p_btm_desc']);
+            unset($arr['p_search_cnt']);
+            unset($arr['p_usd_price']);
+            unset($arr['p_option_buy_cnt_view']);
+            unset($arr['p_main_banner_view']);
+            unset($arr['p_restock_cnt']);
+            unset($arr['p_tot_order_count']);
+            unset($arr['p_outside_display_able']);
+            unset($arr['p_rep_image_add']);
+            unset($arr['p_detail']);
+            unset($arr['p_discount_rate']);
+            unset($arr['p_wish_count']);
+            unset($arr['p_share_count']);
+            unset($arr['p_deliveryprice_type']);
+            unset($arr['p_deliveryprice']);
+            unset($arr['p_order_code']);
+            unset($arr['p_hash']);
+            unset($arr['p_date']);
+            unset($arr['p_detail_image']);
+            unset($arr['p_detail_add']);
+            unset($arr['p_cate2']);
+            unset($arr['p_cate3']);
+            unset($arr['p_detail_image']);
+            unset($arr['p_short_url']);
+            unset($arr['p_app_link_url']);
+            unset($arr['p_app_link_url_2']);
+            unset($arr['p_origin']);
+            unset($arr['p_manufacturer']);
+            unset($arr['p_suvin_flag']);
+            unset($arr['p_taxation']);
+            unset($arr['p_supplier']);
+            unset($arr['p_wish_count_user']);
+            unset($arr['p_wish_raise_yn']);
+            unset($arr['p_wish_raise_count']);
+            unset($arr['p_share_count_user']);
+            unset($arr['p_share_raise_yn']);
+            unset($arr['p_share_raise_count']);
+            unset($arr['p_easy_admin_code']);
+
+        }else{ //순차배열
+
+            foreach ($arr as $k => $r) {
+
+                if(empty($add_f) == false ) {
+                    foreach ($add_f as $kk => $vv) $arr[$k][$kk] = $vv;
+                }
+                $arr[$k]['p_rep_image'] = json_decode($r['p_rep_image'],true)[0];
+
+                unset($arr[$k]['p_banner_image']);
+                unset($arr[$k]['p_category']);
+                unset($arr[$k]['p_order_link']);
+                unset($arr[$k]['p_app_price_yn']);
+                unset($arr[$k]['p_app_price']);
+                unset($arr[$k]['p_price_second_yn']);
+                unset($arr[$k]['p_price_second']);
+                unset($arr[$k]['p_price_third_yn']);
+                unset($arr[$k]['p_price_third']);
+                unset($arr[$k]['p_hotdeal_condition_1']);
+                unset($arr[$k]['p_hotdeal_condition_2']);
+                unset($arr[$k]['total_margin']);
+                unset($arr[$k]['total_margin_twoday']);
+                unset($arr[$k]['p_display_info']);
+                unset($arr[$k]['p_termlimit_yn']);
+                unset($arr[$k]['p_termlimit_datetime1']);
+                unset($arr[$k]['p_termlimit_datetime2']);
+                unset($arr[$k]['p_view_count']);
+                unset($arr[$k]['p_view_3day_count']);
+                unset($arr[$k]['p_view_yesterday_count']);
+                unset($arr[$k]['p_view_today_count']);
+                unset($arr[$k]['p_click_count']);
+                unset($arr[$k]['p_click_yesterday_count']);
+                unset($arr[$k]['p_click_today_count']);
+                unset($arr[$k]['p_click_count_week']);
+                unset($arr[$k]['p_click_count_last_week']);
+                unset($arr[$k]['p_comment_count']);
+                unset($arr[$k]['p_review_count']);
+                unset($arr[$k]['p_order_count']);
+                unset($arr[$k]['p_order_count_3h']);
+                unset($arr[$k]['p_order_count_twoday']);
+                unset($arr[$k]['p_order_count_week']);
+                unset($arr[$k]['p_order_count_month']);
+                unset($arr[$k]['p_order_count_twomonth']);
+                unset($arr[$k]['p_order_count_last_week']);
+                unset($arr[$k]['p_regdatetime']);
+                unset($arr[$k]['p_order']);
+                unset($arr[$k]['p_display_state']);
+                unset($arr[$k]['p_sale_state']);
+                unset($arr[$k]['p_stock_state']);
+                unset($arr[$k]['p_top_desc']);
+                unset($arr[$k]['p_btm_desc']);
+                unset($arr[$k]['p_search_cnt']);
+                unset($arr[$k]['p_usd_price']);
+                unset($arr[$k]['p_option_buy_cnt_view']);
+                unset($arr[$k]['p_main_banner_view']);
+                unset($arr[$k]['p_restock_cnt']);
+                unset($arr[$k]['p_tot_order_count']);
+                unset($arr[$k]['p_outside_display_able']);
+                unset($arr[$k]['p_rep_image_add']);
+                unset($arr[$k]['p_detail']);
+                unset($arr[$k]['p_discount_rate']);
+                unset($arr[$k]['p_wish_count']);
+                unset($arr[$k]['p_share_count']);
+                unset($arr[$k]['p_deliveryprice_type']);
+                unset($arr[$k]['p_deliveryprice']);
+                unset($arr[$k]['p_order_code']);
+                unset($arr[$k]['p_hash']);
+                unset($arr[$k]['p_date']);
+                unset($arr[$k]['p_detail_image']);
+                unset($arr[$k]['p_detail_add']);
+                unset($arr[$k]['p_cate2']);
+                unset($arr[$k]['p_cate3']);
+                unset($arr[$k]['p_detail_image']);
+                unset($arr[$k]['p_short_url']);
+                unset($arr[$k]['p_app_link_url']);
+                unset($arr[$k]['p_app_link_url_2']);
+                unset($arr[$k]['p_origin']);
+                unset($arr[$k]['p_manufacturer']);
+                unset($arr[$k]['p_suvin_flag']);
+                unset($arr[$k]['p_taxation']);
+                unset($arr[$k]['p_supplier']);
+                unset($arr[$k]['p_wish_count_user']);
+                unset($arr[$k]['p_wish_raise_yn']);
+                unset($arr[$k]['p_wish_raise_count']);
+                unset($arr[$k]['p_share_count_user']);
+                unset($arr[$k]['p_share_raise_yn']);
+                unset($arr[$k]['p_share_raise_count']);
+                unset($arr[$k]['p_easy_admin_code']);
+
+            }
+
+        }
+
+        return $arr;
+
+    }
 
 }

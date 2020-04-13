@@ -2986,24 +2986,6 @@ function get_recently_product($limit="", $banner="",$bMainRolling=false) {
                 continue;
             }
 
-            //배너이미지 확인시
-//            if( !empty($banner) && empty($product_row['p_banner_image']) ) {
-//                continue;
-//            }
-
-            $product_row['p_rep_image_array'] = json_decode($product_row['p_rep_image'], true);
-            $product_row['p_display_info_array'] = json_decode($product_row['p_display_info'], true);
-            $product_row['p_display_info_1_text'] = "";
-
-//            foreach($CI->config->item('product_display_info1') as $iKey => $iItem) {
-//                if( $product_row['p_display_info_array'][$iKey] == 'Y' ) {
-//                    $product_row['p_display_info_1_text'] = $iItem;
-//                }
-//            }
-
-            $product_row['p_review_count_str']    = number_format($product_row['p_review_count']);
-            $product_row['p_tot_order_count_str'] = product_count($product_row['p_tot_order_count']);
-
             $recently_list[] = $product_row;
         }//end of foreach()
 
