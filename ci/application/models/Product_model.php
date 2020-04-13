@@ -230,6 +230,8 @@ class Product_model extends W_Model {
 
         $whereQueryString = '';
 
+        $tot_cnt = 4;
+
         if(empty($arrayParams['not_in']) == false){
 
             $not_in = array();
@@ -237,9 +239,15 @@ class Product_model extends W_Model {
             if(is_array($arrayParams['not_in']) == true){
                 foreach ($arrayParams['not_in'] as $r)  $not_in[] = $r['p_num'];
                 $whereQueryString .= " AND p_num NOT IN (". implode(',',$not_in) .")";
+                $limit_cnt = $tot_cnt - count($arrayParams['not_in']);
             }else{
                 $whereQueryString .= " AND p_num <> '{$arrayParams['not_in']}' ";
+                $limit_cnt = $tot_cnt - 1;
             }
+
+        }else{
+
+            $limit_cnt = $tot_cnt;
 
         }
 
@@ -257,16 +265,14 @@ class Product_model extends W_Model {
                     LIMIT 20
                 ) T
                 ORDER BY T.p_margin_price DESC 
-                LIMIT 2;
+                LIMIT {$limit_cnt};
         ";
 
         $oResult = $this->db->query($sql);
         $product_list = $oResult->result_array();
 
         return $product_list;
-    }//end of get_product_list_from_query()
-
-
+    }//end of get_close_product()
 
     /**
      * 상품 조회

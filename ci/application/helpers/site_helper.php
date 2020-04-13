@@ -2952,14 +2952,14 @@ function http_post_request($url, $params="") {
 /**
  * 쿠키에서 최근본상품 추출
  * @param string $limit
- * @param string $banner
+ * @param string $api 앱에서 api호출인경우 true : false
  * @return array
  */
-function get_recently_product($limit="", $banner="",$bMainRolling=false) {
+function get_recently_product($limit="", $api=false) {
     $CI =& get_instance();
 
-    if( is_app() == true ) {
-        $recently_cookie = $CI->getRctly();
+    if( is_app() == true || $api == true ) {
+        $recently_cookie = $CI->core->getRctly();
     }else{
         $recently_cookie = get_cookie('rctlyViewPdt');
     }

@@ -58,11 +58,12 @@ class Popup extends REST_Controller
 
             }
 
+
+
             $this->load->model('product_model');
 
-            $aClosePopup_1 = get_recently_product(2);
+            $aClosePopup_1 = get_recently_product(2,true);
             $aClosePopup_2 = $this->product_model->get_close_product( array('not_in' => $aClosePopup_1 ));
-
             $aClosePopup = array();
             $aClosePopup = array_merge($aClosePopup_1,$aClosePopup_2);
             $aClosePopup = $this->core->clearProductField($aClosePopup);
