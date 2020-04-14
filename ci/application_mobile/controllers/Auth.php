@@ -319,10 +319,13 @@ class Auth extends M_Controller {
      */
     public function join() {
 
-        $this->_header();
+        $this->_header(true);
         $this->load->view('/auth/join_2');
-        $this->_footer();
+//        $this->_footer();
 
+    }
+    public function join_proc_2() {
+        result_echo_json(get_status_code("success"),'');
     }
 
 
