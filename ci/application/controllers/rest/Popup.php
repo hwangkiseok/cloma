@@ -58,22 +58,20 @@ class Popup extends REST_Controller
 
             }
 
-
-
             $this->load->model('product_model');
 
             $aClosePopup_1 = get_recently_product(2,true);
             $aClosePopup_2 = $this->product_model->get_close_product( array('not_in' => $aClosePopup_1 ));
             $aClosePopup = array();
             $aClosePopup = array_merge($aClosePopup_1,$aClosePopup_2);
-            $aClosePopup = $this->core->clearProductField($aClosePopup);
+            $aClosePopup = $this->core->clearProductField($aClosePopup, array('campaign' => 'close_popup'));
 
             //마지막 등록된 팝업의 정보로 팝업사이즈와 버튼액션 결정
             //sort가 최신순으로 처리가되어 있어 0번배열로 처리
             $apo_size_type = $aTodayPopup[0]['apo_size_type'];
             $apo_btn_type = $aTodayPopup[0]['apo_btn_type'];
 
-            $aTodayPopup = self::clearPopupData($aTodayPopup);
+            $aTodayPopup = self::clearPopupData($aTodayPopup, array('campaign' => 'popup'));
 
             if(empty($aTodayPopup) == true) $aTodayPopup = array();
 
@@ -144,11 +142,16 @@ class Popup extends REST_Controller
 
     }
 
-    private function clearPopupData($aPopup){
+    private function clearPopupData($aPopup , $add_f = array()){
 
         if(empty($aPopup['apo_num']) == true){ //다중배열
 
             foreach ($aPopup as $k => $r) {
+
+                if(empty($add_f) == false ) {
+                    foreach ($add_f as $kk => $vv) $aPopup[$k][$kk] = $vv;
+                }
+
                 unset($aPopup[$k]['apo_position']);
                 unset($aPopup[$k]['apo_subject']);
                 unset($aPopup[$k]['apo_termlimit_yn']);
@@ -171,6 +174,10 @@ class Popup extends REST_Controller
             }
 
         }else{//단일
+
+            if(empty($add_f) == false ) {
+                foreach ($add_f as $kk => $vv) $aPopup[$kk] = $vv;
+            }
 
             unset($aPopup['apo_position']);
             unset($aPopup['apo_subject']);
