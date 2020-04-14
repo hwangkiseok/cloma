@@ -142,6 +142,18 @@ class Popup extends REST_Controller
 
     }
 
+    public function close_pop_view_get()
+    {
+        total_stat('end_popup');
+
+        $this->set_response(
+            result_echo_rest_json(get_status_code("success"), '' , true , '' , '' , ''
+            ), REST_Controller::HTTP_OK
+        );
+
+    }
+
+
     private function clearPopupData($aPopup , $add_f = array()){
 
         if(empty($aPopup['apo_num']) == true){ //다중배열

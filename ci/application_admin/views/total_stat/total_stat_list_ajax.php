@@ -27,13 +27,16 @@
             <th rowspan="2" class="<?php echo $sort_array['t_product_wish'][1];?>" onclick="form_submit('sort_field=t_product_wish&sort_type=<?php echo $sort_array['t_product_wish'][0]; ?>');">찜</th>
             <th rowspan="2" class="<?php echo $sort_array['t_product_share'][1];?>" onclick="form_submit('sort_field=t_product_share&sort_type=<?php echo $sort_array['t_product_share'][0]; ?>');">공유</th>
             <th rowspan="2" class="<?php echo $sort_array['t_qna'][1];?>" onclick="form_submit('sort_field=t_qna&sort_type=<?php echo $sort_array['t_qna'][0]; ?>');">1:1</th>
+
+
+            <th rowspan="2" class="<?php echo $sort_array['t_end_popup'][1];?>" onclick="form_submit('sort_field=t_end_popup&sort_type=<?php echo $sort_array['t_end_popup'][0]; ?>');">종료팝업</th>
+<!--
             <th rowspan="2" class="<?php echo $sort_array['t_attend'][1];?>" onclick="form_submit('sort_field=t_attend&sort_type=<?php echo $sort_array['t_attend'][0]; ?>');">출석</th>
             <th rowspan="2" class="<?php echo $sort_array['t_attend_accrue'][1];?>" onclick="form_submit('sort_field=t_attend_accrue&sort_type=<?php echo $sort_array['t_attend_accrue'][0]; ?>');">연속출석</th>
             <th rowspan="2" class="<?php echo $sort_array['t_attend_winner'][1];?>" onclick="form_submit('sort_field=t_attend_winner&sort_type=<?php echo $sort_array['t_attend_winner'][0]; ?>');">출석달성</th>
-
             <th rowspan="2" class="<?php echo $sort_array['t_attend_winner'][1];?>" onclick="form_submit('sort_field=t_review_cnt&sort_type=<?php echo $sort_array['t_review_cnt'][0]; ?>');">리뷰<br>텍스트 / 이미지</th>
-
-            <!--<th class="<?php echo $sort_array['t_everyday'][1];?>" onclick="form_submit('sort_field=t_everyday&sort_type=<?php echo $sort_array['t_everyday'][0]; ?>//');">매일응모</th>-->
+            <th class="<?php echo $sort_array['t_everyday'][1];?>" onclick="form_submit('sort_field=t_everyday&sort_type=<?php echo $sort_array['t_everyday'][0]; ?>');">매일응모</th>
+-->
         </tr>
         <tr>
             <th>총가입</th>
@@ -99,11 +102,15 @@
             <td><?php echo number_format($row->t_product_wish); ?></td>
             <td><?php echo number_format($row->t_product_share); ?></td>
             <td><?php echo number_format($row->t_qna); ?></td>
+            <td><?php echo number_format($row->t_end_popup); ?></td>
+
+            <!--
             <td><?php echo number_format($row->t_attend); ?></td>
             <td><?php echo number_format($row->t_attend_accrue); ?></td>
             <td><?php echo number_format($row->t_attend_winner); ?></td>
             <td><?php echo number_format($row->t_review_cnt); ?> / <?php echo number_format($row->t_img_review_cnt); ?></td>
-<!--            <td>--><?php //echo number_format($row->t_everyday); ?><!--</td>-->
+            <td><?php echo number_format($row->t_everyday); ?></td>
+            -->
         </tr>
 
         <?php
@@ -135,11 +142,14 @@
             <td><?php echo number_format($count_array['t_product_wish']); ?></td>
             <td><?php echo number_format($count_array['t_product_share']); ?></td>
             <td><?php echo number_format($count_array['t_qna']); ?></td>
+            <td><?php echo number_format($count_array['t_end_popup']); ?></td>
+            <!--
             <td><?php echo number_format($count_array['t_attend']); ?></td>
             <td><?php echo number_format($count_array['t_attend_accrue']); ?></td>
             <td><?php echo number_format($count_array['t_attend_winner']); ?></td>
             <td><?php echo number_format($count_array['t_review_cnt']); ?> / <?php echo number_format($count_array['t_img_review_cnt']); ?></td>
-<!--            <td>--><?php //echo number_format($count_array['t_everyday']); ?><!--</td>-->
+            <td><?php echo number_format($count_array['t_everyday']); ?></td>
+            -->
         </tr>
         </tbody>
     </table>

@@ -785,6 +785,25 @@ class Docs extends W_Controller {
     public function popup_click_view_put() {}
 
     /**
+     * 종료팝업 노출수 체크
+     *
+     * @ApiDescription(section="Popup", description="종료팝업 노출수")
+     * @ApiMethod(type="get")
+     * @ApiRoute(name="/rest/popup/close_pop_view/")
+     * @ApiReturn(type="object", sample="
+    {
+    'status': '000',
+    'message': '',
+    'message_type': '',
+    'error_data': '',
+    'goUrl': '',
+    'exit': true
+    }
+     * ")
+     */
+    public function close_pop_view_get() {}
+
+    /**
      * 스플래시 > get
      *
      * @ApiDescription(section="App", description="스플래시")
