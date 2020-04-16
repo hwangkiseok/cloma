@@ -1,4 +1,4 @@
-
+ㅈ
 <link href="/plugins/datepicker/datepicker3.css?v=<?php echo filemtime($this->input->server("DOCUMENT_ROOT") . "/plugins/datepicker/datepicker3.css"); ?>" rel="stylesheet" />
 <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
@@ -578,7 +578,20 @@
 
                             <div class="clearfix"></div>
 
+                            <div class="col-sm-12">
+                                <div style="color:#fff;background:#000;display:block;font-size:13px;font-weight:bold;padding:10px;overflow:hidden;">
+                                    <div class="pull-left" style="padding:7px;">자동댓글</div>
+                                </div>
+                            </div>
+                            <div class="col-sm-10 col-sm-offset-2" style="margin-top: 10px; ">
+                                <p class="alert alert-info" style="margin-left: -15px!important;">
+                                    - 자동댓글은 판매시작 후 일정 시간이 지난 후 등록이 자동으로 되도록 한다.<br>
+                                    - 판매시작 후 몇 분 뒤 등록 - 분단위 시간이 기입가능하며 기입하지 않는 경우 랜덤한 시간이 자동으로 저장된다.
+                                </p>
+                            </div>
+
                             <div class="form-group form-group-sm">
+
                                 <label class="col-sm-2 control-label">자동등록 댓글</label>
                                 <div class="col-sm-1">
                                     <input class="form-control" type="text" name="reg_name" value=""  placeholder="등록자명" title="등록자명">
@@ -597,8 +610,7 @@
                             <div class="form-group form-group-sm">
                                 <label class="col-sm-2 control-label">자동댓글 리스트</label>
                                 <div class="col-sm-10">
-
-                                    <div class="table-responsive">
+                                    <div class="table-responsive" style="padding-right: 15px">
                                         <table id="auto_cmt_table" class="table table-hover table-bordered dataTable">
                                             <colgroup>
                                                 <col style="width:5%" />
