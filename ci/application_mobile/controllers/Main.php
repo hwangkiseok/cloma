@@ -29,7 +29,7 @@ class Main extends M_Controller
             $req['page'] = 1;
         }
         if( empty($req['list_per_page']) ) {
-            $req['list_per_page'] = 10;
+            $req['list_per_page'] = 20;
         }
         if( empty($req['ctgr_code']) ) {
             $req['ctgr_code'] = 2;

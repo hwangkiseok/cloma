@@ -85,7 +85,7 @@ class Exhibition extends REST_Controller
             unset($arr['p_outside_display_able']);
             unset($arr['p_rep_image_add']);
             unset($arr['p_detail']);
-            unset($arr['p_discount_rate']);
+//            unset($arr['p_discount_rate']);
             unset($arr['p_wish_count']);
             unset($arr['p_share_count']);
             unset($arr['p_deliveryprice_type']);
@@ -168,7 +168,7 @@ class Exhibition extends REST_Controller
                 unset($arr[$k]['p_outside_display_able']);
                 unset($arr[$k]['p_rep_image_add']);
                 unset($arr[$k]['p_detail']);
-                unset($arr[$k]['p_discount_rate']);
+//                unset($arr[$k]['p_discount_rate']);
                 unset($arr[$k]['p_wish_count']);
                 unset($arr[$k]['p_share_count']);
                 unset($arr[$k]['p_deliveryprice_type']);

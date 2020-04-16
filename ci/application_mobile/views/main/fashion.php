@@ -57,6 +57,10 @@
         $('input[name="more"]').val(1);
         $('input[name="page"]').val(2);
         $(window).scrollTop(0);
+
+        //탭이동시 page값 1로 초기화
+        $('input[name="page"]').val(1);
+
         ajaxPaging(true);
 
         window.history.replaceState( {} , 'Fashion', '/Fashion?ctgr_code=' + ctgr_code );
@@ -93,7 +97,7 @@
         ajax_on = true;
 
         var x = parseInt($(this).scrollTop());
-        var h = parseInt($('body').height()) - 200;
+        var h = parseInt($('body').height()) - 600;
         var chkH =  parseInt($(window).outerHeight(true)) ;
 
         if( h < x +chkH ) ajaxPaging();

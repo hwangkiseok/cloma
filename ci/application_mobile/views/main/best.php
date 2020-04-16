@@ -51,6 +51,10 @@
         $('.depth3nav a').removeClass('active');
         $('.depth3nav a[data-best="'+best_code+'"]').addClass('active');
         $('input[name="best_code"]').val(best_code);
+
+        //탭이동시 page값 1로 초기화
+        $('input[name="page"]').val(1);
+
         ajaxPaging(true);
 
         window.history.replaceState( {} , 'Best', '/Best?best_code=' + best_code );

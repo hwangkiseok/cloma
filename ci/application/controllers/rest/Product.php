@@ -118,7 +118,7 @@ class Product extends REST_Controller
             unset($arr['p_supply_price']);
             unset($arr['p_original_price']);
             unset($arr['p_margin_price']);
-            unset($arr['p_discount_rate']);
+//            unset($arr['p_discount_rate']);
             unset($arr['p_margin_rate']);
             unset($arr['p_taxation']);
             unset($arr['p_origin']);
@@ -221,7 +221,7 @@ class Product extends REST_Controller
                 unset($arr[$k]['p_supply_price']);
                 unset($arr[$k]['p_original_price']);
                 unset($arr[$k]['p_margin_price']);
-                unset($arr[$k]['p_discount_rate']);
+//                unset($arr[$k]['p_discount_rate']);
                 unset($arr[$k]['p_margin_rate']);
                 unset($arr[$k]['p_taxation']);
                 unset($arr[$k]['p_origin']);

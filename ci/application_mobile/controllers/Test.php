@@ -52,42 +52,35 @@ class Test extends M_Controller
 
     }//end of login()
 
-    public function bitly_info(){
 
-        $param   = array( 'bitlink_id' => 'bit.ly/36hnEi2' );
-        $param_j = json_encode_no_slashes($param);
+    public function set_org_price(){
 
-        //$data = 'http://bit.ly/36hnEi2';
+        $sql = "SELECT * FROM product_tb";
+        $oResult = $this->db->query($sql);
+        $aResult = $oResult->result_array();
 
-        $url = "https://api-ssl.bitly.com/v4/expand";
-        $ACCESS_TOKEN = $this->config->item('bitly_token');
 
-        $ch = curl_init();
-        $arr = array();
-        array_push($arr, "Content-Type: application/json; charset=utf-8");
-        array_push($arr, "Authorization: Bearer {$ACCESS_TOKEN}");
-        array_push($arr, "Accept: application/json");
-        curl_setopt($ch, CURLOPT_HTTPHEADER, $arr);
-        curl_setopt($ch, CURLOPT_URL,$url);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER,true);
-        curl_setopt($ch, CURLOPT_HEADER, false);
-        curl_setopt($ch, CURLOPT_POST, false);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $param_j);
+        foreach ($aResult as $r) {
 
-        $output = curl_exec($ch);
-        $status_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+            $ratio = (int)rand(30,70);
+            $org_price = $r['p_sale_price'] * (( 100 + $ratio) / 100 );
+            $org_price = substr($org_price,0,-2).'00';
+//            zsView($ratio.'///'.$r['p_sale_price'].'///'.$org_price.'///'.substr($org_price,0,-2) );
 
-        $output = json_decode($output,true);
+//            $sql = "UPDATE product_tb
+//                    SET
+//                        p_discount_rate = '{$ratio}'
+//                    ,   p_original_price = '{$org_price}'
+//                    WHERE p_num = '{$r['p_num']}';
+//            ";
+//            $this->db->query($sql);
 
-        curl_close($ch);
+        }
 
-        echo $output['long_url'];
 
     }
-    public function rand(){
-        $this->load->helper('string');
-        zsView(random_string('all',29));
-    }
+
+
     public function update_detail(){
 
 exit;
