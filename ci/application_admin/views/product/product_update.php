@@ -1,4 +1,3 @@
-ㅈ
 <link href="/plugins/datepicker/datepicker3.css?v=<?php echo filemtime($this->input->server("DOCUMENT_ROOT") . "/plugins/datepicker/datepicker3.css"); ?>" rel="stylesheet" />
 <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
@@ -586,7 +585,7 @@
                             <div class="col-sm-10 col-sm-offset-2" style="margin-top: 10px; ">
                                 <p class="alert alert-info" style="margin-left: -15px!important;">
                                     - 자동댓글은 판매시작 후 일정 시간이 지난 후 등록이 자동으로 되도록 한다.<br>
-                                    - 판매시작 후 몇 분 뒤 등록 - 분단위 시간이 기입가능하며 기입하지 않는 경우 랜덤한 시간이 자동으로 저장된다.
+                                    - 판매시작 후 몇 분 뒤 등록 - 분단위 시간이 기입가능하며 기입하지 않는 경우 랜덤한 시간(10분~60분)이 자동으로 저장된다.
                                 </p>
                             </div>
 

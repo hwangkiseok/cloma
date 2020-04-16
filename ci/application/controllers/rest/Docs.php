@@ -57,6 +57,9 @@ class Docs extends W_Controller {
      * @ApiDescription(section="Main", description="메인페이지")
      * @ApiMethod(type="get")
      * @ApiRoute(name="/rest/main/index/")
+     * @ApiParams(name="top15_type", type="string", nullable=false, description="상품 재정렬", sample="1 | 2 | 3")
+     * @ApiHeaders(name="m_key", type="String", nullable=false, description="회원키")
+     * @ApiHeaders(name="m_num", type="integer", nullable=false, description="회원번호")
      * @ApiReturn(type="object", sample="
      * {
      *   status: '000', // 000 : 정상 , 100 : 권한없음 , 200 : 에러 , 300 : 중복

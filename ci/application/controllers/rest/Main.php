@@ -261,6 +261,9 @@ class Main extends REST_Controller
     {
 
         $top15_type = $this->get('top15_type',true);
+        $test = $this->get('test',true);
+
+
 
         $this->load->model('product_model');
         $this->load->model('exhibition_model');
@@ -297,7 +300,7 @@ class Main extends REST_Controller
 
         }else if($top15_type == 2){ //최근 본상품 + 마진높은 상품
 
-            $addProductList = get_recently_product();
+            $addProductList = get_recently_product('',true);
             if(empty($addProductList) == false){
                 foreach ($addProductList as $r) {
                     $notin[] = $r['p_num'];
@@ -305,6 +308,8 @@ class Main extends REST_Controller
             }
 
             $e_limit    = $fix_cnt - count($addProductList);
+
+            $aTop10Lists  = array();
 
             if($e_limit > 0){
 
@@ -314,11 +319,17 @@ class Main extends REST_Controller
                 $aInput['where']['not_pnum']    =  $notin;
                 $aInput['orderby']              = ' p_margin_price DESC ';
                 $aTop10Lists = $this->product_model->get_product_list($aInput , 0 , $e_limit) ;
-                $aTopTheme  = array_merge($addProductList,$aTop10Lists);
-
-                foreach ($aTopTheme as $r)  $notin[] = $r['p_num'];
 
             }
+
+            $aTopTheme  = array_merge($addProductList,$aTop10Lists);
+
+            if($test == 'Y'){
+                zsView($addProductList);
+            }
+
+
+            foreach ($aTopTheme as $r)  $notin[] = $r['p_num'];
 
         }else if($top15_type == 3){ //최근 2주간 잘판린 상품
 
@@ -326,7 +337,7 @@ class Main extends REST_Controller
             $aInput['where']['sale_state']  =  'Y';
             $aInput['where']['stock_state'] =  'Y';
             $aInput['orderby']              = ' p_order_count_week+p_order_count_last_week DESC ';
-            $aTopTheme = $this->product_model->get_product_list($aInput) ;
+            $aTopTheme = $this->product_model->get_product_list($aInput , 0 , $fix_cnt) ;
 
             foreach ($aTopTheme as $r)  $notin[] = $r['p_num'];
 
