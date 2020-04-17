@@ -922,6 +922,7 @@ class App_push extends A_Controller {
         /* 푸시 렌딩페이지 변경 End*/
 
         $return_data = array();
+
         foreach($regid_list as $k => $r) {
             $fields                         = array();
             $fields['title']        = $push_row['ap_subject'];    //제목

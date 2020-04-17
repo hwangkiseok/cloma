@@ -9,6 +9,20 @@
     #join_form table tr td select{padding: 5px }
 </style>
 
+
+
+<?
+
+//zsView(create_dynamic_url('http://m.cloma.co.kr/product/detail/95','a_referer',''));
+//zsView(get_short_url(create_dynamic_url('http://m.cloma.co.kr/product/detail/95')));
+//zsView(create_dynamic_url_v2('http://m.cloma.co.kr/wish/'));
+//zsView(create_dynamic_url_v2('http://m.cloma.co.kr/delivery/detail/?tn=200414717372'));
+//zsView(create_dynamic_url_v2('http://m.cloma.co.kr/exhibition/list?seq=2'));
+
+?>
+
+
+
 <form name="join_form" id="join_form" method="post" action="/Auth/join_proc_2">
     <p>부가정보 확인</p>
 
@@ -31,7 +45,7 @@
                     <? } ?>
                 </select>&nbsp;월&nbsp;&nbsp;
                 <select name="birth_d">
-                    <? for ($i = 1; $i < 31 ; $i++) {?>
+                    <? for ($i = 1; $i < 32 ; $i++) {?>
                         <option value="<?=sprintf("%02d", $i);?>"><?=sprintf("%02d", $i);?></option>
                     <? } ?>
                 </select>&nbsp;일

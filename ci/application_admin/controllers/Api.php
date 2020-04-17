@@ -184,6 +184,26 @@ class Api extends A_Controller {
 
                         );
 
+                        if(empty($aSnsformProductInfo['org_price']) == true){
+
+                            $ratio = (int)rand(30,70);
+                            $org_price = round($aSnsformProductInfo['item_price'] / ( 1 - ($ratio / 100)));
+                            $org_price = substr($org_price,0,-2).'00';
+                            $ratio = number_format((($org_price - $aSnsformProductInfo['item_price']) / $org_price) * 100, 2);
+
+                            $aInput['p_original_price'] = $org_price;
+                            $aInput['p_discount_rate'] = $ratio;
+
+                        }else{
+
+                            $ratio = number_format((($aSnsformProductInfo['org_price'] - $aSnsformProductInfo['item_price']) / $aSnsformProductInfo['org_price']) * 100, 2);
+                            $org_price = $aSnsformProductInfo['org_price'];
+
+                            $aInput['p_original_price'] = $org_price;
+                            $aInput['p_discount_rate'] = $ratio;
+
+                        }
+
                         $this->snsform_model->publicUpdate('product_tb',$aInput , array('p_order_code' , $item_no ));
 
                     }
@@ -217,12 +237,30 @@ class Api extends A_Controller {
                         ,   'p_today_image'         => $img_prefix_path.$aSnsformProductInfo['img_url']
                         ,   'p_sale_price'          => $aSnsformProductInfo['item_price']
                         ,   'p_regdatetime'         => current_datetime()
-
                         ,   'p_supply_price'        => $aSnsformProductInfo['supply_price']
                         ,   'p_margin_rate'         => ( ( $aSnsformProductInfo['item_price'] - $aSnsformProductInfo['supply_price'] ) / $aSnsformProductInfo['item_price'] ) * 100
 
-
                         );
+
+                        if(empty($aSnsformProductInfo['org_price']) == true){
+
+                            $ratio = (int)rand(30,70);
+                            $org_price = round($aSnsformProductInfo['item_price'] / ( 1 - ($ratio / 100)));
+                            $org_price = substr($org_price,0,-2).'00';
+                            $ratio = number_format((($org_price - $aSnsformProductInfo['item_price']) / $org_price) * 100, 2);
+
+                            $aInput['p_original_price'] = $org_price;
+                            $aInput['p_discount_rate'] = $ratio;
+
+                        }else{
+
+                            $ratio = number_format((($aSnsformProductInfo['org_price'] - $aSnsformProductInfo['item_price']) / $aSnsformProductInfo['org_price']) * 100, 2);
+                            $org_price = $aSnsformProductInfo['org_price'];
+
+                            $aInput['p_original_price'] = $org_price;
+                            $aInput['p_discount_rate'] = $ratio;
+
+                        }
 
                         $this->snsform_model->publicInsert('product_tb',$aInput);
 

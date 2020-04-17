@@ -53,19 +53,51 @@ class Test extends M_Controller
     }//end of login()
 
 
+//    public function excel(){
+//        $this->_header();
+//        $this->load->view('/test/excel' );
+//        $this->_footer();
+//    }
+//
+//    public function excel_proc(){
+//
+//        $arrayParams['filePath'] = $_FILES['excel']['tmp_name'];
+//        $this->load->library("/MY_Excel",$arrayParams);
+//        $aResult = $this->my_excel->getData();
+//
+//        foreach ($aResult as $k => $r) {
+//
+//
+//            if($k > 1){
+//
+//                $sql = "UPDATE product_tb SET p_summary = '{$r['C']}' WHERE p_num = '{$r['A']}'; ";
+//                $this->db->query($sql);
+//
+//            }
+//
+//        }
+//
+//        zsView('complete');
+//
+//        exit;
+//
+//    }
+
+
     public function set_org_price(){
+
+        exit;
 
         $sql = "SELECT * FROM product_tb";
         $oResult = $this->db->query($sql);
         $aResult = $oResult->result_array();
 
-
         foreach ($aResult as $r) {
 
             $ratio = (int)rand(30,70);
-            $org_price = $r['p_sale_price'] * (( 100 + $ratio) / 100 );
+            $org_price = round($r['p_sale_price'] / ( 1 - ($ratio / 100)));
             $org_price = substr($org_price,0,-2).'00';
-//            zsView($ratio.'///'.$r['p_sale_price'].'///'.$org_price.'///'.substr($org_price,0,-2) );
+            $ratio = number_format((($org_price - $r['p_sale_price']) / $org_price) * 100, 2);
 
 //            $sql = "UPDATE product_tb
 //                    SET
@@ -223,6 +255,8 @@ exit;
     public function img_chk()
     {
 
+        exit;
+
 //        $aResult = $this->db->query($sql)->result_array();
 //
 //        foreach ($aResult as $k => $r) {
@@ -245,6 +279,29 @@ exit;
 //            //zsView($img);
 //            $data = getimagesize($img);
 //            if($data[1] != '430') zsView($r['p_name'].'  ///  '.$r['p_num'].'  ///  '.$data[1]);
+//
+//        }
+
+
+//        $sql = "SELECT * FROM product_tb where p_rep_image <> '' AND p_rep_image not like '%http%'  ";
+//        $aResult = $this->db->query($sql)->result_array();
+//
+//        foreach ($aResult as $k => $r) {
+//            $img = '/data/shop1/www'.json_decode($r['p_rep_image'],true)[0];
+//            //zsView($img);
+//            $data = getimagesize($img);
+//            if($data[1] != '430') zsView($r['p_name'].'  ///  '.$r['p_num'].'  ///  '.$data[1]);
+//
+//        }
+
+//        $sql = "SELECT * FROM product_tb where p_rep_image <> '' AND p_rep_image like '%cloma%'  ";
+//        $aResult = $this->db->query($sql)->result_array();
+//
+//
+//        foreach ($aResult as $k => $r) {
+//            $img = '/data/shop1/www'.str_replace('http://www.cloma.co.kr','', json_decode($r['p_rep_image'],true)[0]);
+//            $data = getimagesize($img);
+//            if($data[1] != '430') zsView($r['p_name']);
 //
 //        }
 
@@ -306,16 +363,7 @@ exit;
 
     }
 
-    public function excel(){
 
-
-        $this->_header();
-
-        $this->load->view('/test/excel' );
-
-        $this->_footer();
-
-    }
     public function set_main(){
 
         exit;

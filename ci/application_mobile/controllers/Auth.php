@@ -316,10 +316,10 @@ class Auth extends M_Controller {
 
     /**
      * 가입 확인 페이지
-     */
+     */ 
     public function join() {
 
-        $this->_header(true);
+        $this->_header();
         $this->load->view('/auth/join_2');
 //        $this->_footer();
 
