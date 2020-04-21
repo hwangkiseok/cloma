@@ -325,9 +325,120 @@ class Auth extends M_Controller {
 
     }
     public function join_proc_2() {
-        result_echo_json(get_status_code("success"),'');
+        ajax_request_check();
+
+        $this->load->library('form_validation');
+
+        //폼검증 룰 설정
+        $set_rules_array = array(
+                "kor_name"  => array("field" => "kor_name", "label" => "성명", "rules" => "required|" . $this->default_set_rules)
+            ,   "login_id"  => array("field" => "login_id", "label" => "로그인아이디", "rules" => "required|" . $this->default_set_rules)
+            ,   "login_pw"  => array("field" => "login_pw", "label" => "로그인비밀번호", "rules" => "required|" . $this->default_set_rules)
+            ,   "cell_tel"  => array("field" => "cell_tel", "label" => "연락처", "rules" => "required|numeric|" . $this->default_set_rules)
+            ,   "gender"    => array("field" => "gender", "label" => "성별", "rules" => $this->default_set_rules)
+            ,   "age_range" => array("field" => "age_range", "label" => "나이대", "rules" => $this->default_set_rules)
+        );
+
+        $this->form_validation->set_rules($set_rules_array);
+
+        $form_error_array = array();
+
+        //폼 검증 성공시
+        if( $this->form_validation->run() === true ) {
+
+            $aInput = array(
+                'm_key'         => create_session_id()
+            ,   'm_nickname'    => $this->input->post('kor_name')
+            ,   'm_login_id'    => $this->input->post('login_id')
+            ,   'm_login_pw'    => $this->input->post('login_pw')
+            ,   'm_authno'      => $this->input->post('cell_tel')
+            ,   'm_division'    => 1
+            ,   'm_sns_site'    => 0
+            ,   'm_age_range'   => $this->input->post('age_range')
+            ,   'm_gender'      => $this->input->post('gender')
+            ,   'm_push_yn'     => $this->input->post('accept3') == 'on' ? 'Y' : 'N'
+//            ,   'zip_code'      => $this->input->post('zip_code')
+//            ,   'addr1'         => $this->input->post('addr1')
+//            ,   'addr2'         => $this->input->post('addr2')
+//            ,   'birth_m'       => $this->input->post('birth_m')
+//            ,   'birth_d'       => $this->input->post('birth_d')
+
+            );
+
+            $insert_result = $this->member_model->insert_member($aInput);
+
+            if ( $insert_result['code'] == get_status_code('success') ) {
+                result_echo_json(get_status_code("success"),'',true);
+            } else {
+                result_echo_json(get_status_code("error"), lang("site_error_db"), true, "alert", "", "", $this->config->item("error_url"));
+            }
+
+        }
+
+        $form_error_array = set_form_error_from_rules($set_rules_array, $form_error_array);
+        result_echo_json(get_status_code('error'), "", true, "", $form_error_array);
+
     }
 
+    public function overlap_id(){
+
+        $login_id = $this->input->post('m_login_id');
+
+        $sql = "SELECT * FROM member_tb WHERE m_login_id = '{$login_id}'; ";
+        $oResult = $this->db->query($sql);
+        $cnt = $oResult->num_rows();
+        if($cnt > 0){
+            result_echo_json(get_status_code('error'));
+        }else{
+            result_echo_json(get_status_code('success'));
+        }
+
+    }
+
+    public function chk_login(){
+
+        ajax_request_check();
+
+        $this->load->library('form_validation');
+
+        //폼검증 룰 설정
+        $set_rules_array = array(
+            "login_id"   => array("field" => "login_id", "label" => "아이디", "rules" => "trim|required|max_length[30]|xss_clean|prep_for_form|strip_tags"),
+            "login_pw"   => array("field" => "login_pw", "label" => "비밀번호", "rules" => "trim|required|max_length[30]|xss_clean|prep_for_form|strip_tags"),
+        );
+
+        $this->form_validation->set_rules($set_rules_array);
+
+        //$form_error_array = array();
+
+        //폼 검증 성공시
+        if( $this->form_validation->run() === TRUE ) {
+            $id = $this->input->post("login_id", TRUE);
+            $pw = $this->input->post("login_pw", TRUE);
+
+            //model
+            $user_row = $this->member_model->get_user_login($id, $pw);
+
+            if ( empty($user_row) ) {
+                result_echo_json(get_status_code('fail'), "계정정보가 없습니다.", TRUE, "alert");
+            }
+
+            //회원 로그인 세션 생성
+            set_login_session($user_row);
+
+            $query_data = array();
+            $query_data['m_login_ip']       = $this->input->ip_address();
+            $query_data['m_logindatetime']  = current_datetime();
+
+            $this->member_model->publicUpdate('member_tb' , $query_data , array('m_num',$user_row['m_num']));
+
+
+            result_echo_json(get_status_code('success'), "", TRUE);
+        }
+
+        result_echo_json(get_status_code('error'), "", TRUE);
+
+    }
 
     /**
      * 가입 완료처리 (Ajax)

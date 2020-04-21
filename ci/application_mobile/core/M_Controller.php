@@ -213,7 +213,6 @@ class M_Controller extends CI_Controller {
         if( is_app() ) $no_header = true;
 
         if( !$no_header ) {
-
             //menu|back|pop
             $this->load->view('/header_' . $top_type, array(
                 'options'               => $options,

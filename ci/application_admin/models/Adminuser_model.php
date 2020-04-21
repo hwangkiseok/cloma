@@ -31,28 +31,6 @@ class Adminuser_model extends A_Model {
         return $this->db->query($query)->row();
     }//end of get_adminuser_login()
 
-    public function get_adminuser_login_group($id, $pw) {
-        $dreameutdb = $this->load->database("dreameut", true);
-        $query = "select * ";
-        $query .= "from adminuser_tb ";
-        $query .= "where au_loginid = '" . $dreameutdb->escape_str($id) . "' ";
-        $query .= "and au_password = password('" . $dreameutdb->escape_str($pw) . "') ";
-        //$query .= "and adm_usestate = 'Y' ";
-
-        return $dreameutdb->query($query)->row();
-    }//end of get_adminuser_login_group()
-
-    public function get_adminuser_login_group_id($id) {
-        $dreameutdb = $this->load->database("dreameut", true);
-        $query = "select * ";
-        $query .= "from adminuser_tb ";
-        $query .= "where au_loginid = '" . $dreameutdb->escape_str($id) . "' ";
-        //$query .= "and adm_usestate = 'Y' ";
-
-        return $dreameutdb->query($query)->row();
-    }//end of get_adminuser_login_group()
-
-
     /**
      * 관리자계정 단일항목 추출
      * @param $au_num

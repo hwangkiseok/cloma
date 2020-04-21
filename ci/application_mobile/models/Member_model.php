@@ -52,11 +52,17 @@ class Member_model extends M_Model {
             return false;
         }
 
-        if(
-            !isset($query_data['m_sns_site']) || empty($query_data['m_sns_site']) ||
-            !isset($query_data['m_sns_id']) || empty($query_data['m_sns_id'])
-        ) {
-            return false;
+//        if(
+//            !isset($query_data['m_sns_site']) || empty($query_data['m_sns_site']) ||
+//            !isset($query_data['m_sns_id']) || empty($query_data['m_sns_id'])
+//        ) {
+//            return false;
+//        }
+
+        if(empty($query_data['m_login_pw']) == false){
+            $login_pw = $query_data['m_login_pw'];
+            $this->db->set("m_login_pw", "password('" . $login_pw . "')", FALSE);
+            unset($query_data['m_login_pw']);
         }
 
         $query_data['m_regdatetime'] = current_datetime();
@@ -174,5 +180,22 @@ class Member_model extends M_Model {
         }
 
     }
+
+
+    /**
+     * 로그인 체크
+     * @param $id
+     * @param $pw
+     */
+    public function get_user_login($id, $pw) {
+
+        $query = "select * ";
+        $query .= "from member_tb ";
+        $query .= "where m_login_id = '" . $this->db->escape_str($id) . "' ";
+        $query .= "and m_login_pw = password('" . $this->db->escape_str($pw) . "') ";
+
+        return $this->db->query($query)->row_array();
+    }//end of get_adminuser_login()
+
 
 }//end of class Member_model

@@ -123,6 +123,51 @@ class Member extends M_Controller {
         $this->member_login();
     }
 
+
+    public function member_loc_login(){
+
+        if(member_login_status()){ //앱인경우
+            redirect('/');exit;
+        }
+
+        $options = array('title' => '옷쟁이들 로그인' , 'top_type' => 'back');
+        $this->_header($options);
+        $this->load->view("/member/loc_login");
+        $this->_footer();
+
+    }
+
+    public function member_loc_join_form(){
+
+        if(member_login_status()){ //앱인경우
+            redirect('/');exit;
+        }
+
+        $sql = "SELECT * FROM board_help_tb WHERE bh_division = '3' ";
+        $terms_of_use = $this->db->query($sql)->row_array();
+
+
+        $sql = "SELECT * FROM board_help_tb WHERE bh_division = '4' ";
+        $privacy = $this->db->query($sql)->row_array();
+
+        $sql = "SELECT * FROM board_help_tb WHERE bh_division = '7' ";
+        $event_use = $this->db->query($sql)->row_array();
+
+        $options = array('title' => '옷쟁이들 회원가입' , 'top_type' => 'back');
+        $this->_header($options);
+        $this->load->view("/member/loc_join_form" , array(
+                'terms_of_use'  => $terms_of_use
+            ,   'privacy'       => $privacy
+            ,   'event_use'     => $event_use
+        ));
+        $this->_footer();
+
+    }
+
+
+
+
+
     public function member_login(){
 
         if(member_login_status()){ //앱인경우
