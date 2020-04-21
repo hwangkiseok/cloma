@@ -814,17 +814,41 @@ class Docs extends W_Controller {
      * @ApiRoute(name="/rest/App/splash/")
      *
      * @ApiReturn(type="object", sample="
-        {
-        'status': '000',
-        'message': '',
-        'message_type': '',
-        'error_data': '',
-        'data' : '',
-        'goUrl': '',
-        'exit': true
-        }
+    {
+    'status': '000',
+    'message': '',
+    'message_type': '',
+    'error_data': '',
+    'data' : '',
+    'goUrl': '',
+    'exit': true
+    }
      * ")
      */
     public function app_splash_get() {}
+
+    /**
+     * 리퍼러카운팅 > put
+     *
+     * @ApiDescription(section="common", description="리퍼러카운팅")
+     * @ApiMethod(type="put")
+     * @ApiRoute(name="/rest/common/referer/")
+     * @ApiParams(name="ref", type="string", nullable=false, description="referer")
+     *
+     * @ApiReturn(type="object", sample="
+    {
+    'status': '000',
+    'message': '',
+    'message_type': '',
+    'error_data': '',
+    'data' : '',
+    'goUrl': '',
+    'exit': true
+    }
+     * ")
+     */
+    public function referer_put() {}
+
+
 
 }

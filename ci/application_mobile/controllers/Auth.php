@@ -138,19 +138,19 @@ class Auth extends M_Controller {
 
         //request
         $req = array(
-             'id'			    => $this->input->get('id')                  //필수
-            ,'nickname'		    => $this->input->get('nickname')            //필수
-            ,'email'			=> $this->input->get('email')               //필수 x
-            ,'profile_image'	=> $this->input->get('profile_image')       //필수 x
-            ,'access_token'		=> $this->input->get('sns_site') == "4" ? "" : $this->input->get('access_token')        //필수 x
-            ,'fcm_id'		    => $this->input->get('fcm_id')              //필수
-            ,'device_info'		=> $this->input->get('device_info')         //필수
-            ,'os_version'		=> $this->input->get('os_version')          //필수
-            ,'app_version'		=> $this->input->get('app_version')         //필수
-            ,'app_version_code'	=> $this->input->get('app_version_code')    //필수
-            ,'sns_site'		    => $this->input->get('sns_site')            //필수
-            ,'adid'             => $this->input->get('adid')                //필수 x
-            ,'reg_id'           => $this->input->get('fcm_id')              //필수 x
+             'id'			    => $this->input->post_get('id')                  //필수
+            ,'nickname'		    => $this->input->post_get('nickname')            //필수
+            ,'email'			=> $this->input->post_get('email')               //필수 x
+            ,'profile_image'	=> $this->input->post_get('profile_image')       //필수 x
+            ,'access_token'		=> $this->input->post_get('sns_site') == "4" ? "" : $this->input->post_get('access_token')        //필수 x
+            ,'fcm_id'		    => $this->input->post_get('fcm_id')              //필수
+            ,'device_info'		=> $this->input->post_get('device_info')         //필수
+            ,'os_version'		=> $this->input->post_get('os_version')          //필수
+            ,'app_version'		=> $this->input->post_get('app_version')         //필수
+            ,'app_version_code'	=> $this->input->post_get('app_version_code')    //필수
+            ,'sns_site'		    => $this->input->post_get('sns_site')            //필수
+            ,'adid'             => $this->input->post_get('adid')                //필수 x
+            ,'reg_id'           => $this->input->post_get('fcm_id')              //필수 x
         );
 
         if(empty($req['id']) == true){

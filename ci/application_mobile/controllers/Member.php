@@ -409,6 +409,7 @@ Array
             )
         */
 
+
         $profile = array(
             'id'                => $tmpProfile['id']
         ,   'nickname'      => $tmpProfile['properties']['nickname']
@@ -416,8 +417,11 @@ Array
         ,   'profile_image' => $tmpProfile['properties']['profile_image']
         );
 
+
+
+
         // 카카오싱크 api변경으로 인한 확장 데이터 dhkim
-        if(0){
+        if(1){
 
             // 배송지 정보 api
             $url = "https://kapi.kakao.com/v1/user/shipping_address";
@@ -537,6 +541,7 @@ Array
 
             $this->arrayParams2 = $profile_ext;
         }
+
 
         /*회원 정보 END*/
 
@@ -835,8 +840,6 @@ Array
         $aInput      = $this->aInput;
         $arrayParams = $this->arrayParams;
 
-
-
         //회원정보 확인
         $member_row = $this->member_model->get_member_row(array('m_sns_site' => $arrayParams['m_sns_site'], 'm_sns_id' => $arrayParams['id']));
 
@@ -958,21 +961,15 @@ Array
 
     }
 
-    /**
-     * m_num으로 회원 정보가져오기 ajax
-     */
-    public function getMemberInfoAjax()
-    {
-        ajax_request_check();
+    //채널 추가/차단 콜백
+    //ssl설치 후 가능
+    public function callback_change_channel(){
 
-        $m_num = $this->input->post_get('m_num');
-        $m_data = $this->member_model->getMemberBasicInfo($m_num);
+        foreach ($_REQUEST as $k => $v) {
+            log_message('A',$k.' ====> '.json_encode($v,JSON_UNESCAPED_UNICODE));
+        }
 
-        $profile_img = get_profile_img($m_data);
-
-        $m_data['profile_img'] = $profile_img;
-
-        echo json_encode_no_slashes($m_data);
     }
+
 
 }//end of class Member
