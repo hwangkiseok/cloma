@@ -83,7 +83,6 @@ class Test extends M_Controller
 //
 //    }
 
-
     public function set_org_price(){
 
         exit;

@@ -73,6 +73,103 @@ class Auth extends M_Controller {
         $query_data['m_os_version']         = $req['os_version'];
         $query_data['m_push_yn']            = 'Y';//$req['push'];
 
+
+        if( $req['sns_site'] == '1' ){
+
+            //연락처
+            $phone_arr = explode(' ', $req['phone_number']);
+            $phone_number_country = $phone_arr[0];
+            if ($phone_arr[0] == '+82') {
+                $phone_number = '0' . $phone_arr[1];
+                $phone_num_arr = explode('-', $phone_number);
+                $phone_number = $phone_num_arr[0] . $phone_num_arr[1] . $phone_num_arr[2];
+            } else {
+                $phone_number = $phone_arr[1];
+            }
+
+            //성별
+            $gender = '';
+            if($req['gender'] == 'male') $gender = 'M';
+            else if($req['gender'] == 'female') $gender = 'F';
+
+            $query_data['m_age_range'] = empty($req['age_range']) == false ? substr($req['age_range'],0,1).'0' : '';
+            $query_data['m_gender']    = $gender;
+            $query_data['m_authno']    = $phone_number;
+
+
+//            log_message('A',$req['address']);
+
+
+            if(empty($req['address']) == false){
+
+                $delivery_addr_1 = json_decode($req['address'],true);
+
+                foreach ($delivery_addr_1 as $key => $val) {
+
+                    if ($val['isDefault'] == true) {
+
+                        $phone_arr1 = '';
+                        $phone_arr2 = '';
+                        $receiver_phone_number1 = '';
+                        $receiver_phone_number2 = '';
+
+                        if (isset($val['receiverPhoneNumber1'])) {
+                            $phone_arr1 = explode('-', $val['receiverPhoneNumber1']);
+                            $receiver_phone_number1 = $phone_arr1[0] . $phone_arr1[1] . $phone_arr1[2];
+                        }
+
+                        if (isset($val['receiverPhoneNumber2'])) {
+                            $phone_arr2 = explode('-', $val['receiverPhoneNumber2']);
+                            $receiver_phone_number2 = $phone_arr2[0] . $phone_arr2[1] . $phone_arr2[2];
+                        }
+
+                        $tmpProfile['name'] = $val['name'];
+                        $tmpProfile['addr_type'] = $val['type'];
+                        $tmpProfile['addr_post'] = $val['zipCode'];
+                        $tmpProfile['addr_post_new'] = $val['zoneNumber'];
+                        $tmpProfile['addr1'] = $val['baseAddress'];
+                        $tmpProfile['addr2'] = $val['detailAddress'];
+                        $tmpProfile['receiver_name'] = $val['receiverName'];
+                        $tmpProfile['receiver_phone_number1'] = $receiver_phone_number1;
+                        $tmpProfile['receiver_phone_number2'] = $receiver_phone_number2;
+                    }
+
+                }
+
+            }
+
+            // 확장 데이터
+            $profile_ext = array(
+                'sns_id'                => $req['id']
+            ,   'sns_site'              => $req['sns_site']
+            ,   'nickname'              => str_replace(array("\"", "'"), array("˝", "´"), $tmp_nickname)
+            ,   'profile_image'         => $req['profile_image']
+            ,   'profile_image_thumb'   => $req['profile_image']
+            ,   'email'                 => $req['email']
+            ,   'gender'                => $req['gender']
+            ,   'birthday'              => $req['birthday']
+            ,   'age_range'             => $req['age_range']
+            ,   'phone_number_country'  => $phone_number_country
+            ,   'phone_number'          => $phone_number
+            ,   'name'                  => $tmpProfile['name']
+            ,   'addr_type'             => $tmpProfile['addr_type']
+            ,   'addr_post'             => $tmpProfile['addr_post']
+            ,   'addr_post_new'         => $tmpProfile['addr_post_new']
+            ,   'addr1'                 => $tmpProfile['addr1']
+            ,   'addr2'                 => $tmpProfile['addr2']
+            ,   'receiver_name'         => $tmpProfile['receiver_name']
+            ,   'receiver_phone_number1'=> $tmpProfile['receiver_phone_number1']
+            ,   'receiver_phone_number2'=> $tmpProfile['receiver_phone_number2']
+            ,   'login_path'            => 'app'
+            );
+
+//            foreach ($profile_ext as $k => $v) {
+//                log_message('A',$k.' ===> '.$v);
+//            }
+
+        }
+
+
         if( !empty($req['reg_id']) )  $query_data['m_regid'] = $req['reg_id'];
 
         log_message('M', '- APP Member Insert Params --------------------------------------------------------------------------------------');
@@ -81,7 +178,7 @@ class Auth extends M_Controller {
         }
 
         //회원가입
-        $this->member_model->insert_member($query_data);
+        $this->member_model->insert_member($query_data,$profile_ext);
 
         $login_result   = $this->member_model->get_login_sns($session_sns_site, $session_sns_userid);
         $member_row     = $login_result['data'];
@@ -151,6 +248,13 @@ class Auth extends M_Controller {
             ,'sns_site'		    => $this->input->post_get('sns_site')            //필수
             ,'adid'             => $this->input->post_get('adid')                //필수 x
             ,'reg_id'           => $this->input->post_get('fcm_id')              //필수 x
+
+            ,'age_range'        => $this->input->post_get('age_range')           //필수 x
+            ,'birthday'         => $this->input->post_get('birthday')            //필수 x
+            ,'gender'           => $this->input->post_get('gender')              //필수 x
+            ,'phone_number'     => $this->input->post_get('phone_number')        //필수 x
+            ,'address'          => $this->input->post_get('address')             //필수 x
+
         );
 
         if(empty($req['id']) == true){

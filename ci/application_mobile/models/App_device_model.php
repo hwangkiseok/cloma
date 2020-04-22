@@ -76,8 +76,8 @@ class App_device_model extends M_Model {
 
         if( $this->db->where('dv_num', $dv_num)->update("app_device_tb", $query_data) ) {
             //푸시 DB에 수정
-            $db_push = $this->get_db("db_push");
-            $db_push->where('dv_num', $dv_num)->update("app_device_tb", $query_data);
+//            $db_push = $this->get_db("db_push");
+//            $db_push->where('dv_num', $dv_num)->update("app_device_tb", $query_data);
 
             return true;
         }
@@ -109,8 +109,8 @@ class App_device_model extends M_Model {
         $query .= "where " . substr($where_query, 0, -3) . " ";
         if( $this->db->query($query) ) {
             //푸시 DB에 삭제
-            $db_push = $this->get_db("db_push");
-            $db_push->query($query);
+//            $db_push = $this->get_db("db_push");
+//            $db_push->query($query);
 
             return true;
         }

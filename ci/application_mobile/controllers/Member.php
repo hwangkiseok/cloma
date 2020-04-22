@@ -451,7 +451,7 @@ Array
         ,   'sns_site'              => '1'
         ,   'nickname'              => $tmpProfile['properties']['nickname']
         ,   'profile_image'         => $tmpProfile['properties']['profile_image']
-        ,   'profile_image_thumb'   => $tmpProfile['properties']['[thumbnail_image']
+        ,   'profile_image_thumb'   => $tmpProfile['properties']['thumbnail_image']
         ,   'email_needs_yn'        => $tmpProfile['kakao_account']['has_email'] == true ? 'N' : 'Y'
         ,   'email'                 => $tmpProfile['kakao_account']['has_email'] == true ? $tmpProfile['kakao_account']['email'] : ''
         ,   'email_valid_yn'        => $tmpProfile['kakao_account']['is_email_valid'] == true ? 'Y' : 'N'

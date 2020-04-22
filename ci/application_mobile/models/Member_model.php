@@ -43,7 +43,7 @@ class Member_model extends M_Model {
      * @param array $query_data
      * @return bool
      */
-    public function insert_member($query_data=array()) {
+    public function insert_member($query_data=array() , $profile_ext = array()) {
 
         if(
             !isset($query_data['m_key']) || empty($query_data['m_key']) ||
@@ -84,6 +84,11 @@ class Member_model extends M_Model {
         if( $this->db->insert('member_tb', $query_data) ) {
             $m_num = $this->db->insert_id();
             $member_row = $this->get_member_row(array('m_num' => $m_num));
+
+            $profile_ext['m_num']       = $m_num;
+            $profile_ext['reg_date']    = current_date();
+
+            $this->db->insert('member_ext_tb', $profile_ext);
 
             total_stat("join_total");
 
