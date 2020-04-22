@@ -61,6 +61,7 @@
 <form id="authForm" name="authForm" action="/member/kakaoSyncCall" method="post">
     <input name="access_token" type="hidden" value="">
     <input name="token_type" type="hidden" value="">
+    <input name="return_url" type="hidden" value="<?=$rUrl?>">
 </form>
 
 <script src="//developers.kakao.com/sdk/js/kakao.min.js"></script>
@@ -75,7 +76,14 @@
             type: 'post',
             dataType: 'json',
             success: function(result){
-                if( result.status == status_code['success'] ) go_home();
+
+                if( result.status == status_code['success'] ) {
+                    if(empty(result.goUrl) == false) go_link(result.goUrl);
+                    else go_home();
+                }else{
+                    alert("로그인을 실패하였습니다\n잠시 후 다시시도해주세요!");
+                }
+
             }
 
         });

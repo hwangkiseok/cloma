@@ -324,7 +324,6 @@ Array
 
     public function kakaoSyncCall(){
 
-
         ajax_request_check();
 
         $aInput     = $this->aInput;
@@ -332,11 +331,13 @@ Array
         $data = arraY(
                 'token_type'    => $this->input->post('token_type')
             ,   'access_token'  => $this->input->post('access_token')
+            ,   'return_url'    => $this->input->post('return_url')
         );
+
+        if(empty($data['return_url']) == false) $this->aInput['rUrl'] = $data['return_url'];
 
         /*회원 정보*/
         $headers[0]   = "Authorization: {$data['token_type']} {$data['access_token']}";
-
         $headers[]    = "Content-type: application/x-www-form-urlencoded;charset=utf-8'";
         $is_post      = false;
 
@@ -345,7 +346,6 @@ Array
         curl_setopt($ch, CURLOPT_POST, $is_post);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-
         $response = curl_exec ($ch);
         $status_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         curl_close ($ch);
@@ -1128,7 +1128,11 @@ Array
 
         if($this->input->is_ajax_request() == true){
 
-            result_echo_json(get_status_code('success'), "", true);
+            $go_url = '';
+            if($aInput['rUrl_kakao'] != '(null)' && $aInput['rUrl_kakao'] != '') $go_url = $aInput['rUrl_kakao'];
+            else if($aInput['rUrl']) $go_url = $aInput['rUrl'];
+
+            result_echo_json(get_status_code('success'), "", true, "", "", "", $go_url);
 
         }else{
 
