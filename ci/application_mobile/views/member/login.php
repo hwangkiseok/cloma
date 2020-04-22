@@ -22,30 +22,21 @@
 ?>
 
 <style>
-
     #container { width:100%; height:100%; margin:0 auto;}
     #container .join-wrap { position:fixed; width:100%; height:100%; left:0; top:0; overflow:hidden;padding: 0;background-color: #fff; }
     #container .join-wrap .join_bg {background:url('<?=IMG_HTTP?>/images/login_bg.png') no-repeat top center; background-size:cover;max-width: 580px;height: 100%;margin: 0 auto;}
-    #container .join-wrap .join_content { position:absolute; bottom:0; text-align:center;  margin-bottom: -4px; _margin-bottom:60px; background-color: #fff;width: 100%;max-width: 580px}
+    #container .join-wrap .join_content { position:absolute; bottom:0; text-align:center;  _margin-bottom: -4px; margin-bottom:60px; background-color: #fff;width: 100%;max-width: 580px}
     #container .join-wrap .btn_area li {margin-bottom: 10px;}
     #container .join-wrap .btn_area button { font-size: 15px; color: #777; border: none;background: #fff; width: 80%;padding: 15px 0;position: relative;border-radius: 5px;}
     #container .join-wrap .btn_area button.n {background-color: #1EC800;color: #FFFFFF}
     #container .join-wrap .btn_area button.k {background-color: #fae000;color: #411b1b}
     #container .join-wrap .btn_area button.g {background-color: #ececec;color: #000000}
     #container .join-wrap .btn_area button.l {background-color: #67146f;color: #FFFFFF}
-
-
-
     #container .join-wrap .btn_area button i { position: absolute; left: 20px; top:5px; display: inline-block; width: 35px; height: 35px; background: url('http://www.cloma.co.kr/images/mb_icon_set_img.png') no-repeat; background-size: 130px!important; }
     #container .join-wrap .btn_area button.n i {background-position: -63px -1px}
     #container .join-wrap .btn_area button.k i {background-position: -93px -1px}
     #container .join-wrap .btn_area button.g i {background-position: -63px -31px}
-
     #container .join-wrap .btn_area button.l i {background-position: -93px -153px; }
-
-
-
-
 </style>
 
 <div class="join-wrap">
@@ -56,13 +47,57 @@
             <div class="btn_area">
                 <ul>
                     <li><button class="n" onclick="go_link('<?=$NAVER_REQUEST_URL?>');"><i></i>네이버로 시작하기</button></li>
-                    <li><button class="k" onclick="go_link('<?=$KAKAO_REQUEST_URL?>');"><i></i>카카오로 시작하기</button></li>
+                    <!--<li><button class="k" onclick="go_link('<?=$KAKAO_REQUEST_URL?>');"><i></i>카카오로 시작하기</button></li>-->
+                    <li><button class="k" onclick="go_kakao_sync()"><i></i>카카오로 시작하기</button></li>
                     <li><button class="g" onclick="go_link('<?=$GOOGLE_REQUEST_URL?>');"><i></i>구글로 시작하기</button></li>
-                    <li><button class="l" onclick="go_link('/member/loc_login');"><i></i>옷쟁이들로 시작하기</button></li>
+                    <!--<li><button class="l" onclick="go_link('/member/loc_login');"><i></i>옷쟁이들로 시작하기</button></li>-->
                 </ul>
             </div>
         </div>
 
     </div>
 </div>
+
+<form id="authForm" name="authForm" action="/member/kakaoSyncCall" method="post">
+    <input name="access_token" type="hidden" value="">
+    <input name="token_type" type="hidden" value="">
+</form>
+
+<script src="//developers.kakao.com/sdk/js/kakao.min.js"></script>
+<script type="text/javascript">
+
+    Kakao.init('<?php echo $this->config->item('javascript', 'kakao_app_key'); ?>');
+
+    $(function(){
+
+        $('#authForm').ajaxForm({
+
+            type: 'post',
+            dataType: 'json',
+            success: function(result){
+                if( result.status == status_code['success'] ) go_home();
+            }
+
+        });
+
+    });
+
+    function go_kakao_sync(){
+
+        Kakao.Auth.login({
+            success: function(authObj) {
+
+                $('#authForm input[name="access_token"]').val(authObj.access_token);
+                $('#authForm input[name="token_type"]').val(authObj.token_type);
+                $('#authForm').submit();
+
+            },
+            fail: function(err) {
+                alert('로그인에 실패하였습니다.');
+            }
+        });
+
+    }
+
+</script>
 

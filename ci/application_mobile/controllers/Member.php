@@ -322,6 +322,180 @@ Array
     }
 
 
+    public function kakaoSyncCall(){
+
+
+        ajax_request_check();
+
+        $aInput     = $this->aInput;
+
+        $data = arraY(
+                'token_type'    => $this->input->post('token_type')
+            ,   'access_token'  => $this->input->post('access_token')
+        );
+
+        /*회원 정보*/
+        $headers[0]   = "Authorization: {$data['token_type']} {$data['access_token']}";
+
+        $headers[]    = "Content-type: application/x-www-form-urlencoded;charset=utf-8'";
+        $is_post      = false;
+
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, KAKAO_GET_USERINFO_URL_V2);
+        curl_setopt($ch, CURLOPT_POST, $is_post);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+
+        $response = curl_exec ($ch);
+        $status_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close ($ch);
+
+        if($status_code != 200) {
+            alert(PROFILE_PROCESS_ERR,'/');
+            exit;
+        }
+
+        $tmpProfile = json_decode($response, true);
+
+        $url = "https://kapi.kakao.com/v1/user/shipping_address";
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_POST, $is_post);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+
+        $response = curl_exec ($ch);
+        $status_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close ($ch);
+
+        if($status_code != 200) {
+            alert(PROFILE_PROCESS_ERR,'/');
+            exit;
+        }
+
+        $delivery_addr = json_decode($response, true);
+
+        if ($delivery_addr['shipping_addresses_needs_agreement'] == false) { // 배송지정보가 존재하면
+            foreach ($delivery_addr['shipping_addresses'] as $key => $val) {
+
+                if ($val['is_default'] == true) {
+
+                    $phone_arr1 = '';
+                    $phone_arr2 = '';
+                    $receiver_phone_number1 = '';
+                    $receiver_phone_number2 = '';
+
+                    if (isset($val['receiver_phone_number1'])) {
+                        $phone_arr1 = explode('-', $val['receiver_phone_number1']);
+                        $receiver_phone_number1 = $phone_arr1[0] . $phone_arr1[1] . $phone_arr1[2];
+                    }
+
+                    if (isset($val['receiver_phone_number2'])) {
+                        $phone_arr2 = explode('-', $val['receiver_phone_number2']);
+                        $receiver_phone_number2 = $phone_arr2[0] . $phone_arr2[1] . $phone_arr2[2];
+                    }
+
+                    $tmpProfile['name'] = $val['name'];
+                    $tmpProfile['addr_type'] = $val['type'];
+                    $tmpProfile['addr_post'] = $val['zip_code'];
+                    $tmpProfile['addr_post_new'] = $val['zone_number'];
+                    $tmpProfile['addr1'] = $val['base_address'];
+                    $tmpProfile['addr2'] = $val['detail_address'];
+                    $tmpProfile['receiver_name'] = $val['receiver_name'];
+                    $tmpProfile['receiver_phone_number1'] = $receiver_phone_number1;
+                    $tmpProfile['receiver_phone_number2'] = $receiver_phone_number2;
+                }
+
+            }
+        } else {
+
+            $tmpProfile['name'] = '';
+            $tmpProfile['addr_type'] = '';
+            $tmpProfile['addr_post'] = '';
+            $tmpProfile['addr_post_new'] = '';
+            $tmpProfile['addr1'] = '';
+            $tmpProfile['addr2'] = '';
+            $tmpProfile['receiver_name'] = '';
+            $tmpProfile['receiver_phone_number1'] = '';
+            $tmpProfile['receiver_phone_number2'] = '';
+        }
+
+        $phone_arr = '';
+        $phone_number = '';
+        $phone_number_country = '';
+        if ($tmpProfile['kakao_account']['has_phone_number'] == true) {
+            $phone_arr = explode(' ', $tmpProfile['kakao_account']['phone_number']);
+            $phone_number_country = $phone_arr[0];
+
+            if ($phone_arr[0] == '+82') {
+                $phone_number = '0' . $phone_arr[1];
+
+                $phone_num_arr = explode('-', $phone_number);
+
+                $phone_number = $phone_num_arr[0] . $phone_num_arr[1] . $phone_num_arr[2];
+            } else {
+                $phone_number = $phone_arr[1];
+            }
+        }
+
+        $profile = array(
+            'id'                => $tmpProfile['id']
+        ,   'nickname'      => $tmpProfile['properties']['nickname']
+        ,   'email'         => $tmpProfile['kakao_account']['has_email'] ? $tmpProfile['kakao_account']['email'] : ''
+        ,   'profile_image' => $tmpProfile['properties']['profile_image']
+        );
+
+        // 확장 데이터
+        $profile_ext = array(
+            'sns_id'                => $tmpProfile['id']
+        ,   'sns_site'              => '1'
+        ,   'nickname'              => $tmpProfile['properties']['nickname']
+        ,   'profile_image'         => $tmpProfile['properties']['profile_image']
+        ,   'profile_image_thumb'   => $tmpProfile['properties']['[thumbnail_image']
+        ,   'email_needs_yn'        => $tmpProfile['kakao_account']['has_email'] == true ? 'N' : 'Y'
+        ,   'email'                 => $tmpProfile['kakao_account']['has_email'] == true ? $tmpProfile['kakao_account']['email'] : ''
+        ,   'email_valid_yn'        => $tmpProfile['kakao_account']['is_email_valid'] == true ? 'Y' : 'N'
+        ,   'gender_needs_yn'       => $tmpProfile['kakao_account']['has_gender'] == true ? 'N' : 'Y'
+        ,   'gender'                => $tmpProfile['kakao_account']['has_gender'] == true ? ($tmpProfile['kakao_account']['gender'] == 'male' ? 'M' : 'F') : ''
+        ,   'birthyear_needs_yn'    => $tmpProfile['kakao_account']['has_birthyear'] == true ? 'N' : 'Y'
+        ,   'birthyear'             => $tmpProfile['kakao_account']['has_birthyear'] == true ? $tmpProfile['kakao_account']['birthyear'] : ''
+        ,   'birthday_needs_yn'     => $tmpProfile['kakao_account']['has_birthday'] == true ? 'N' : 'Y'
+        ,   'birthday'              => $tmpProfile['kakao_account']['has_birthday'] == true ? $tmpProfile['kakao_account']['birthday'] : ''
+        ,   'age_range_needs_yn'    => $tmpProfile['kakao_account']['has_age_range'] == true ? 'N' : 'Y'
+        ,   'age_range'             => $tmpProfile['kakao_account']['age_range'] == true ?  $tmpProfile['kakao_account']['age_range'] : ''
+        ,   'phone_number_country'  => $phone_number_country
+        ,   'phone_number'          => $phone_number
+        ,   'name'                  => $tmpProfile['name']
+        ,   'addr_type'             => $tmpProfile['addr_type']
+        ,   'addr_post'             => $tmpProfile['addr_post']
+        ,   'addr_post_new'         => $tmpProfile['addr_post_new']
+        ,   'addr1'                 => $tmpProfile['addr1']
+        ,   'addr2'                 => $tmpProfile['addr2']
+        ,   'receiver_name'         => $tmpProfile['receiver_name']
+        ,   'receiver_phone_number1'=> $tmpProfile['receiver_phone_number1']
+        ,   'receiver_phone_number2'=> $tmpProfile['receiver_phone_number2']
+        ,   'login_path'            => 'web'
+        );
+
+        $this->arrayParams2 = $profile_ext;
+
+        /*회원 정보 END*/
+
+        $initInput = array(
+            'm_division'        => 2
+        ,   'm_sns_site'        => 1
+        ,   'm_loginid_prv_str' => 'ka'
+        ,   'access_token'      => $data['access_token']
+        ,   'join_path'         => $aInput['join_path']
+        ,   'code'              => ''
+        ,   'state'             => ''
+        );
+        $this->arrayParams = array_merge($initInput, $profile);
+
+        $this->join_proc();
+
+    }
+
     ///kakao/oauth
     public function member_kakao_callback(){
 
@@ -950,14 +1124,23 @@ Array
             }
 
         }//end of if()
-        if($aInput['rUrl_kakao'] != '(null)' && $aInput['rUrl_kakao'] != ''){
-            redirect($aInput['rUrl_kakao']);
-        }else if($aInput['rUrl']){
-            redirect($aInput['rUrl']);
+
+
+        if($this->input->is_ajax_request() == true){
+
+            result_echo_json(get_status_code('success'), "", true);
+
         }else{
-            redirect('/');
+
+            if($aInput['rUrl_kakao'] != '(null)' && $aInput['rUrl_kakao'] != ''){
+                redirect($aInput['rUrl_kakao']);
+            }else if($aInput['rUrl']){
+                redirect($aInput['rUrl']);
+            }else{
+                redirect('/');
+            }
+            //alert('로그인 되었습니다.', '/');
         }
-        //alert('로그인 되었습니다.', '/');
 
     }
 
