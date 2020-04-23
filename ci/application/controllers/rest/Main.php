@@ -361,6 +361,237 @@ class Main extends REST_Controller
 
         }
 
+        $aMainThemaResult   = $this->product_model->get_main_thema(array('not_in' => $notin));
+        $notin              = $aMainThemaResult['not_in'];
+        $aMainThemaList     = $aMainThemaResult['list'];
+
+        { // 테마 - 카테고리 별 신상품 ( 카테고리별 20개 씩 )
+
+            $this->load->model('category_md_model');
+            $aInput = array();
+            $aInput['where']['division'] = 4;
+            $aInput['where']['state'] = 'Y';
+            $aCategory = $this->category_md_model->get_category_md_list($aInput);
+
+            $aTmpTheme3 = array();
+
+            foreach ($aCategory as $r) {
+
+                $aInput = array();
+                $aInput['where']['sale_state']  =  'Y';
+                $aInput['where']['stock_state'] =  'Y';
+                $aInput['where']['ctgr']        =  $r['cmd_name'];
+                $aInput['where']['not_pnum']    =  $notin;
+                $aInput['orderby']              = ' p_termlimit_datetime1 DESC ';
+                $tmp_result = $this->product_model->get_product_list($aInput, 0 , 20 ) ;
+
+                $aTmpTheme3 = array_merge($tmp_result,$aTmpTheme3);
+
+            }
+
+        }
+
+        {// adid / fcmid 저장
+
+            $adid   = $this->get('adid');
+            $fcm_id = $this->get('fcm_id');
+
+            if(( empty($adid) == false || empty($fcm_id) == false ) && empty($_SESSION['session_m_num']) == false ) {
+
+                $this->load->model('member_model');
+
+                if(empty($adid) == false) $aInput['m_adid'] = $adid;
+                if(empty($fcm_id) == false) $aInput['m_reg'] = $fcm_id;
+
+                $this->member_model->update_member($_SESSION['session_m_num'] , $aInput);
+
+            }
+
+        }
+
+        $aRollingBanner = self::clearExhibitionField($aRollingBanner,'exhibition');
+
+        if(empty($aTopTheme) == false) $aTopTheme = self::clearProductField($aTopTheme , array('campaign' => 'top30_t'));
+        else $aTopTheme = array();
+        if(empty($aTopTheme2) == false) $aTopTheme2 = self::clearProductField($aTopTheme2 , array('campaign' => 'top30_b'));
+        else $aTopTheme2 = array();
+        if(empty($aTmpTheme3) == false) $aTmpTheme3 = self::clearProductField($aTmpTheme3 , array('campaign' => 'thema_new_ctgr'));
+        else $aTmpTheme3 = array();
+
+        $aTheme2 = array(
+            'title' => ''
+        ,   'view_type' => 'A'
+        ,   'aLists' => $aTopTheme2
+        );
+
+        $aTheme3 = array(
+            'title' => '카테고리별 신상품'
+        ,   'view_type' => 'C'
+        ,   'aLists' => $aTmpTheme3
+        );
+
+        $aTheme = array();
+
+        if(count($aMainThemaList) > 1){
+
+            foreach ($aMainThemaList as $k => $r) {
+
+                if($k == 1) $aTheme[] = $aTheme2;
+
+                $aRowList = self::clearProductField($r['main_thema_product_lists'], array());
+
+                $aTheme[] = array(
+                    'title' => $r['main_thema_row']['thema_name']
+                ,   'view_type' => $r['main_thema_row']['display_type']
+                ,   'aLists' => $aRowList
+                );
+
+            }
+
+        }else {
+
+            if(count($aMainThemaList) == 1){
+                foreach ($aMainThemaList as $k => $r) {
+
+                    $aRowList = self::clearProductField($r['main_thema_product_lists'], array());
+
+                    $aTheme[] = array(
+                        'title' => $r['main_thema_row']['thema_name']
+                    ,   'view_type' => $r['main_thema_row']['display_type']
+                    ,   'aLists' => $aRowList
+                    );
+
+                }
+            }
+
+            $aTheme[] = $aTheme2;
+
+        }
+
+        $aTheme[] = $aTheme3;
+
+        $this->set_response(
+            result_echo_rest_json(get_status_code("success"), "", true, "", "",
+
+                array(  'aRollingBanner'=> $aRollingBanner // 상단 롤링배너
+                ,   'aTopTheme'     => array ( array( 'title' => '' , 'aLists' => $aTopTheme) )        //상단 상품 리스트
+                ,   'aTheme'        => $aTheme //테마 리스트
+                )
+
+            ), REST_Controller::HTTP_OK
+        ); // OK (200) being the HTTP response code;
+
+
+    }
+
+    /**
+     * 메인
+     * @desc 200423 변경
+
+    public function index_bak_get()
+    {
+
+        $top15_type = $this->get('top15_type',true);
+
+        $this->load->model('product_model');
+        $this->load->model('exhibition_model');
+
+        $aRollingBanner = $this->exhibition_model->get_exhibition_product_list();
+
+        $notin = array();
+
+        $fix_cnt = 15;
+
+        if($top15_type == 1 || $top15_type == ''){ // top30_top 상품은 최대 15개
+
+            //강제 노출
+            $aInput = array();
+            $aInput['where']['md_div']      =  '1';
+            $aInput['where']['sale_state']  =  'Y';
+            $aInput['where']['stock_state'] =  'Y';
+            $aInput['orderby']              = ' pmd_order ASC ';
+            $addProductList = $this->product_model->get_product_list($aInput) ;
+
+            if(empty($addProductList) == false){
+                foreach ($addProductList as $r) {
+                    $notin[] = $r['p_num'];
+                }
+            }
+
+            $e_limit    = $fix_cnt - count($addProductList);
+            $aInput     = array('not_pnum'  => $notin);
+
+            $aTop10Lists = $this->product_model->get_main_product($aInput, 0 , $e_limit);
+            $aTopTheme  = array_merge($addProductList,$aTop10Lists);
+
+            foreach ($aTopTheme as $r)  $notin[] = $r['p_num'];
+
+        }else if($top15_type == 2){ //최근 본상품 + 마진높은 상품
+
+            $addProductList = get_recently_product('',true);
+            if(empty($addProductList) == false){
+                foreach ($addProductList as $r) {
+                    $notin[] = $r['p_num'];
+                }
+            }
+
+            $e_limit    = $fix_cnt - count($addProductList);
+
+            $aTop10Lists  = array();
+
+            if($e_limit > 0){
+
+                $aInput = array();
+                $aInput['where']['sale_state']  =  'Y';
+                $aInput['where']['stock_state'] =  'Y';
+                $aInput['where']['not_pnum']    =  $notin;
+                $aInput['orderby']              = ' p_margin_price DESC ';
+                $aTop10Lists = $this->product_model->get_product_list($aInput , 0 , $e_limit) ;
+
+            }
+
+            $aTopTheme  = array_merge($addProductList,$aTop10Lists);
+
+            foreach ($aTopTheme as $r)  $notin[] = $r['p_num'];
+
+        }else if($top15_type == 3){ //최근 2주간 잘판린 상품
+
+            $aInput = array();
+            $aInput['where']['sale_state']  =  'Y';
+            $aInput['where']['stock_state'] =  'Y';
+            $aInput['orderby']              = ' p_order_count_week+p_order_count_last_week DESC ';
+            $aTopTheme = $this->product_model->get_product_list($aInput , 0 , $fix_cnt) ;
+
+            foreach ($aTopTheme as $r)  $notin[] = $r['p_num'];
+
+        }
+
+        { // top30_bottom 상품은 최대 15개
+
+            //정책에 의한 노출
+            $aInput = array('not_pnum'  => $notin);
+            $aTopTheme2 = $this->product_model->get_main_product($aInput,0,$fix_cnt);
+            foreach ($aTopTheme2 as $r)  $notin[] = $r['p_num'];
+
+            if( count($aTopTheme2) < $fix_cnt ) { //모자르는 경우 채워넣기
+
+                $addCnt =  (int)$fix_cnt - count($aTopTheme2);
+
+                $aInput = array(
+                    'main_best' => 'Y'
+                ,   'where'     => array('not_pnum'  => $notin)
+                );
+
+                $aAddTopTheme2 = $this->product_model->get_product_list($aInput, 0 , $addCnt);
+
+                foreach ($aAddTopTheme2 as $r)  $notin[] = $r['p_num'];
+
+                $aTopTheme2 = array_merge($aTopTheme2,$aAddTopTheme2);
+
+            }
+
+        }
+
         { // 테마 - 편하고 이쁜 밴딩팬츠 맛집~
 
             //강제 노출
@@ -491,7 +722,7 @@ class Main extends REST_Controller
         ); // OK (200) being the HTTP response code;
 
     }//end of index()
-
+     */
 
     public function best_get(){
 

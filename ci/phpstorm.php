@@ -92,6 +92,7 @@ die('This file is used for development purposes only.');
  * @property mypage_model       $mypage_model
  * @property cron_model         $cron_model
  * @property popup_model        $popup_model
+ * @property main_thema_model   $main_thema_model
  */
 class CI_Controller {
 

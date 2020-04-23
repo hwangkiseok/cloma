@@ -448,4 +448,59 @@ class Product_model extends W_Model {
         return $aResult;
 
     }
+
+    public function get_main_thema($arrayParams){
+
+        $sql        = "SELECT 
+                            seq
+                       ,    thema_name
+                       ,    display_type 
+                       FROM main_thema_tb 
+                       WHERE 1
+                       AND activate_flag = 'Y'
+                       AND ( view_type = 'B' OR ( view_type = 'A' AND start_date <= DATE_FORMAT(NOW(),'%Y%m%d') AND end_date >= DATE_FORMAT(NOW(),'%Y%m%d') ) )
+                       ORDER BY sort_num ASC ; 
+        ";
+        $oResult        = $this->db->query($sql);
+        $main_thema_list = $oResult->result_array();
+
+        $aResult = array();
+
+        foreach ($main_thema_list as $row) {
+
+            $where_query = '';
+            if(empty($arrayParams['not_in']) == false){
+                if( is_array($arrayParams['not_in']) == true ) {
+                    $where_query .= " AND sop.p_num NOT IN (" . implode(",", $arrayParams['not_in']) . ") ";
+                } else {
+                    $where_query .= " AND sop.p_num != '" . $this->db->escape_str($arrayParams['not_in']) . "' ";
+                }
+            }
+
+            $sql        = " SELECT * 
+                            FROM main_thema_product_tb sop
+                            INNER JOIN product_tb pt ON pt.p_num = sop.p_num 
+                            WHERE sop.parent_seq = '{$row['seq']}' 
+                            {$where_query}
+                            ORDER BY sop.sort_num ASC ;
+            ";
+
+            $oResult                    = $this->db->query($sql);
+            $main_thema_product_lists   = $oResult->result_array();
+
+            $aResult[] = array(
+                'main_thema_row'             => $row
+            ,   'main_thema_product_lists'   => $main_thema_product_lists
+            );
+
+            foreach ($main_thema_product_lists as $r) {
+                $arrayParams['not_in'][] = $r['p_num'];
+            }
+
+        }
+
+        return array('list' => $aResult , 'not_in' => $arrayParams['not_in']);
+
+    }
+
 }//end of class Product_model

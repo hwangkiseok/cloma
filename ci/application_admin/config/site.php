@@ -78,6 +78,10 @@ $config['qna_file_path'] = HOMEPATH . $config['qna_file_head'];
 $config['special_offer_file_path'] = DOCROOT . $config['upload_path_web'] . "/special_offer";
 $config['special_offer_file_path_web'] = $config['upload_path_web'] . "/special_offer";
 
+/*메인테마 이미지 경로*/
+$config['main_thema_file_path'] = DOCROOT . $config['upload_path_web'] . "/main_thema";
+$config['main_thema_file_path_web'] = $config['upload_path_web'] . "/main_thema";
+
 $config['smarteditor_file_path'] = DOCROOT . $config['upload_path_web'] . "/smarteditor";
 $config['smarteditor_file_path_web'] = $config['upload_path_web'] . "/smarteditor";
 

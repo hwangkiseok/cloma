@@ -171,6 +171,7 @@
                                 <ul class="nav nav-second-level collapse">
                                     <li><a href="/product/list">상품목록</a></li>
                                     <li><a href="/product_md/list">상품MD관리</a></li>
+                                    <li><a href="/main_thema/lists">메인테마관리</a></li>
                                     <li><a href="/category_md/list">카테고리MD관리</a></li>
                                     <li><a href="/special_offer/lists">기획전관리</a></li>
 <!--                                    <li><a href="/restock/lists">재입고푸시관리</a></li>-->
