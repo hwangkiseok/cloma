@@ -9,6 +9,8 @@
 
 </script>
 
+
+
 <div class="box product_detail no-before">
     <div class="box-in product_info">
 
@@ -78,6 +80,9 @@
                 }
             }
             ?>
+            <div class="more">
+                <button> + 상품설명 더보기</button>
+            </div>
         </div>
 
         <div class="cont_area product_deli" style="display: none">

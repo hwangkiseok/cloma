@@ -11,7 +11,21 @@
                 }
             }
             ?>
+            <div class="more">
+                <button> + 상품설명 더보기</button>
+            </div>
         </div>
 
     </div>
 </div>
+
+<script type="text/javascript">
+    $(function(){
+        //상품설명 더보기
+        $('.product_cont .more button').on('click' ,function(e){
+            e.preventDefault();
+            $('.product_cont').css('height' , 'auto');
+            $('.product_cont .more').hide();
+        });
+    })
+</script>

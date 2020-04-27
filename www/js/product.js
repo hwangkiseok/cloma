@@ -48,6 +48,14 @@ function cart_complete_pop(){
 
 $(function(){
 
+    //상품설명 더보기
+    $('.product_cont .more button').on('click' ,function(e){
+        e.preventDefault();
+        $('.product_cont').css('height' , '100%');
+        $('.product_cont .more').hide();
+    });
+
+
     /* header fix */
     $(window).scroll( setProductNav );
     setProductNav();

@@ -45,6 +45,15 @@ class Board_help_model extends W_Model {
             $where_query .= "and " . $query_array['where']['kfd'] . " like '%" . $this->db->escape_str($query_array['where']['kwd']) . "%' ";
         }
 
+        //앱에서 검색 :: 전체검색
+        if( isset($query_array['where']['app_search_text']) && !empty($query_array['where']['app_search_text']) ) {
+            $where_query .= "and ( 
+                    bh_subject like '%" . $this->db->escape_str($query_array['where']['app_search_text']) . "%' 
+                OR  bh_content like '%" . $this->db->escape_str($query_array['where']['app_search_text']) . "%' 
+            )
+            ";
+        }
+
         //order by 절
         if( isset($query_array['orderby']) && !empty($query_array['orderby']) ) {
             $order_query = "order by " . $query_array['orderby'] . " ";

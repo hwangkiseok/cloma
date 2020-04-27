@@ -32,11 +32,11 @@ class Board extends REST_Controller
     {
 
         $req                    = array();
-        $req['page']            = trim($this->input->post_get('page', true));
-        $req['list_per_page']   = trim($this->input->post_get('list_per_page', true));
+        $req['page']            = $this->get('page');
+        $req['list_per_page']   = $this->get('list_per_page');
 
         if( empty($req['page']) ) $req['page'] = 1;
-        if( empty($req['list_per_page']) ) $req['list_per_page'] = 5;
+        if( empty($req['list_per_page']) ) $req['list_per_page'] = 999;
 
         $this->load->model('board_help_model');
 
@@ -56,9 +56,16 @@ class Board extends REST_Controller
             "ajax"          => true
         ));
 
-        $aNoticeList = $this->board_help_model->get_board_help_list($query_data, $page_result['start'], $page_result['limit']);
+        $aTmpNoticeList = $this->board_help_model->get_board_help_list($query_data, $page_result['start'], $page_result['limit']);
 
-        if(empty($aFaqList) == true){
+        $aNoticeList = array();
+        foreach ($aTmpNoticeList as $k => $r) {
+            $aNoticeList[$k]['bh_subject']         = $r['bh_subject'];
+            $aNoticeList[$k]['bh_content']         = $r['bh_content'];
+            $aNoticeList[$k]['bh_regdatetime']     =  view_date_format($r['bh_regdatetime'],4);
+        }
+
+        if(empty($aNoticeList) == true){
 
             $this->set_response(
                 result_echo_rest_json(get_status_code("error"), lang('site_error_empty_data'), true, "", "", "" ), REST_Controller::HTTP_OK
@@ -69,8 +76,8 @@ class Board extends REST_Controller
             $this->set_response(
                 result_echo_rest_json(get_status_code("success"), "", true, "", "",
                     array(
-                        'aNoticeList'   => $aNoticeList
-                    ,   'req'           => $req
+                        'aList'   => $aNoticeList
+                    ,   'req'     => $req
                     )
                 ), REST_Controller::HTTP_OK
             ); // OK (200) being the HTTP response code;
@@ -86,11 +93,14 @@ class Board extends REST_Controller
     {
 
         $req                    = array();
-        $req['page']            = trim($this->input->post_get('page', true));
-        $req['list_per_page']   = trim($this->input->post_get('list_per_page', true));
+        $req['page']            = $this->get('page');
+        $req['list_per_page']   = $this->get('list_per_page');
+
+        $req['app_search_text'] = $this->get('search_text');
+        $req['ctgr']            = $this->get('ctgr');
 
         if( empty($req['page']) ) $req['page'] = 1;
-        if( empty($req['list_per_page']) ) $req['list_per_page'] = 5;
+        if( empty($req['list_per_page']) ) $req['list_per_page'] = 999;
 
         $this->load->model('board_help_model');
 
@@ -98,6 +108,9 @@ class Board extends REST_Controller
         $query_data['where'] = $req;
         $query_data['where']['div'] = 2;
         $query_data['where']['usestate'] = 'Y';
+        if(empty($req['ctgr']) == false) $query_data['where']['cate'] = $req['ctgr'];
+        if(empty($req['app_search_text']) == false) $query_data['where']['app_search_text'] = $req['app_search_text'];
+
 
         //전체갯수
         $list_count = $this->board_help_model->get_board_help_list($query_data, "", "", true);
@@ -110,7 +123,14 @@ class Board extends REST_Controller
             "ajax"          => true
         ));
 
-        $aFaqList = $this->board_help_model->get_board_help_list($query_data, $page_result['start'], $page_result['limit']);
+        $aTmpFaqList = $this->board_help_model->get_board_help_list($query_data, $page_result['start'], $page_result['limit']);
+        $aFaqList = array();
+        foreach ($aTmpFaqList as $k => $r) {
+            $aFaqList[$k]['bh_subject']         = $r['bh_subject'];
+            $aFaqList[$k]['bh_content']         = $r['bh_content'];
+            $aFaqList[$k]['bh_regdatetime']     =  view_date_format($r['bh_regdatetime'],4);
+            $aFaqList[$k]['bh_category_str']    = $this->config->item($r['bh_category'],'faq_category');
+        }
 
         if(empty($aFaqList) == true){
 
@@ -123,8 +143,8 @@ class Board extends REST_Controller
             $this->set_response(
                 result_echo_rest_json(get_status_code("success"), "", true, "", "",
                     array(
-                        'aFaqList' => $aFaqList
-                    ,   'req'      => $req
+                        'aList' => $aFaqList
+                    ,   'req'   => $req
                     )
                 ), REST_Controller::HTTP_OK
             ); // OK (200) being the HTTP response code;
