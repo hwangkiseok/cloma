@@ -441,9 +441,9 @@ class Main extends REST_Controller
                 $aRowList = self::clearProductField($r['main_thema_product_lists'], array());
 
                 $aTheme[] = array(
-                    'title' => $r['main_thema_row']['thema_name']
+                    'title'     => $r['main_thema_row']['thema_name']
                 ,   'view_type' => $r['main_thema_row']['display_type']
-                ,   'aLists' => $aRowList
+                ,   'aLists'    => $aRowList
                 );
 
             }
@@ -456,9 +456,9 @@ class Main extends REST_Controller
                     $aRowList = self::clearProductField($r['main_thema_product_lists'], array());
 
                     $aTheme[] = array(
-                        'title' => $r['main_thema_row']['thema_name']
+                        'title'     => $r['main_thema_row']['thema_name']
                     ,   'view_type' => $r['main_thema_row']['display_type']
-                    ,   'aLists' => $aRowList
+                    ,   'aLists'    => $aRowList
                     );
 
                 }

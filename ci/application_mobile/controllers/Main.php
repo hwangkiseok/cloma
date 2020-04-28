@@ -47,7 +47,6 @@ class Main extends M_Controller
     public function index()
     {
 
-
         $this->load->model('product_model');
 
         {//rolling banner
@@ -160,40 +159,13 @@ class Main extends M_Controller
 
         }
 
-        { // 테마 - 편하고 이쁜 밴딩팬츠 맛집~
+        { // 메인 페이지 테마
 
-            //강제 노출
-            $aInput = array();
-            $aInput['where']['md_div']      =  '3';
-            $aInput['where']['sale_state']  =  'Y';
-            $aInput['where']['stock_state'] =  'Y';
-            $aInput['where']['not_pnum']    =  $notin;
-            $aInput['orderby']              = ' pmd_order ASC ';
-            $aTmpTheme2_1 = $this->product_model->get_product_list($aInput, 0 , 8) ;
-
-            foreach ($aTmpTheme2_1 as $r) {
-                $notin[] = $r['p_num'];
-            }
+            $aMainThemaResult   = $this->product_model->get_main_thema(array('not_in' => $notin));
+            $notin              = $aMainThemaResult['not_in'];
+            $aMainThemaList     = $aMainThemaResult['list'];
 
         }
-
-        { // 테마 - 코디걱정 없는 상하의세트!
-
-            //강제 노출
-            $aInput = array();
-            $aInput['where']['md_div']      =  '4';
-            $aInput['where']['sale_state']  =  'Y';
-            $aInput['where']['stock_state'] =  'Y';
-            $aInput['where']['not_pnum']    =  $notin;
-            $aInput['orderby']              = ' pmd_order ASC ';
-            $aTmpTheme2_2 = $this->product_model->get_product_list($aInput, 0 , 8) ;
-
-            foreach ($aTmpTheme2_2 as $r) {
-                $notin[] = $r['p_num'];
-            }
-
-        }
-
 
         { // 테마 - 카테고리 별 신상품 ( 카테고리별 20개 씩 )
 
@@ -228,23 +200,6 @@ class Main extends M_Controller
         if(empty($aTmpTheme3) == false) $aTmpTheme3 = self::clearProductField($aTmpTheme3 , array('campaign' => 'thema_new_ctgr'));
         else $aTmpTheme3 = array();
 
-        if(empty($aTmpTheme2_1) == false) $aTmpTheme2_1 = self::clearProductField($aTmpTheme2_1 , array('campaign' => ''));
-        else $aTmpTheme2_1 = array();
-        if(empty($aTmpTheme2_2) == false) $aTmpTheme2_2 = self::clearProductField($aTmpTheme2_2 , array('campaign' => ''));
-        else $aTmpTheme2_2 = array();
-
-        $aTheme2_1 = array(
-            'title' => '편하고 이쁜 밴딩팬츠 맛집~'
-        ,   'view_type' => 'B'
-        ,   'aLists' => $aTmpTheme2_1
-        );
-
-        $aTheme2_2 = array(
-            'title' => '코디걱정 없는 상하의세트!'
-        ,   'view_type' => 'B'
-        ,   'aLists' => $aTmpTheme2_2
-        );
-
         $aTheme2 = array(
             'title' => ''
         ,   'view_type' => 'A'
@@ -257,8 +212,52 @@ class Main extends M_Controller
         ,   'aLists' => $aTmpTheme3
         );
 
+
+        $aTheme = array();
+
+        if(count($aMainThemaList) > 1){
+
+            foreach ($aMainThemaList as $k => $r) {
+
+                if($k == 1) $aTheme[] = $aTheme2;
+
+                $aRowList = self::clearProductField($r['main_thema_product_lists'], array());
+
+                $aTheme[] = array(
+                    'title'     => $r['main_thema_row']['thema_name']
+                ,   'view_type' => $r['main_thema_row']['display_type']
+                ,   'aLists'    => $aRowList
+                );
+
+            }
+
+        }else {
+
+            if(count($aMainThemaList) == 1){
+                foreach ($aMainThemaList as $k => $r) {
+
+                    $aRowList = self::clearProductField($r['main_thema_product_lists'], array());
+
+                    $aTheme[] = array(
+                        'title'     => $r['main_thema_row']['thema_name']
+                    ,   'view_type' => $r['main_thema_row']['display_type']
+                    ,   'aLists'    => $aRowList
+                    );
+
+                }
+            }
+
+            $aTheme[] = $aTheme2;
+
+        }
+
+        $aTheme[] = $aTheme3;
+
+
+
+
         $this->load->view('/main/main_btm_thema', array(
-            'aTheme' => array ( $aTheme2_1, $aTheme2 , $aTheme2_2 ,  $aTheme3 ) //테마 리스트
+            'aTheme' => $aTheme //테마 리스트
         ) );
 
     }
