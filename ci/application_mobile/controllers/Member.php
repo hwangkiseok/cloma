@@ -1148,15 +1148,4 @@ Array
 
     }
 
-    //채널 추가/차단 콜백
-    //ssl설치 후 가능
-    public function callback_change_channel(){
-
-        foreach ($_REQUEST as $k => $v) {
-            log_message('A',$k.' ====> '.json_encode($v,JSON_UNESCAPED_UNICODE));
-        }
-
-    }
-
-
 }//end of class Member

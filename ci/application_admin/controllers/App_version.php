@@ -154,7 +154,8 @@ class App_version extends A_Controller {
             "av_version_code" => array("field" => "av_version_code", "label" => "버전코드", "rules" => "required|max_length[10]|".$this->default_set_rules),
             "av_offer_type" => array("field" => "av_offer_type", "label" => "제공방식", "rules" => "required|in_list[".get_config_item_keys_string("app_version_offer_type")."]|".$this->default_set_rules),
             "av_os_type" => array("field" => "av_os_type", "label" => "OS타입", "rules" => "required|in_list[".get_config_item_keys_string("app_version_os_type")."]|".$this->default_set_rules),
-            "av_download_url" => array("field" => "av_download_url", "label" => "설치URL", "rules" => "required|".$this->default_set_rules)
+            "av_download_url" => array("field" => "av_download_url", "label" => "설치URL", "rules" => "required|".$this->default_set_rules),
+            "av_content" => array("field" => "av_content", "label" => "작업내역", "rules" => $this->default_set_rules)
         );
 
         $this->form_validation->set_rules($set_rules_array);
@@ -168,6 +169,8 @@ class App_version extends A_Controller {
             $av_offer_type = $this->input->post('av_offer_type', true);
             $av_os_type = $this->input->post('av_os_type', true);
             $av_download_url = $this->input->post('av_download_url', true);
+            $av_content = $this->input->post('av_content', true);
+
 
             if( empty($form_error_array) ) {
                 $query_data = array();
@@ -176,6 +179,7 @@ class App_version extends A_Controller {
                 $query_data['av_offer_type'] = $av_offer_type;
                 $query_data['av_os_type'] = $av_os_type;
                 $query_data['av_download_url'] = $av_download_url;
+                $query_data['av_content'] = $av_content;
 
                 if( $this->app_version_model->insert_app_version($query_data) ) {
                     result_echo_json(get_status_code('success'), lang('site_insert_success'), true, 'alert');
@@ -240,7 +244,8 @@ class App_version extends A_Controller {
             "av_version_code" => array("field" => "av_version_code", "label" => "버전코드", "rules" => "required|max_length[10]|".$this->default_set_rules),
             "av_offer_type" => array("field" => "av_offer_type", "label" => "제공방식", "rules" => "required|in_list[".get_config_item_keys_string("app_version_offer_type")."]|".$this->default_set_rules),
             "av_os_type" => array("field" => "av_os_type", "label" => "OS타입", "rules" => "required|in_list[".get_config_item_keys_string("app_version_os_type")."]|".$this->default_set_rules),
-            "av_download_url" => array("field" => "av_download_url", "label" => "설치URL", "rules" => "required|".$this->default_set_rules)
+            "av_download_url" => array("field" => "av_download_url", "label" => "설치URL", "rules" => "required|".$this->default_set_rules),
+            "av_content" => array("field" => "av_content", "label" => "작업내역", "rules" => $this->default_set_rules)
         );
 
         $this->form_validation->set_rules($set_rules_array);
@@ -255,6 +260,7 @@ class App_version extends A_Controller {
             $av_offer_type = $this->input->post('av_offer_type', true);
             $av_os_type = $this->input->post('av_os_type', true);
             $av_download_url = $this->input->post('av_download_url', true);
+            $av_content = $this->input->post('av_content', true);
 
             if( empty($form_error_array) ) {
                 $query_data = array();
@@ -263,6 +269,7 @@ class App_version extends A_Controller {
                 $query_data['av_offer_type'] = $av_offer_type;
                 $query_data['av_os_type'] = $av_os_type;
                 $query_data['av_download_url'] = $av_download_url;
+                $query_data['av_content'] = $av_content;
 
                 if( $this->app_version_model->update_app_version($av_num, $query_data) ) {
                     result_echo_json(get_status_code('success'), lang('site_update_success'), true, 'alert');

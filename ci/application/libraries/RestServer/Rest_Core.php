@@ -48,7 +48,7 @@ class Rest_Core  {
             ,   'm_key' => $m_key
             );
 
-            $member_row = $this->CI->member_model->get_member_row($aInput);
+            $member_row = $this->CI->member_model->get_member_row_app($aInput);
             if (empty($member_row) == false) {
                 set_login_session($member_row);
                 $this->aMemberInfo = $member_row;

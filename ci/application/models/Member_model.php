@@ -8,6 +8,27 @@ class Member_model extends W_Model {
         parent::__construct();
     }//end of __construct()
 
+
+    public function get_member_row_app($arrayParams){
+
+        if(empty($arrayParams['m_num']) == true || empty($arrayParams['m_key']) == true) return false;
+
+        $addQueryString = "";
+        $addQueryString .= " AND m_num = '{$arrayParams['m_num']}' ";
+        $addQueryString .= " AND m_key = '{$arrayParams['m_key']}' ";
+
+        $sql = "SELECT 
+                * 
+                FROM member_tb
+                WHERE 1
+                {$addQueryString}
+        ";
+
+        $oResult = $this->db->query($sql);
+        $aResult = $oResult->row_array();
+        return $aResult;
+
+    }
     /**
      * 회원 조회
      * @param array $query_data (m_num | m_key | hp)
@@ -17,14 +38,13 @@ class Member_model extends W_Model {
 
         $addQueryString = "";
 
-
-        //m_num=10, m_key=
         if(empty($arrayParams['m_num']) == false) $addQueryString .= " AND m_num = '{$arrayParams['m_num']}' ";
         if(empty($arrayParams['m_key']) == false) $addQueryString .= " AND m_key = '{$arrayParams['m_key']}' ";
         if(empty($arrayParams['hp']) == false) $addQueryString .= " AND ( m_authno = '{$arrayParams['hp']}' OR m_order_phone = '{$arrayParams['p_code']}' ) ";
         if(empty($arrayParams['m_sns_site']) == false) $addQueryString .= " AND m_sns_site = '{$arrayParams['m_sns_site']}' ";
         if(empty($arrayParams['m_sns_id']) == false) $addQueryString .= " AND m_sns_id = '{$arrayParams['m_sns_id']}' ";
         if(empty($arrayParams['m_nickname']) == false) $addQueryString .= " AND m_nickname = '{$arrayParams['m_nickname']}' ";
+        if(empty($arrayParams['m_state']) == false) $addQueryString .= " AND m_state = '{$arrayParams['m_state']}' ";
 
         if(empty($addQueryString) == true ) return false;
 
@@ -34,6 +54,7 @@ class Member_model extends W_Model {
                 WHERE 1
                 {$addQueryString}
         ";
+
         $oResult = $this->db->query($sql);
         $aResult = $oResult->row_array();
         return $aResult;
@@ -271,6 +292,30 @@ class Member_model extends W_Model {
         $row = $query->row();
 
         return $row;
+    }
+
+    public function withdraw_member($m_num , $draw_data = array()){
+
+        if( empty($m_num) ) {
+            return false;
+        }
+
+        if( $this->publicInsert('member_withdraw_log_tb',$draw_data) == true ){ //로그 기록 성공
+
+            $sql = "DELETE FROM member_ext_tb WHERE m_num = '{$m_num}';  ";
+            $this->db->query($sql);
+
+            $sql = "DELETE FROM member_tb WHERE m_num = '{$m_num}';  ";
+            $bRet = $this->db->query($sql);
+
+            return array('success' => $bRet , 'msg' => '');
+
+        } else {
+
+            return array('success' => false , 'msg' => '');
+
+        }
+
     }
 
 }//end of class Member_model

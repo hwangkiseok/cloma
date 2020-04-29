@@ -182,6 +182,8 @@ class Mypage extends M_Controller
 
             $aRet = $this->member_model->withdraw_member($aMemberInfo['m_num'] , $aDrawData);
 
+            if($aMemberInfo['m_sns_site'] == 1) unlink_kakao($aMemberInfo['m_sns_id']);
+
             if($aRet['success'] == true){
                 session_destroy();
                 echo json_encode_no_slashes(array('msg' => "" , 'success' => true ));

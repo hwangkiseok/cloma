@@ -50,6 +50,16 @@
                                 </div>
                             </div>
                         </div>
+
+                        <div class="form-group form-group-sm">
+                            <label class="col-sm-2 control-label">작업내역</label>
+                            <div class="col-sm-10">
+                                <div id="field_av_content">
+                                    <textarea class="form-control" rows="8" name="av_content"><?php echo $app_version_row->av_content; ?></textarea>
+                                </div>
+                            </div>
+                        </div>
+
                     </form>
                 </div>
             </div>

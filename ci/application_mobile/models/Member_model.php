@@ -85,10 +85,12 @@ class Member_model extends M_Model {
             $m_num = $this->db->insert_id();
             $member_row = $this->get_member_row(array('m_num' => $m_num));
 
-            $profile_ext['m_num']       = $m_num;
-            $profile_ext['reg_date']    = current_date();
+            if($query_data['m_sns_site'] == '1' && empty($profile_ext) == false){
+                $profile_ext['m_num']       = $m_num;
+                $profile_ext['reg_date']    = current_datetime();
 
-            $this->db->insert('member_ext_tb', $profile_ext);
+                $this->db->insert('member_ext_tb', $profile_ext);
+            }
 
             total_stat("join_total");
 
@@ -172,6 +174,9 @@ class Member_model extends M_Model {
         }
 
         if( $this->publicInsert('member_withdraw_log_tb',$draw_data) == true ){ //로그 기록 성공
+
+            $sql = "DELETE FROM member_ext_tb WHERE m_num = '{$m_num}';  ";
+            $this->db->query($sql);
 
             $sql = "DELETE FROM member_tb WHERE m_num = '{$m_num}';  ";
             $bRet = $this->db->query($sql);

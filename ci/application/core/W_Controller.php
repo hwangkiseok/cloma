@@ -15,12 +15,16 @@ class W_Controller extends CI_Controller {
     function __construct() {
         parent::__construct();
 
-        //CLI 요청일때 세션 라이브러리 사용안함
-        if( !$this->input->is_cli_request() ) {
-            header('P3P: CP="NOI CURa ADMa DEVa TAIa OUR DELa BUS IND PHY ONL UNI COM NAV INT DEM PRE"');
-            session_start();
-        }
+        $headers = apache_request_headers();
+        if( strpos($headers['Authorization'], $this->config->item('kakao_app_key')['admin']) === false ) {
+        //카카오 api 중 req시 text를 담아 넘기는 경우 header 에러발생
+            if( !$this->input->is_cli_request() ) {
+                //CLI 요청일때 세션 라이브러리 사용안함
+                header('P3P: CP="NOI CURa ADMa DEVa TAIa OUR DELa BUS IND PHY ONL UNI COM NAV INT DEM PRE"');
+                session_start();
+            }
 
+        }
         if( !$_SESSION['my_session_id'] ) {
             $_SESSION['my_session_id'] = create_session_id();
         }

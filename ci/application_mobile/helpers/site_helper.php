@@ -4735,3 +4735,26 @@ function getSnsformOrderCancel($arrayParams){
 //    return $delivery_row['data'];
 
 }
+
+/**
+ * @date 20200429
+ * @modify 황기석
+ * @desc 카카오 연결끊기 api
+ */
+function unlink_kakao($sns_id){
+
+    $CI =& get_instance();
+
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_HTTPHEADER, array("Authorization : KakaoAK ".$CI->config->item('kakao_app_key')['admin']));
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_URL, "https://kapi.kakao.com/v1/user/unlink");
+    curl_setopt($ch, CURLOPT_POSTFIELDS, "target_id_type=user_id&target_id={$sns_id}");
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+    $output = curl_exec($ch);
+    $resp = json_decode($output, true);
+    curl_close($ch);
+
+    return $resp;
+
+}

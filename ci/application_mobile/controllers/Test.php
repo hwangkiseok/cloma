@@ -83,6 +83,23 @@ class Test extends M_Controller
 //
 //    }
 
+    public function img_repl(){
+
+        $sql = "SELECT * FROM product_tb WHERE p_detail LIKE '%http://ai.esmplus.com%'";
+        $oResult = $this->db->query($sql);
+        $aResult = $oResult->result_array();
+
+        foreach ($aResult as $k => $r) {
+//            $p_detail = str_replace('http://ai.esmplus.com','https://ai.esmplus.com',$r['p_detail']);
+//            $sql = "UPDATE product_tb SET p_detail = '{$p_detail}' WHERE p_num = '{$r['p_num']}'; ";
+//            $bRet = $this->db->query($sql);
+//
+//            zsView("{$r['p_num']} ==> ". $bRet);
+//            //$sql = "UPDATE";
+
+        }
+
+    }
     public function set_org_price(){
 
         exit;
