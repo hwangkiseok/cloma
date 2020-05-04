@@ -25,11 +25,10 @@ class Api extends W_Controller
      */
     public function changeChannel(){
         
-        $callback_data = file_get_contents( 'php://input' );
+        $callback_data = file_get_contents('php://input');
 
         if(empty($callback_data) == false){
 
-            $aInput = json_decode($callback_data,true);
 //------------ sample
 //event ==> blocked
 //id ==> 1274364410
@@ -39,9 +38,60 @@ class Api extends W_Controller
 //timestamp ==> 1588138497000
 //updated_at ==> 2020-04-29T05:34:57Z
 
-            if($aInput['event' == 'blocked']){ //차단
+            $aInput               = json_decode($callback_data,true);
+            $aInput['updated_at'] = date('YmdHis',strtotime($aInput['updated_at']));
 
-            }else{ //추가
+            $sql            = "SELECT * FROM kakao_friend_tb WHERE sns_id = '{$aInput['id']}';";
+            $oResult        = $this->db->query($sql);
+            $aFriendInfo    = $oResult->row_array();
+
+            $this->load->model('member_model');
+            if(empty($aFriendInfo) == true){ //insert
+
+                $query_data = array(
+                        'sns_id'        => $aInput['id']
+                    ,   'friend_flag'   => $aInput['event']
+                    ,   'update_date'   => date('YmdHis')
+                    ,   'reg_date'      => date('YmdHis')
+                );
+
+                {//addInfo
+
+                    $kakao_user_info = get_kakao_user_info($aInput['id']);
+
+                    $query_data['nickname'] = $kakao_user_info['kakao_account']['profile']['nickname'];
+                    if( $kakao_user_info['kakao_account']['has_email'] == true ) $query_data['email'] = $kakao_user_info['kakao_account']['email'];
+                    if( $kakao_user_info['kakao_account']['has_age_range'] == true ) $query_data['age_range'] = $kakao_user_info['kakao_account']['age_range'];
+                    if( $kakao_user_info['kakao_account']['has_birthday'] == true ) $query_data['birthday'] = $kakao_user_info['kakao_account']['birthday'];
+                    if( $kakao_user_info['kakao_account']['has_gender'] == true ) $query_data['gender'] = $kakao_user_info['kakao_account']['gender'];
+                    if( $kakao_user_info['kakao_account']['has_phone_number'] == true ) {
+
+                        $phone_arr = explode(' ', $kakao_user_info['kakao_account']['phone_number']);
+
+                        if ($phone_arr[0] == '+82') {
+                            $phone_number = '0' . $phone_arr[1];
+                            $phone_num_arr = explode('-', $phone_number);
+                            $phone_number = $phone_num_arr[0] . $phone_num_arr[1] . $phone_num_arr[2];
+                        } else {
+                            $phone_number = $phone_arr[1];
+                        }
+
+                        $query_data['phone_number'] = $phone_number;
+
+                    }
+
+                }
+
+                $this->member_model->publicInsert('kakao_friend_tb',$query_data);
+
+            }else{
+
+                $query_data = array(
+                    'friend_flag'   => $aInput['event']
+                ,   'update_date'   => date('YmdHis')
+                );
+
+                $this->member_model->publicUpdate('kakao_friend_tb',$query_data,array('seq' , $aFriendInfo['seq']));
 
             }
 
