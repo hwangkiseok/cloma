@@ -35,7 +35,6 @@ var initSample = ( function() {
 			editorElement.setAttribute( 'contenteditable', 'true' );
 			CKEDITOR.inline( 'editor' );
 
-			// TODO we can consider displaying some info box that
 			// without wysiwygarea the classic editor may not work.
 		}
 	};

@@ -156,6 +156,7 @@
                                 <a href="/member/list"><i class="fa fa-user fa-fw"></i> 회원관리<span class="fa arrow"></span></a>
                                 <ul class="nav nav-second-level collapse">
                                     <li><a href="/member/list">회원관리</a></li>
+                                    <li><a href="/kakao_member/list">카카오채널 회원관리</a></li>
                                 </ul>
                             </li>
 

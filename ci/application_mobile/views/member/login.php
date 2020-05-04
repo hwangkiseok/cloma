@@ -50,7 +50,7 @@
                     <!--<li><button class="k" onclick="go_link('<?=$KAKAO_REQUEST_URL?>');"><i></i>카카오로 시작하기</button></li>-->
                     <li><button class="k" onclick="go_kakao_sync()"><i></i>카카오로 시작하기</button></li>
                     <li><button class="g" onclick="go_link('<?=$GOOGLE_REQUEST_URL?>');"><i></i>구글로 시작하기</button></li>
-                    <!--<li><button class="l" onclick="go_link('/member/loc_login');"><i></i>옷쟁이들로 시작하기</button></li>-->
+                    <li><button class="l" onclick="go_link('/member/loc_login');"><i></i>옷쟁이들로 시작하기</button></li>
                 </ul>
             </div>
         </div>

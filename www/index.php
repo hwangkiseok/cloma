@@ -108,7 +108,6 @@ else if( $_SERVER['SERVER_ADDR'] == "192.168.1.12" ) {
 
 //define('ENVIRONMENT', isset($_SERVER['CI_ENV']) ? $_SERVER['CI_ENV'] : 'development');
 
-//TODO:운영
 //if( APP_TYPE == "admin" ) {
 if( APP_TYPE == "admin" ) {
 //    define('ENVIRONMENT', 'development');
@@ -118,7 +117,6 @@ else {
     define('ENVIRONMENT', 'production');
 }
 
-//TODO:개발
 //define('ENVIRONMENT', 'development');
 
 /*

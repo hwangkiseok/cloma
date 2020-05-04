@@ -95,9 +95,6 @@ class Member extends M_Controller {
         ,   'KAKAO_CALLBACK_URL'    => urlencode($this->config->item('default_http').'/member/kakao_callback')
         ,   'KAKAO_REQUEST_URL'     => "https://kauth.kakao.com/oauth/authorize?client_id=".KAKAO_CLIENT_KEY."&redirect_uri=".urlencode($this->config->item('default_http').'/member/kakao_callback')."&response_type=code&state=".urlencode($this->input->get('r_url'))
 
-        ,   'KAKAO_CALLBACK_URL_TEST'    => urlencode($this->config->item('default_http').'/member/kakaoSyncCall')
-        ,   'KAKAO_REQUEST_URL_TEST'     => "https://kauth.kakao.com/oauth/authorize?client_id=".KAKAO_CLIENT_KEY."&redirect_uri=".urlencode($this->config->item('default_http').'/member/kakaoSyncCall')."&response_type=code&state=".urlencode($this->input->get('r_url'))
-
         ,   'GOOGLE_CLIENT_KEY'   => GOOGLE_CLIENT_KEY
         ,   'GOOGLE_SECRET_KEY'   => GOOGLE_SECRET_KEY
 
@@ -337,9 +334,10 @@ Array
         if(empty($data['return_url']) == false) $this->aInput['rUrl'] = $data['return_url'];
 
         /*회원 정보*/
-        $headers[0]   = "Authorization: {$data['token_type']} {$data['access_token']}";
-        $headers[]    = "Content-type: application/x-www-form-urlencoded;charset=utf-8'";
-        $is_post      = false;
+        $headers    = array();
+        $headers[]  = "Authorization: {$data['token_type']} {$data['access_token']}";
+        $headers[]  = "Content-type: application/x-www-form-urlencoded;charset=utf-8'";
+        $is_post    = false;
 
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, KAKAO_GET_USERINFO_URL_V2);

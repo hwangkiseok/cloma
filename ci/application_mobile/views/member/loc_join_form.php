@@ -58,8 +58,14 @@
     <table>
 
         <tr>
-            <th>생일</th>
+            <th>생년월일</th>
             <td>
+                <select name="birth_y">
+                    <option value="">- 선택 -</option>
+                    <? for ($i = 2010; $i >= 1960 ; $i--) {?>
+                        <option value="<?=sprintf("%04d", $i);?>"><?=sprintf("%04d", $i);?></option>
+                    <? } ?>
+                </select> 년&nbsp;&nbsp;
                 <select name="birth_m">
                     <option value="">- 선택 -</option>
                     <? for ($i = 1; $i < 13 ; $i++) {?>

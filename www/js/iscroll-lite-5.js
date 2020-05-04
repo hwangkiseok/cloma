@@ -459,7 +459,7 @@ IScroll.prototype = {
 			return;
 		}
 
-		if ( this.options.preventDefault ) {	// increases performance on Android? TODO: check!
+		if ( this.options.preventDefault ) {	// increases performance on Android?
 			e.preventDefault();
 		}
 

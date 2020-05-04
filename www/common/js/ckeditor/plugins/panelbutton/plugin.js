@@ -25,7 +25,6 @@ CKEDITOR.plugins.add( 'panelbutton', {
 		/**
 		 * @class
 		 * @extends CKEDITOR.ui.button
-		 * @todo class and methods
 		 */
 		CKEDITOR.ui.panelButton = CKEDITOR.tools.createClass( {
 			base: CKEDITOR.ui.button,

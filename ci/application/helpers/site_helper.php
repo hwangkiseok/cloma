@@ -4713,7 +4713,7 @@ function unlink_kakao($sns_id){
     $CI =& get_instance();
 
     $ch = curl_init();
-    curl_setopt($ch, CURLOPT_HTTPHEADER, array("Authorization : KakaoAK ".$CI->config->item('kakao_app_key')['admin']));
+    curl_setopt($ch, CURLOPT_HTTPHEADER, array("Authorization: KakaoAK ".$CI->config->item('kakao_app_key')['admin']));
     curl_setopt($ch, CURLOPT_POST, true);
     curl_setopt($ch, CURLOPT_URL, "https://kapi.kakao.com/v1/user/unlink");
     curl_setopt($ch, CURLOPT_POSTFIELDS, "target_id_type=user_id&target_id={$sns_id}");
@@ -4723,5 +4723,35 @@ function unlink_kakao($sns_id){
     curl_close($ch);
 
     return $resp;
+
+}
+
+function get_kakao_user_info($sns_id){
+
+    $CI =& get_instance();
+
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, "https://kapi.kakao.com/v2/user/me");
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, 'target_id_type=user_id&target_id='.$sns_id);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+            "Authorization: KakaoAK ".$CI->config->item('kakao_app_key')['admin']
+        ,   "Content-type: application/x-www-form-urlencoded;charset=utf-8" )
+    );
+
+    $output = curl_exec($ch);
+    $status_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    $resp = json_decode($output, true);
+    curl_close($ch);
+
+    zsView($resp);
+
+    if( $status_code != '200' ){ //실패
+        return false;
+    }else{ //성공
+        return $resp;
+    }
+
 
 }

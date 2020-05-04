@@ -439,6 +439,9 @@ class Auth extends M_Controller {
             ,   "login_id"  => array("field" => "login_id", "label" => "로그인아이디", "rules" => "required|" . $this->default_set_rules)
             ,   "login_pw"  => array("field" => "login_pw", "label" => "로그인비밀번호", "rules" => "required|" . $this->default_set_rules)
             ,   "cell_tel"  => array("field" => "cell_tel", "label" => "연락처", "rules" => "required|numeric|" . $this->default_set_rules)
+            ,   "birth_y"    => array("field" => "birth_y", "label" => "생년", "rules" => $this->default_set_rules)
+            ,   "birth_m"    => array("field" => "birth_y", "label" => "생년", "rules" => $this->default_set_rules)
+            ,   "birth_d"    => array("field" => "birth_y", "label" => "생년", "rules" => $this->default_set_rules)
             ,   "gender"    => array("field" => "gender", "label" => "성별", "rules" => $this->default_set_rules)
             ,   "age_range" => array("field" => "age_range", "label" => "나이대", "rules" => $this->default_set_rules)
         );

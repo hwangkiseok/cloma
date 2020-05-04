@@ -228,7 +228,7 @@ EOF;
         // Subtract the proxy header size unless the cURL bug prior to 7.30.0
         // is present which prevented the proxy header size from being taken into
         // account.
-        // @TODO look into this
+        // look into this
         // if (!$this->needsQuirk()) {
         //   $headerSize -= strlen($established_header);
         // }

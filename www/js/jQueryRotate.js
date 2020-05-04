@@ -92,7 +92,6 @@
             this._Loader();
           } else {
             var self=this;
-            // TODO: Remove jQuery dependency
             jQuery(this._img).bind("load", function(){ self._Loader(); });
           }
         }
@@ -147,13 +146,13 @@
           if (this._parameters.bind){
             var oldEvents = this._parameters.bind;
             for (var a in oldEvents) if (oldEvents.hasOwnProperty(a))
-              // TODO: Remove jQuery dependency
+              //  Remove jQuery dependency
               jQuery(this._eventObj).unbind(a,oldEvents[a]);
           }
 
         this._parameters.bind = events;
         for (var a in events) if (events.hasOwnProperty(a))
-          // TODO: Remove jQuery dependency
+          //  Remove jQuery dependency
           jQuery(this._eventObj).bind(a,events[a]);
         }
       },
@@ -249,7 +248,7 @@
         var actualTime = +new Date;
         var checkEnd = actualTime - this._animateStartTime > this._parameters.duration;
 
-        // TODO: Bug for animatedGif for static rotation ? (to test)
+        //  Bug for animatedGif for static rotation ? (to test)
         if (checkEnd && !this._parameters.animatedGif)
         {
           clearTimeout(this._timer);
