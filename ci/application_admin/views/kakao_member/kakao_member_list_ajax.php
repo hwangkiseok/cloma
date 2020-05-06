@@ -8,7 +8,7 @@
             <th>연결상태</th>
             <th>닉네임</th>
             <th>연령대</th>
-            <th>생일</th>
+            <th>생년월일</th>
             <th>이메일</th>
             <th>성별</th>
             <th>연락처</th>
@@ -31,7 +31,7 @@
                 <td><?=$row['friend_flag']=='added'?'채널추가':'차단'?></td>
                 <td><?=$row['nickname']?></td>
                 <td><?=$row['age_range']?></td>
-                <td><?=substr($row['birthday'],0,2)?>월 <?=substr($row['birthday'],2,2)?>일</td>
+                <td><?=$row['birthyear']?>.<?=substr($row['birthday'],0,2)?>.<?=substr($row['birthday'],2,2)?></td>
                 <td><?=$row['email']?></td>
                 <td><?=$row['gender']=='male'?'남성':'여성'?></td>
                 <td><?=ph_slice($row['phone_number'])?></td>

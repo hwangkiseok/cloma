@@ -96,7 +96,6 @@ class Auth extends M_Controller {
             $query_data['m_gender']    = $gender;
             $query_data['m_authno']    = $phone_number;
 
-
 //            log_message('A',$req['address']);
 
 
@@ -147,6 +146,7 @@ class Auth extends M_Controller {
             ,   'profile_image_thumb'   => $req['profile_image']
             ,   'email'                 => $req['email']
             ,   'gender'                => $req['gender']
+            ,   'birthyear'             => $req['birthyear']
             ,   'birthday'              => $req['birthday']
             ,   'age_range'             => $req['age_range']
             ,   'phone_number_country'  => $phone_number_country
@@ -250,10 +250,12 @@ class Auth extends M_Controller {
             ,'reg_id'           => $this->input->post_get('fcm_id')              //필수 x
 
             ,'age_range'        => $this->input->post_get('age_range')           //필수 x
+            ,'birthyear'        => $this->input->post_get('birthyear')           //필수 x
             ,'birthday'         => $this->input->post_get('birthday')            //필수 x
             ,'gender'           => $this->input->post_get('gender')              //필수 x
             ,'phone_number'     => $this->input->post_get('phone_number')        //필수 x
             ,'address'          => $this->input->post_get('address')             //필수 x
+            ,'ci'               => $this->input->post_get('ci')             //필수 x
 
         );
 

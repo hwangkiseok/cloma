@@ -32,7 +32,7 @@
     #container .join-wrap .btn_area button.k {background-color: #fae000;color: #411b1b}
     #container .join-wrap .btn_area button.g {background-color: #ececec;color: #000000}
     #container .join-wrap .btn_area button.l {background-color: #67146f;color: #FFFFFF}
-    #container .join-wrap .btn_area button i { position: absolute; left: 20px; top:5px; display: inline-block; width: 35px; height: 35px; background: url('http://www.cloma.co.kr/images/mb_icon_set_img.png') no-repeat; background-size: 130px!important; }
+    #container .join-wrap .btn_area button i { position: absolute; left: 20px; top:5px; display: inline-block; width: 35px; height: 35px; background: url('https://www.cloma.co.kr/images/mb_icon_set_img.png') no-repeat; background-size: 130px!important; }
     #container .join-wrap .btn_area button.n i {background-position: -63px -1px}
     #container .join-wrap .btn_area button.k i {background-position: -93px -1px}
     #container .join-wrap .btn_area button.g i {background-position: -63px -31px}
@@ -50,7 +50,7 @@
                     <!--<li><button class="k" onclick="go_link('<?=$KAKAO_REQUEST_URL?>');"><i></i>카카오로 시작하기</button></li>-->
                     <li><button class="k" onclick="go_kakao_sync()"><i></i>카카오로 시작하기</button></li>
                     <li><button class="g" onclick="go_link('<?=$GOOGLE_REQUEST_URL?>');"><i></i>구글로 시작하기</button></li>
-                    <li><button class="l" onclick="go_link('/member/loc_login');"><i></i>옷쟁이들로 시작하기</button></li>
+                    <!--<li><button class="l" onclick="go_link('/member/loc_login');"><i></i>옷쟁이들로 시작하기</button></li>-->
                 </ul>
             </div>
         </div>

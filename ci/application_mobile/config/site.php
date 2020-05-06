@@ -32,7 +32,7 @@ if( !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' ) {
 $config['site_domain_cookie'] = ".cloma.co.kr";
 $config['site_img_http'] = "https://img." . SITE_DOMAIN;  //이미지(https)
 //$config['site_img_http'] = IMG_HTTP;
-$config['site_thumb'] = $config['site_domain_http'] . "/images/og_image.png?t=" . time();
+$config['site_thumb'] = $config['default_http'] . "/images/og_image.png?t=" . time();
 
 //결과 코드
 $config['status_code']['success']   = "000";

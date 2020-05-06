@@ -123,6 +123,8 @@ class Member extends M_Controller {
 
     public function member_loc_login(){
 
+        show_404();
+
         if(member_login_status()){ //앱인경우
             redirect('/');exit;
         }
@@ -135,6 +137,8 @@ class Member extends M_Controller {
     }
 
     public function member_loc_join_form(){
+
+        show_404();
 
         if(member_login_status()){ //앱인경우
             redirect('/');exit;

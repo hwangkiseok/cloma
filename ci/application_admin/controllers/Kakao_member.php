@@ -143,15 +143,21 @@ class Kakao_member extends A_Controller {
     /**
      * @date 20200504
      * @modify 황기석
-     * @desc 엑셀다운로드
+     * @desc 엑셀다운로드 csv
      */
     public function kakao_member_list_excel() {
+
+        error_reporting(-1);
+        ini_set('memory_limit', '-1');
+        ini_set('display_errors', 1);
+        error_reporting(E_ALL & ~E_NOTICE);
 
         set_time_limit(0);
         ini_set("memory_limit", "1024M");
 
-        $file_name = iconv("utf-8", "euc-kr", "채널_회원리스트_" . current_datetime() . ".xls");
-        header("Content-Type: application/vnd.ms-excel");
+
+        $file_name = iconv("utf-8", "euc-kr", "채널_회원리스트_" . current_datetime() . ".csv");
+        header("Content-Type:application/octet-stream");
         header("Content-Disposition: attachment; filename=$file_name");
         header("Content-Description: PHP5 Generated Data");
         header("Cache-Control: max-age=0");
@@ -165,47 +171,83 @@ class Kakao_member extends A_Controller {
 
         $kakao_member_list  = $this->kakao_member_model->get_kakao_member_list($query_array);
 
-        //lib
-        require_once(APPPATH . "third_party/PHPExcel.php");
+        if(1){
 
-        $phpExcel = new PHPExcel();
-        $phpExcel->getProperties()->setTitle("채널_회원리스트_".date('YmdHi'));
+            $data_line = "전화번호,이름,생년월일,지역,성별,연령" ;
 
-        $excelRow = $phpExcel->setActiveSheetIndex(0);
-        $excelRow->setCellValue("A1", "No.");
-        $excelRow->setCellValue("B1", "ID");
-        $excelRow->setCellValue("C1", "연결상태");
-        $excelRow->setCellValue("D1", "닉네임");
-        $excelRow->setCellValue("E1", "연령대");
-        $excelRow->setCellValue("F1", "생일");
-        $excelRow->setCellValue("G1", "이메일");
-        $excelRow->setCellValue("H1", "성별");
-        $excelRow->setCellValue("I1", "연락처");
+            foreach ($kakao_member_list as $key => $row) {
 
-        $list_number = count($kakao_member_list);
+                if(empty($row['phone_number']) == false) $phone_number = ph_slice($row['phone_number']) ;
+                else $phone_number = '';
 
-        $i = 2;
-        foreach ($kakao_member_list as $key => $row) {
+                if(empty($row['gender']) == false)  $gender = $row['gender'] == 'male' ? '남' : '여';
+                else $gender = '';
+
+                if(empty($row['birthyear']) == false) $age = date('Y') - $row['birthyear'] + 1;
+                else if(empty($row['age_range']) == false) $age = explode('~',$row['age_range'])[0];
+                else $age = '';
+
+                if(     empty($row['birthyear']) == false
+                    &&  empty($row['birthday']) == false
+                ) $birth = $row['birthyear'].'.'.(int)substr($row['birthday'],0,2).'.'.(int)substr($row['birthday'],2,2);
+                else $birth = '';
+
+                $data_line     .= "\n{$phone_number},{$row['nickname']},{$birth},,{$gender},{$age}";
+
+            }
+
+            echo iconv('utf-8','euc-kr',$data_line);
+
+        }else{ //한글깨짐 처리가 안됨
+
+            //lib
+            require_once(APPPATH . "third_party/PHPExcel.php");
+
+            $phpExcel = new PHPExcel();
+            $phpExcel->getProperties()->setTitle("채널_회원리스트_".date('YmdHi'));
+
 
             $excelRow = $phpExcel->setActiveSheetIndex(0);
-            $excelRow->setCellValue("A$i", $list_number);
-            $excelRow->setCellValue("B$i", $row['sns_id']);
-            $excelRow->setCellValue("C$i", $row['friend_flag']=='added'?'채널추가':'차단');
-            $excelRow->setCellValue("D$i", $row['nickname']);
-            $excelRow->setCellValue("E$i", $row['age_range']);
-            $excelRow->setCellValue("F$i", substr($row['birthday'],0,2).'월 '.substr($row['birthday'],2,2).'일');
-            $excelRow->setCellValue("G$i", $row['email']);
-            $excelRow->setCellValue("H$i", $row['gender']=='male'?'남성':'여성');
-            $excelRow->setCellValue("I$i", ph_slice($row['phone_number']));
-
-            $i++;
-            $list_number--;
-        }//end of foreach()
+    //        $excelRow->setCellValue("A1", "No.");
+    //        $excelRow->setCellValue("A1", "앱유저아이디");
+            $excelRow->setCellValue("A1",  iconv('utf-8','euc-kr','가나다') );
+            $excelRow->setCellValue("B1", "이름");
+            $excelRow->setCellValue("C1", "생년월일");
+            $excelRow->setCellValue("D1", "지역");
+            $excelRow->setCellValue("E1", "성별");
+            $excelRow->setCellValue("F1", "연령");
 
 
-        $objWriter = PHPExcel_IOFactory::createWriter($phpExcel, 'Excel5');
-        $objWriter->save('php://output');
 
+            $list_number = count($kakao_member_list);
+
+            $i = 2;
+            foreach ($kakao_member_list as $key => $row) {
+
+
+
+                $excelRow = $phpExcel->setActiveSheetIndex(0);
+    //            $excelRow->setCellValue("A$i", $row['sns_id']);
+                $excelRow->setCellValue("A$i", ph_slice($row['phone_number']));
+                $excelRow->setCellValue("B$i", $row['nickname']);
+                $excelRow->setCellValue("C$i", '');
+                $excelRow->setCellValue("D$i", '');
+                $excelRow->setCellValue("E$i", $row['gender']=='male'?'남':'여');
+                $excelRow->setCellValue("F$i", explode('~',$row['age_range'])[0]);
+    //            $excelRow->setCellValue("I$i", ph_slice($row['phone_number']));
+
+
+    //$excelRow->setCellValue("F$i", substr($row['birthday'],0,2).'월 '.substr($row['birthday'],2,2).'일');
+    //$excelRow->setCellValue("D$i", $row['friend_flag']=='added'?'채널추가':'차단');
+                $i++;
+                $list_number--;
+            }//end of foreach()
+            $objWriter = PHPExcel_IOFactory::createWriter($phpExcel, 'CSV');
+            $objWriter->setUseBOM(true);
+            ob_end_clean();
+
+            $objWriter->save('php://output');
+        }
         exit;
 
     }
