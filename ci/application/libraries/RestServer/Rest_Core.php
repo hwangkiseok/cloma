@@ -23,6 +23,10 @@ class Rest_Core  {
         $this->CI->load->model('member_model');
         $this->doc_version = '1';
 
+        if( !$_SESSION['my_session_id'] ) {
+            $_SESSION['my_session_id'] = create_session_id();
+        }
+
         $this->login();
 
     }

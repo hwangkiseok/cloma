@@ -4745,13 +4745,10 @@ function get_kakao_user_info($sns_id){
     $resp = json_decode($output, true);
     curl_close($ch);
 
-    zsView($resp);
-
     if( $status_code != '200' ){ //실패
         return false;
     }else{ //성공
         return $resp;
     }
-
 
 }

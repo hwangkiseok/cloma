@@ -62,7 +62,7 @@ class Api extends W_Controller
                     $query_data['nickname'] = $kakao_user_info['kakao_account']['profile']['nickname'];
                     if( $kakao_user_info['kakao_account']['has_email'] == true ) $query_data['email'] = $kakao_user_info['kakao_account']['email'];
                     if( $kakao_user_info['kakao_account']['has_age_range'] == true ) $query_data['age_range'] = $kakao_user_info['kakao_account']['age_range'];
-                    if( $kakao_user_info['kakao_account']['has_birthday'] == true ) $query_data['birthyear'] = $kakao_user_info['kakao_account']['birthyear'];
+                    if( $kakao_user_info['kakao_account']['has_birthyear'] == true ) $query_data['birthyear'] = $kakao_user_info['kakao_account']['birthyear'];
                     if( $kakao_user_info['kakao_account']['has_birthday'] == true ) $query_data['birthday'] = $kakao_user_info['kakao_account']['birthday'];
                     if( $kakao_user_info['kakao_account']['has_gender'] == true ) $query_data['gender'] = $kakao_user_info['kakao_account']['gender'];
                     if( $kakao_user_info['kakao_account']['has_phone_number'] == true ) {

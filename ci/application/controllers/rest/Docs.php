@@ -629,6 +629,72 @@ class Docs extends W_Controller {
 
 
     /**
+     * 회원가입/로그인 > post
+     *
+     * @ApiDescription(section="Member", description="로그인/가입")
+     *
+     * @ApiMethod(type="post")
+     * @ApiRoute(name="/rest/member/login/")
+     * @ApiParams(name="id", type="integer", nullable=false, description="id")
+     * @ApiParams(name="nickname", type="String", nullable=false, description="nickname")
+     * @ApiParams(name="profile_image", type="String", nullable=true, description="profile_image")
+     * @ApiParams(name="sns_site", type="String", nullable=true, description="sns_site")
+     * @ApiParams(name="fcm_id", type="String", nullable=true, description="fcm_id")
+     * @ApiParams(name="device_info", type="String", nullable=true, description="device_info")
+     * @ApiParams(name="os_version", type="String", nullable=true, description="os_version")
+     * @ApiParams(name="app_version", type="String", nullable=true, description="app_version")
+     * @ApiParams(name="app_version_code", type="String", nullable=true, description="app_version_code")
+     * @ApiParams(name="sns_site", type="String", nullable=true, description="sns_site")
+     * @ApiParams(name="adid", type="String", nullable=true, description="adid")
+     * @ApiParams(name="fcm_id", type="String", nullable=true, description="fcm_id")
+     * @ApiParams(name="age_range", type="String", nullable=true, description="age_range::카카오한정")
+     * @ApiParams(name="birthyear", type="integer", nullable=true, description="birthyear::카카오한정")
+     * @ApiParams(name="birthday", type="integer", nullable=true, description="birthday::카카오한정")
+     * @ApiParams(name="gender", type="String", nullable=true, description="gender::카카오한정")
+     * @ApiParams(name="phone_number", type="String", nullable=true, description="phone_number::카카오한정")
+     * @ApiParams(name="address", type="String", nullable=true, description="address::카카오한정")
+     * @ApiParams(name="ci", type="String", nullable=true, description="ci::카카오한정")
+     *
+     * @ApiReturn(type="object", sample="
+    {
+    'status': '000',
+    'message': '',
+    'message_type': '',
+    'error_data': '',
+    'data': { },
+    'goUrl': '',
+    'exit': true
+    }
+     * ")
+     */
+    public function member_login_post() {}
+
+    /**
+     * 회원정보 승인 > get
+     *
+     * @ApiDescription(section="Member", description="회원정보 승인")
+     *
+     * @ApiMethod(type="get")
+     * @ApiRoute(name="/rest/member/accept_proc/")
+     *
+     * @ApiHeaders(name="m_key", type="String", nullable=true, description="회원키")
+     * @ApiHeaders(name="m_num", type="integer", nullable=true, description="회원번호")
+     *
+     * @ApiReturn(type="object", sample="
+    {
+    'status': '000',
+    'message': '',
+    'message_type': '',
+    'error_data': '',
+    'data': { },
+    'goUrl': '',
+    'exit': true
+    }
+     * ")
+     */
+    public function member_accept_proc_get() {}
+
+    /**
      * 회원정보 > get
      *
      * @ApiDescription(section="Member", description="회원정보")

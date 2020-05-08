@@ -23,6 +23,7 @@ class Member_model extends M_Model {
         if(empty($arrayParams['m_sns_site']) == false) $addQueryString .= " AND m_sns_site = '{$arrayParams['m_sns_site']}' ";
         if(empty($arrayParams['m_sns_id']) == false) $addQueryString .= " AND m_sns_id = '{$arrayParams['m_sns_id']}' ";
         if(empty($arrayParams['m_nickname']) == false) $addQueryString .= " AND m_nickname = '{$arrayParams['m_nickname']}' ";
+        if(empty($arrayParams['m_state']) == false) $addQueryString .= " AND m_state = '{$arrayParams['m_state']}' ";
 
         if(empty($addQueryString) == true ) return false;
 

@@ -40,7 +40,7 @@ class Member_model extends W_Model {
 
         if(empty($arrayParams['m_num']) == false) $addQueryString .= " AND m_num = '{$arrayParams['m_num']}' ";
         if(empty($arrayParams['m_key']) == false) $addQueryString .= " AND m_key = '{$arrayParams['m_key']}' ";
-        if(empty($arrayParams['hp']) == false) $addQueryString .= " AND ( m_authno = '{$arrayParams['hp']}' OR m_order_phone = '{$arrayParams['p_code']}' ) ";
+        if(empty($arrayParams['hp']) == false) $addQueryString .= " AND ( m_authno = '{$arrayParams['hp']}' OR m_order_phone = '{$arrayParams['hp']}' ) ";
         if(empty($arrayParams['m_sns_site']) == false) $addQueryString .= " AND m_sns_site = '{$arrayParams['m_sns_site']}' ";
         if(empty($arrayParams['m_sns_id']) == false) $addQueryString .= " AND m_sns_id = '{$arrayParams['m_sns_id']}' ";
         if(empty($arrayParams['m_nickname']) == false) $addQueryString .= " AND m_nickname = '{$arrayParams['m_nickname']}' ";
@@ -88,11 +88,11 @@ class Member_model extends W_Model {
         }
         else if( $member_row['m_state'] == '3' ) {
             $where_array = array();
-            $where_array['m_num'] = $member_row->m_num;
+            $where_array['m_num'] = $member_row['m_num'];
             $ret = array('code' => get_status_code('success'), 'message' => '', 'data' => $member_row);
         }
         else {
-            $ret = array('code' => get_status_code('error'), 'message' => "회원정보가 없습니다.\n이메일 및 아이디를 확인 후 다시 시도해 주세요.", 'data' => array());
+            $ret = array('code' => get_status_code('error'), 'message' => "회원정보가 없습니다.\n잠시 후 다시 시도해 주세요.", 'data' => array());
         }
 
         return $ret;
@@ -105,7 +105,7 @@ class Member_model extends W_Model {
      * @param array $query_data
      * @return bool
      */
-    public function insert_member($query_data=array()) {
+    public function insert_member($query_data=array() , $profile_ext = array()) {
 
         if(
             !isset($query_data['m_key']) || empty($query_data['m_key']) ||
@@ -137,9 +137,19 @@ class Member_model extends W_Model {
             }
         }
 
+        log_message('A',json_encode($query_data,JSON_UNESCAPED_UNICODE));
+
         if( $this->db->insert('member_tb', $query_data) ) {
-            $m_num = $this->db->insert_id();
+
+            $m_num      = $this->db->insert_id();
             $member_row = $this->get_member_row(array('m_num' => $m_num));
+
+            if($query_data['m_sns_site'] == '1' && empty($profile_ext) == false){
+                $profile_ext['m_num']       = $m_num;
+                $profile_ext['reg_date']    = current_datetime();
+
+                $this->db->insert('member_ext_tb', $profile_ext);
+            }
 
             total_stat("join_total");
 
