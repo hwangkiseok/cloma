@@ -19,8 +19,8 @@ class Apidoc
         session_start();
         Apidoc_Autoloader::register();
         $this->CI = &get_instance();
-        $this->title = "API Docs";
-        $this->logo = "";
+        $this->title = "옷쟁이들 :: API Docs";
+        $this->logo = "<img src='https://www.cloma.co.kr/images/favicon/32_32.png' width='20' />";
     }
 
     /**

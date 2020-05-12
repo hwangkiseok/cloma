@@ -39,12 +39,21 @@
     <footer id="footer">
 
         <div class="copyright">
-            <p>상호 : <?=$this->config->item('company_name_kr')?> / 대표자 : <?=$this->config->item('site_name_ceo')?>  /  개인정보책임자 : <?=$this->config->item('site_name_cpo')?></p>
-            <p><a href="tel:<?=$this->config->item('site_help_tel')?>">전화 : <?=$this->config->item('site_help_tel')?></a> <!-- / 이메일 : <?=$this->config->item('site_help_email')?> --> / 사업자등록번호 : <?=$this->config->item('biz_no')?> </p>
-            <p>통신판매업 신고 : <?=$this->config->item('tongsin')?> <em class="zs_cp" onclick="go_link('http://www.ftc.go.kr/bizCommPop.do?wrkr_no=<?=$this->config->item('biz_no')?>','','Y')">[사업자정보확인]</em></p>
-            <p>주소 : <?=$this->config->item('site_zip_code')?> <?=$this->config->item('site_addr')?></p>
-            <p>Copyright © 2020 <?=$this->config->item('site_name_kr')?> All rights reserved.</p>
+
+            <a class="copyright_toggle zs-cp">(주)인사이트드림 사업자정보 확인<i></i></a>
+
+            <div class="copyright_cont">
+                <p>상호 : <?=$this->config->item('company_name_kr')?> / 대표자 : <?=$this->config->item('site_name_ceo')?>  /  개인정보책임자 : <?=$this->config->item('site_name_cpo')?></p>
+                <p><a href="tel:<?=$this->config->item('site_help_tel')?>">전화 : <?=$this->config->item('site_help_tel')?></a> <!-- / 이메일 : <?=$this->config->item('site_help_email')?> --> / 사업자등록번호 : <?=$this->config->item('biz_no')?> </p>
+                <p>통신판매업 신고 : <?=$this->config->item('tongsin')?> <em class="zs_cp" onclick="go_link('http://www.ftc.go.kr/bizCommPop.do?wrkr_no=<?=$this->config->item('biz_no')?>','','Y')">[사업자정보확인]</em></p>
+                <p>주소 : <?=$this->config->item('site_zip_code')?> <?=$this->config->item('site_addr')?></p>
+                <p>Copyright © 2020 <?=$this->config->item('site_name_kr')?> All rights reserved.</p>
+            </div>
+
         </div>
+
+
+
 
     </footer>
 

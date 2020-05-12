@@ -17,7 +17,7 @@
             <?}?>
             <li>
                 <div class="fl">알림메시지보기</div>
-                <div class="fr" style="text-align: right;position: relative;padding-right: 10px;" onclick="go_link('/push','','','push')">
+                <div class="fr zs_cp" style="text-align: right;position: relative;padding-right: 10px;" onclick="go_link('/push','','','push')">
                     보기 <i></i>
                 </div>
                 <div class="clear"></div>
@@ -29,22 +29,22 @@
         <ul class="etc_info">
             <li>
                 <div class="fl">이용약관</div>
-                <div class="fr viewCommon" data-type="TermOfUs"> 보기<i></i> </div>
+                <div class="fr viewCommon zs_cp" data-type="TermOfUs"> 보기<i></i> </div>
                 <div class="clear"></div>
             </li>
             <li>
                 <div class="fl">개인정보취급방침</div>
-                <div class="fr viewCommon" data-type="Privacy"> 보기<i></i> </div>
+                <div class="fr viewCommon zs_cp" data-type="Privacy"> 보기<i></i> </div>
                 <div class="clear"></div>
             </li>
             <li>
                 <div class="fl">이벤트/쇼핑정보수신동의</div>
-                <div class="fr viewCommon" data-type="UseEventNoti"> 보기<i></i> </div>
+                <div class="fr viewCommon zs_cp" data-type="UseEventNoti"> 보기<i></i> </div>
                 <div class="clear"></div>
             </li>
             <li>
                 <div class="fl">사업자정보확인</div>
-                <div class="fr viewCommon" data-type="bizInfo"> 보기<i></i> </div>
+                <div class="fr viewCommon zs_cp" data-type="bizInfo"> 보기<i></i> </div>
                 <div class="clear"></div>
             </li>
         </ul>

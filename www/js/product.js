@@ -131,6 +131,13 @@ $(function(){
 
     $('.goCart').on('click',function(){
 
+        if(isLogin != 'Y'){
+            if( confirm("로그인 후 이용가능합니다.\n로그인페이지로 이동하시겠습니까?") == true){
+                go_link('/member');
+            }
+            return false;
+        }
+
         if($('.option_sel_result > div.sel_option_row').length > 0) { //구매
 
             if ($('.opt_area').hasClass('on') == true) {
@@ -180,6 +187,13 @@ $(function(){
         initOptionAreaH();
     });
     $('.goBuy').on('click',function(){
+
+        if(isLogin != 'Y'){
+            if( confirm("로그인 후 이용가능합니다.\n로그인페이지로 이동하시겠습니까?") == true){
+                go_link('/member');
+            }
+            return false;
+        }
 
         if($('.option_sel_result > div.sel_option_row').length > 0){ //구매
 

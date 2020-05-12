@@ -328,6 +328,11 @@ $(document).on('keyup','input[name="srh_text"]',function(){
 //document.ready
 $(function () {
 
+    //카피라이트 토글처리
+    $('.copyright_toggle').on('click',function(){
+        $('.copyright .copyright_cont').toggle();
+    });
+
     /*header fix*/
     if($('#header').length > 0 ) {
 

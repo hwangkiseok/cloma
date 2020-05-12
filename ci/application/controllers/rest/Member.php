@@ -24,7 +24,6 @@ class Member extends REST_Controller
 
         //model
         $this->load->helper('rest');
-
         $this->core = new Rest_Core(); // Core Class (MyController 코어클래스와 같은역할)
 
     }
@@ -97,7 +96,6 @@ class Member extends REST_Controller
         }
 
     }
-
 
     /**
      * @date 200508
@@ -450,7 +448,6 @@ class Member extends REST_Controller
             ); // OK (200) being the HTTP response code;
 
         }
-
 
     }
 

@@ -385,7 +385,7 @@ select.form-control {padding: 10px 9px;}
 .setting p.tit {font-size: 16px;padding: 0 10px;border-bottom: 1px solid #777;line-height: 55px;vertical-align: middle;margin: 0 -8px;font-weight: bold}
 .setting ul li{padding: 0 10px;border-bottom: 1px solid #ddd;line-height: 55px;vertical-align: middle}
 .setting ul li > div{width: 50%;}
-.setting ul li > div.viewCommon{text-align: right;position: relative; padding-right: 10px;}
+.setting ul li > div.viewCommon{text-align: right;position: relative; padding-right: 10px;width: 40px;}
   .setting .push_set i
 , .setting .etc_info i { position: absolute;top: 19px;right: -8px; display: inline-block;background-size: 60px!important;  width: 15px;height: 15px; background: url(https://www.cloma.co.kr/images/mb_icon_set_img.png) no-repeat -30px -128px ;}
 .setting .push_set .chk-ani { position: relative; }
@@ -669,8 +669,11 @@ select.form-control {padding: 10px 9px;}
 .modal.trans .modal-content .modal-body .close { background:none; }
 .modal.trans .modal-content .modal-footer { display:none; }
 
-#footer .copyright {padding: 30px 12px 50px 12px;}
-#footer .copyright p{font-size: 13px;text-align: center;}
+#footer .copyright {padding: 30px 12px 50px 12px;text-align: center;}
+#footer .copyright .copyright_toggle {position: relative;margin: 0 auto;font-size:12px }
+#footer .copyright .copyright_toggle i{position: absolute;top: 1px;right: -18px; background: url(https://www.cloma.co.kr/images/mb_icon_set_img.png) no-repeat -3px -134px; width: 15px; height: 15px; display: inline-block; background-size: 70px!important; }
+#footer .copyright .copyright_cont{margin-top: 10px;display: none;}
+#footer .copyright .copyright_cont p{font-size: 11px;text-align: center;}
 
 /* 결제완료페이지 */
 .order_complete_wrap h2 {padding-left: 5px;font-size: 18px;}
@@ -680,7 +683,6 @@ select.form-control {padding: 10px 9px;}
 .order_complete_wrap .vacc_info {margin-bottom: 20px;}
 .order_complete_wrap .vacc_info .highlight{background: #f1f1f1;margin: 10px -8px 0 -8px;padding: 0 15px; line-height: 60px;height: 60px;}
 .order_complete_wrap .delivery_info {margin-bottom: 20px;}
-
 
 /**/
 .mypage-top  { text-align: center; }
