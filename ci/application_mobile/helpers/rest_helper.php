@@ -1,43 +1,6 @@
 <?php
 
 /**
- * @date 180326
- * @modify 옵션별데이터 ajax
- */
-function _option_graph($p_order_code){
-
-    $CI =& get_instance();
-    $CI->load->model("product_model");
-
-    $aInput = array('p_code' => $p_order_code);
-
-    if (empty($aInput['p_code'])) {
-        $rResult = array('success' => false , 'msg' => '필수입력정보 없음[pcode]' , 'data' => '');
-        echo json_encode_no_slashes($rResult);
-        exit;
-    }
-
-    /**
-     * @date 190208
-     * @modify 황기석
-     * @desc curl 처리 -> db conn으로 변경
-     */
-    if (0) {
-        $url = $CI->config->item("order_site_http") . "/api/zsApi.php";
-        $param = "mode=getBuyOptionInfo&p_code={$aInput['p_code']}";
-        $jResult = http_post_request($url, $param);
-        $aResult =json_decode($jResult,true);
-
-        $rResult = array('success' => true , 'msg' => '' , 'data' => $aResult);
-    } else {
-        $aResult = $CI->product_model->getBuyOptionInfo($aInput);
-        $rResult = array('success' => true , 'msg' => '' , 'data' => $aResult);
-    }
-
-    return $rResult;
-}
-
-/**
  * 추천상품 목록 배열 리턴
  * @param $prod_list
  * @param $wish_list_result

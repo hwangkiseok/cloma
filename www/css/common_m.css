@@ -669,7 +669,7 @@ select.form-control {padding: 10px 9px;}
 .modal.trans .modal-content .modal-body .close { background:none; }
 .modal.trans .modal-content .modal-footer { display:none; }
 
-#footer .copyright {padding: 30px 12px 50px 12px;text-align: center;}
+#footer .copyright {padding: 15px 12px 30px 12px;text-align: center;}
 #footer .copyright .copyright_toggle {position: relative;margin: 0 auto;font-size:12px }
 #footer .copyright .copyright_toggle i{position: absolute;top: 1px;right: -18px; background: url(https://www.cloma.co.kr/images/mb_icon_set_img.png) no-repeat -3px -134px; width: 15px; height: 15px; display: inline-block; background-size: 70px!important; }
 #footer .copyright .copyright_cont{margin-top: 10px;display: none;}

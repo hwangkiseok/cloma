@@ -361,7 +361,7 @@ $tot_price = 0;
 
             var option_count = parseInt($(parent_obj).find('input[name="cart_count"]').val())-1;
 
-            if(option_count <= 1){
+            if(option_count < 1){
 
                 return false;
 
@@ -391,7 +391,7 @@ $tot_price = 0;
 
             var option_count = parseInt($(parent_obj).find('input[name="cart_count"]').val())+1;
 
-            if(option_count >= 999) {
+            if(option_count > 999) {
                 return false
             }else {
 

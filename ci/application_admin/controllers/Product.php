@@ -1639,7 +1639,7 @@ class Product extends A_Controller {
         }
 
         //예전댓글갯수
-        $old_comment_count = $this->product_model->get_product_old_comment_list($product_row->p_num, true);
+        $old_comment_count = $this->product_model->get_product_old_comment_list($product_row['p_num'], true);
         if( empty($old_comment_count) ) {
             result_echo_json(get_status_code('error'), lang('site_no_data'), true);
         }
@@ -1677,8 +1677,8 @@ class Product extends A_Controller {
         //}
 
         //댓글 복구
-        if( $this->product_model->product_old_comment_restore($product_row->p_num) ) {
-            $old_commnet_count = $this->product_model->get_product_old_comment_list($product_row->p_num, true);
+        if( $this->product_model->product_old_comment_restore($product_row['p_num']) ) {
+            $old_commnet_count = $this->product_model->get_product_old_comment_list($product_row['p_num'], true);
 
             $data = array();
             $data['old_commnet_count'] = $old_commnet_count;
@@ -1933,9 +1933,9 @@ class Product extends A_Controller {
         }
 
         if($req['type'] == 'B') {
-            $detail_image_array = json_decode($product_row->p_detail_image_b, true);
+            $detail_image_array = json_decode($product_row['p_detail_image_b'], true);
         }else{
-            $detail_image_array = json_decode($product_row->p_detail_image, true);
+            $detail_image_array = json_decode($product_row['p_detail_image'], true);
         }
 
 
@@ -1957,25 +1957,6 @@ class Product extends A_Controller {
         }
 
         $this->product_model->update_product($req['p_num'], $query_data);
-
-        $product_row = $this->product_model->get_product_row($req['p_num']);
-
-        if($req['type'] != 'B'){ // A값인경우
-
-            $aReqInput = array(
-                'p_detail_image'    => $product_row->p_detail_image
-            ,   'p_order_code'      => $product_row->p_order_code
-            ,   'p_rep_image'       => $product_row->p_rep_image
-            ,   'p_today_image'     => $product_row->p_today_image
-            ,   'p_banner_image'    => $product_row->p_banner_image
-            ,   'mode'              => 'setSyncProductDetail_img'
-            );
-
-            $url = $this->config->item("order_site_http") . "/api/zsApi.php";
-            $param = http_build_query($aReqInput);
-            http_post_request($url, $param);
-
-        }
 
         page_request_return(get_status_code('success'), "", true);
     }//end of product_detail_img_order_update()
@@ -2001,9 +1982,9 @@ class Product extends A_Controller {
         }
 
         if($req['type'] == 'B') {
-            $p_rep_image_add_arr = json_decode($product_row->p_rep_image_add, true);
+            $p_rep_image_add_arr = json_decode($product_row['p_rep_image_add'], true);
         }else{
-            $p_rep_image_add_arr = json_decode($product_row->p_rep_image_add, true);
+            $p_rep_image_add_arr = json_decode($product_row['p_rep_image_add'], true);
         }
 
 
@@ -2161,21 +2142,11 @@ class Product extends A_Controller {
                 exit;
             }
 
-            if(     $product_row->p_display_state   == 'N' //진열상태
-                ||  $product_row->p_sale_state      == 'N' //판매상태
-                ||  $product_row->p_stock_state     == 'N' //재고상태
+            if(     $product_row['p_display_state']   == 'N' //진열상태
+                ||  $product_row['p_sale_state']      == 'N' //판매상태
+                ||  $product_row['p_stock_state']     == 'N' //재고상태
             ){
                 $rResult = array('success' => false , 'msg' => '푸시발송은 구매가능한 상품만 가능합니다.[쇼핑앱]'."[상품번호:{$aInput['p_num']}]" );
-                echo json_encode_no_slashes($rResult);
-                exit;
-            }
-
-            $jOrgProductInfo = get_product_info($product_row->p_order_code, $fd="p_stock:p_view");
-            $oOrgProductInfo = json_decode($jOrgProductInfo);
-
-            if(     $oOrgProductInfo->p_stock < 1
-                ||  $oOrgProductInfo->p_view == 'N' ){
-                $rResult = array('success' => false , 'msg' => '푸시발송은 구매가능한 상품만 가능합니다.[09sns]'."[상품번호:{$aInput['p_num']}]" );
                 echo json_encode_no_slashes($rResult);
                 exit;
             }
@@ -2267,21 +2238,11 @@ class Product extends A_Controller {
             exit;
         }
 
-        if(     $product_row->p_display_state   == 'N' //진열상태
-            ||  $product_row->p_sale_state      == 'N' //판매상태
-            ||  $product_row->p_stock_state     == 'N' //재고상태
+        if(     $product_row['p_display_state']   == 'N' //진열상태
+            ||  $product_row['p_sale_state']      == 'N' //판매상태
+            ||  $product_row['p_stock_state']     == 'N' //재고상태
         ){
             $rResult = array('success' => false , 'msg' => '푸시발송은 구매가능한 상품만 가능합니다.[쇼핑앱]' );
-            echo json_encode_no_slashes($rResult);
-            exit;
-        }
-
-        $jOrgProductInfo = get_product_info($product_row->p_order_code, $fd="p_stock:p_view");
-        $oOrgProductInfo = json_decode($jOrgProductInfo);
-
-        if(     $oOrgProductInfo->p_stock < 1
-            ||  $oOrgProductInfo->p_view == 'N' ){
-            $rResult = array('success' => false , 'msg' => '푸시발송은 구매가능한 상품만 가능합니다.[09sns]' );
             echo json_encode_no_slashes($rResult);
             exit;
         }

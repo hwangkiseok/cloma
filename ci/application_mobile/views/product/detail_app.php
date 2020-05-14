@@ -4,8 +4,10 @@
         <div class="cont_area product_cont" style="display: block;text-align: center;">
             <?=$aProductInfo['p_detail']?>
             <? $product_img_arr = json_decode($aProductInfo['p_detail_image'],true);
-            if(count($product_img_arr) > 0){
-            foreach ($product_img_arr as $k => $r) {?>
+            if(count($product_img_arr) > 0){?>
+                <p>&nbsp;</p>
+                <p>&nbsp;</p>
+            <? foreach ($product_img_arr as $k => $r) {?>
                 <img src="<?=$r[0]?>" alt="img_<?=$k?>" />
             <?
                 }

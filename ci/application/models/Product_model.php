@@ -480,7 +480,10 @@ class Product_model extends W_Model {
             $sql        = " SELECT * 
                             FROM main_thema_product_tb sop
                             INNER JOIN product_tb pt ON pt.p_num = sop.p_num 
-                            WHERE sop.parent_seq = '{$row['seq']}' 
+                            WHERE sop.parent_seq = '{$row['seq']}'
+                            AND pt.p_display_state = 'Y'
+                            AND pt.p_sale_state = 'Y'
+                            AND pt.p_stock_state = 'Y'
                             {$where_query}
                             ORDER BY sop.sort_num ASC ;
             ";
