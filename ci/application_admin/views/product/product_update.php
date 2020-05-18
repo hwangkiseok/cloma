@@ -522,22 +522,18 @@
                                         <?php } ?>
                                     </div>
 
-                                    <?
-                                    /*
                                     <div class="input-group mgt10" id="field_p_banner_image" style="width:100%;">
-                                        <span class="input-group-addon" style="width:110px">배너이미지</span>
+                                        <span class="input-group-addon" style="width:110px">세로배너이미지</span>
                                         <input type="file" name="p_banner_image" class="form-control" />
                                     </div>
-                                    <p class="help-block">* 720 x 300</p>
+                                    <!--<p class="help-block">* 720 x 300</p>-->
                                     <div class="mgt5 mgb10 pBannerImage">
                                         <?php if( !empty($product_row['p_banner_image']) ) { ?>
                                             <?php echo create_img_tag($product_row['p_banner_image'], "", '100', '', 'data-type="rep_img"'); ?>
                                             <a href="#none" onclick="delete_product_image('<?php echo $product_row['p_num']; ?>', '4', '');" class="btn btn-danger btn-xs">삭제</a>
                                         <?php } ?>
                                     </div>
-*
-                                     */
-                                    ?>
+
                                     <div class="mgt10" id="field_p_detail_image">
                                         <div class="input-group" style="width:100%;">
                                             <span class="input-group-addon" style="width:110px">상세이미지</span>

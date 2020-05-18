@@ -13,9 +13,11 @@
                 }
             }
             ?>
+            <!--
             <div class="more">
                 <button> + 상품설명 더보기</button>
             </div>
+            -->
         </div>
 
     </div>

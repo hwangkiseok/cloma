@@ -1728,7 +1728,7 @@ class Product extends A_Controller {
         //폼검증 룰 설정
         $set_rules_array = array(
             "p_num" => array("field" => "p_num", "label" => "상품번호", "rules" => "required|is_natural|".$this->default_set_rules),
-            "img_div" => array("field" => "img_div", "label" => "이미지구분", "rules" => "in_list[1,2,3,5]|".$this->default_set_rules),
+            "img_div" => array("field" => "img_div", "label" => "이미지구분", "rules" => "in_list[1,2,3,4,5]|".$this->default_set_rules),
             "img_no" => array("field" => "img_no", "label" => "이미지번호", "rules" => "is_natural|".$this->default_set_rules)
         );
 

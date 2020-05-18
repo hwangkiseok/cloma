@@ -297,7 +297,7 @@ class Product extends M_Controller
 
     public function detail_app(){
 
-        if(is_app() == false) exit;
+        //if(is_app() == false) exit;
 
         $p_num = number_only($this->uri->segment(3));
         if(empty($p_num) == true ) $p_num = $this->input->post_get('p_num',true);
