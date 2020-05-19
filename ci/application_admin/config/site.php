@@ -631,6 +631,7 @@ $config['event_winner_state'][3] = "상품지급완료";
 //외부 접속 허용 아이피
 $config['api_allow_ip'] = array(
     "112.146.73.238" //회사내부
+,   "106.243.140.135"   //마포
 ,   "27.102.214.69" //snsform test
 ,   "27.102.213.35" //snsform service
 ,   "27.102.213.34" //snsform service

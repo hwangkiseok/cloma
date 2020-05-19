@@ -1,5 +1,80 @@
 <?php link_src_html("/plugins/icheck/skins/square/blue.css", "css"); ?>
 <?php link_src_html("/plugins/icheck/icheck.min.js", "js"); ?>
+
+<script>
+
+    $(function(){
+
+        var ctrl_top = $('.ctrl-line').offset().top;
+
+        $(window).scroll(function() {
+
+            var x = parseInt($(this).scrollTop());
+
+            <?if(is_app() == false){?>
+
+            if(ctrl_top <= x && $('.depth3').length < 1){
+
+                $('.all_check').iCheck('destroy');
+
+                var html  = "<div class='depth3 depth3nav'>";
+                    html += "   <div class='box' >";
+                    html += "       <div class='box-in' style='padding-bottom: 0!important;'>";
+                    html += "           <div class='ctrl-line' style='margin-bottom: 0!important;border-left: 1px solid #ddd;border-right: 1px solid #ddd;'>";
+                    html += $('.ctrl-line').html();
+                    html += "           </div>";
+                    html += "       </div>";
+                    html += "   </div>";
+                    html += "</div>";
+
+                    $('.header_fixed').append(html);
+
+                $('.all_check').iCheck({
+                    checkboxClass: 'icheckbox_square-blue'
+                });
+
+            }
+
+            <?}else{?>
+
+            if(ctrl_top <= x ){
+
+                $('.all_check').iCheck('destroy');
+
+                var html  = "<div class='ctrl-line-fixed'>";
+                    html += "   <div class='box' >";
+                    html += "       <div class='box-in'>";
+                    html += "           <div class='ctrl-line'>";
+                    html += $('.ctrl-line').html();
+                    html += "           </div>";
+                    html += "       </div>";
+                    html += "   </div>";
+                    html += "</div>";
+                $('.cart_wrap').prepend(html);
+
+                $('.all_check').iCheck({
+                    checkboxClass: 'icheckbox_square-blue'
+                });
+
+            }else{
+
+                $('.cart_wrap .ctrl-line-fixed').remove();
+            }
+
+            <?}?>
+
+        });
+
+    });
+
+</script>
+
+<style>
+    .ctrl-line-fixed { position: fixed;top: 0;left: 0;width: 100%;z-index: 100;border: 0!important;  }
+    .ctrl-line-fixed .box-in{padding-bottom: 0!important;}
+    .ctrl-line-fixed .box-in .ctrl-line{margin-bottom: 0!important;}
+</style>
+
 <div class="cart_wrap">
 <?
 $tot_price = 0;
@@ -13,6 +88,38 @@ $tot_price = 0;
         $option_info = json_decode($r['option_info'],true);
         $option_tot_price = (int)$option_info['option_price']*(int)$option_info['option_count'];
 
+        $product_option_info = json_decode($r['product_option_info'],true);
+        $option_name_arr = explode(' | ',$option_info['option_name']);
+
+        $depth = 1;
+        $depth1 = $option_name_arr[0];
+        if(empty($option_name_arr[1]) == false) {
+            $depth2 = $option_name_arr[1];
+            $depth = 2;
+        }
+        if(empty($option_name_arr[2]) == false) {
+            $depth3 = $option_name_arr[2];
+            $depth = 3;
+        }
+
+        $is_stock = true;
+        foreach ($product_option_info as $rr) {
+
+            if($depth == 3){
+                if($rr['option_depth1'] == $depth1 && $rr['option_depth2'] == $depth2 && $rr['option_depth3'] == $depth3) if($rr['option_count'] < 1) $is_stock = false;
+            }else if($depth == 2){
+                if($rr['option_depth1'] == $depth1 && $rr['option_depth2'] == $depth2) if($rr['option_count'] < 1) $is_stock = false;
+            }else if($depth == 1){
+                if($rr['option_depth1'] == $depth1) if($rr['option_count'] < 1) $is_stock = false;
+            }
+
+        }
+
+
+
+        $is_sale = false;
+        if($r['p_sale_state'] == 'Y' && $r['p_stock_state'] == 'Y' && $is_stock == true) $is_sale = true;
+
         ?>
 
         <div class="box">
@@ -22,7 +129,7 @@ $tot_price = 0;
                 <?if($k == 0){?>
 
                     <div class="ctrl-line">
-                        <span class="fl" style="margin-left: 7px;"><input type="checkbox" id="all_check" checked />&nbsp;&nbsp;전체선택</span>
+                        <span class="fl" style="margin-left: 7px;"><input type="checkbox" class="all_check" checked />&nbsp;&nbsp;전체선택</span>
                         <span class="fr" style="margin-right: 7px;">
                             <a class="del" href="#none" onclick="chkDel();"><i></i>선택삭제</a>
                             &nbsp;&nbsp;&nbsp;&nbsp;
@@ -33,11 +140,11 @@ $tot_price = 0;
 
                 <?}?>
 
-                <div class="sub_prod_list <?if($r['p_sale_state'] == 'Y' && $r['p_stock_state'] == 'Y'){?>on<?}?>" data-p_name="<?=$r['p_name']?>" data-cart_id="<?=$r['cart_id']?>" data-p_order_code="<?=$r['p_order_code']?>" <? foreach ($option_info as $kk => $vv) {?>data-<?=$kk?>="<?=$vv?>"<?}?> >
+                <div style="position: relative" class="sub_prod_list <?if($is_sale == true){?>on<?}?>" data-p_name="<?=$r['p_name']?>" data-cart_id="<?=$r['cart_id']?>" data-p_order_code="<?=$r['p_order_code']?>" <? foreach ($option_info as $kk => $vv) {?>data-<?=$kk?>="<?=$vv?>"<?}?> >
 
                     <div class="chk fl">
-                        <?if($r['p_sale_state'] == 'Y' && $r['p_stock_state'] == 'Y'){?>
-                            <input type="checkbox" name="num_check" class="num_check" value="<?=$r['cart_id']?>" checked />
+                        <?if($is_sale == true){?>
+                            <input type="checkbox" name="num_check" class="num_check" value="<?=$r['cart_id']?>" checked  />
                         <?}else{?>
                             <input type="checkbox" name="num_check" class="num_check" value="<?=$r['cart_id']?>" disabled />
                         <?}?>
@@ -63,15 +170,21 @@ $tot_price = 0;
                             </li>
                         </ul>
                     </div>
-
                     <div class="clear"></div>
+                    <?if($is_sale == false){?>
+                        <div style="position: absolute ;top: 0;left: 0;width: calc(100% + 16px);height: calc(100% + 16px); background: rgba(0,0,0,0.6);margin: -8px; ">
+                            <span style="font-size: 20px;color: #fff;vertical-align: middle;text-align: center;width: 100%;height: 100%;display: inline-block;padding-top: 13%">해당 상품은 품절되었습니다.</span>
+                        </div>
+                    <?}?>
 
                 </div>
 
             </div>
+
+
         </div>
 
-    <?$tot_price += (int)$option_tot_price;}?>
+    <?if($is_sale == true) $tot_price += (int)$option_tot_price;}?>
 
 <?}else{?>
 
@@ -187,7 +300,7 @@ $tot_price = 0;
         var delivery_amt = 2500;
         var product_amt = 0;
 
-        if( $('input[name="num_check"]:checked').length < 1 ){
+        if( $('input[name="num_check"]:checked').not('[disabled]').length < 1 ){
 
             $('.tot_price .price em').html(0);
             $('.price_detail .detail_tot_price_wrap em').html(0);
@@ -196,7 +309,7 @@ $tot_price = 0;
 
         }else{
 
-            $('input[name="num_check"]:checked').each(function(){
+            $('input[name="num_check"]:checked').not('[disabled]').each(function(){
                 var cart_id = $(this).val();
                 var target_obj = $('.sub_prod_list[data-cart_id="'+cart_id+'"]');
 
@@ -420,26 +533,24 @@ $tot_price = 0;
             checkboxClass: 'icheckbox_square-blue'
         });
 
-        $('input[type="checkbox"]').not('#all_check').on('ifChanged',function(){
+        $('input[type="checkbox"]').not('.all_check').on('ifChanged',function(){
 
             $(this).parent().parent().parent().toggleClass('on');
 
             cart_calc();
 
-            var tot_cart = $('input[type="checkbox"]').not('#all_check').length;
+            var tot_cart = $('input[type="checkbox"]').not('.all_check').length;
             var check_cnt = 0;
-            $('input[type="checkbox"]').not('#all_check').each(function(){
+            $('input[type="checkbox"]').not('.all_check').each(function(){
                 if( $(this).is(':checked') == true ) check_cnt++;
             });
 
-            if(tot_cart == check_cnt) $('#all_check').iCheck('check');
-            else $('#all_check').iCheck('uncheck');
+            if(tot_cart == check_cnt) $('.all_check').iCheck('check');
+            else $('.all_check').iCheck('uncheck');
 
         });
 
-        $('#all_check').on('ifClicked',function(){
-            chkAll();
-        });
+
 
         $('.price_detail_expended').on('click',function(){
 
@@ -455,18 +566,23 @@ $tot_price = 0;
 
     });
 
+    $(document).on('ifClicked','.all_check',function(){
+        chkAll();
+    });
+
+
     function chkAll(){
 
         if( !$('.num_check').length ) {
             return false;
         }
 
-        var checked = $('#all_check').prop('checked');
+        var checked = $('.all_check').prop('checked');
         if( checked ) {
-            $('.num_check').iCheck('uncheck');
+            $('.num_check').not('[disabled]').iCheck('uncheck');
         }
         else {
-            $('.num_check').iCheck('check');
+            $('.num_check').not('[disabled]').iCheck('check');
         }
 
     }

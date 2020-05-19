@@ -79,28 +79,63 @@ class M_Controller extends CI_Controller {
 
     private function app_login(){
 
-        $this->load->model('member_model');
 
-        $headers = apache_request_headers();
+        if(is_app()){
 
-        foreach ($headers as $header => $value) {
-            if ($header == 'm_num') $m_num = $value;
-            if ($header == 'm_key') $m_key = $value;
-        }
+            $headers = apache_request_headers();
 
-        if ($m_num && $m_key) { //네이티브 세션제어
+            foreach ($headers as $header => $value) {
+                if ($header == 'm_num') $m_num = $value;
+                if ($header == 'm_key') $m_key = $value;
+            }
 
-            $aInput = array(
-                'm_num' => $m_num
-            ,   'm_key' => $m_key
-            );
+            $this->load->library('encryption');
 
-            $member_row = $this->member_model->get_member_row($aInput);
+            if ($m_num && $m_key) { //네이티브 세션제어
 
-            if (empty($member_row) == false) {
-                set_login_session($member_row);
-                $this->aMemberInfo = $member_row;
-                $this->isLogin = 'Y';
+                $this->load->model('member_model');
+
+                $aInput = array(
+                    'm_num' => $m_num
+                ,   'm_key' => $m_key
+                );
+
+                $member_row = $this->member_model->get_member_row($aInput);
+
+                if (empty($member_row) == false) {
+                    set_login_session($member_row);
+
+                    //로그인 유지 쿠키
+                    $auto_login_enc =  $this->encryption->encrypt(time() . "|".$member_row['m_sns_site']."|" . $member_row['m_sns_id']);
+                    set_cookie('cookie_sal', $auto_login_enc, get_strtotime_diff("+1 years"));
+
+                    $this->aMemberInfo = $member_row;
+                    $this->isLogin = 'Y';
+                }
+
+            }else{ // 서브페이지에서 세션시간보다 오래 켜져 로그인이 풀리는경우 쿠키데이터로 대체하여 로그인 처리
+
+                log_message('A','----------- test in');
+                $cookie_sal = get_cookie('cookie_sal');
+
+                $sSnsData = $this->encryption->decrypt($cookie_sal);
+                $aSnsData = explode('|',$sSnsData);
+//                $aSnsData[1]; //sns_site
+//                $aSnsData[2]; //sns_id
+
+                log_message('A','----------- test in 2 : '.$sSnsData);
+
+                $member_row = $this->member_model->get_member_row(array('m_sns_site' => $aSnsData[1], 'm_sns_id' => $aSnsData[2]));
+
+                if (empty($member_row) == false) {
+                    log_message('A','----------- test in ok');
+                    set_login_session($member_row);
+                    $this->aMemberInfo = $member_row;
+                    $this->isLogin = 'Y';
+                }else{
+                    log_message('A','----------- test in failed');
+                }
+
             }
 
         }

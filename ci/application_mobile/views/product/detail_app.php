@@ -2,6 +2,11 @@
     <div class="box-in product_info">
 
         <div class="cont_area product_cont" style="display: block;text-align: center;">
+
+            <p>&nbsp;</p>
+            <p style="font-size: 15px;font-weight: bold">'<?=$aProductInfo['p_name']?>'</p>
+            <p>&nbsp;</p>
+            <p>&nbsp;</p>
             <?=$aProductInfo['p_detail']?>
             <? $product_img_arr = json_decode($aProductInfo['p_detail_image'],true);
             if(count($product_img_arr) > 0){?>

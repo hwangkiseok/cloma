@@ -22,6 +22,7 @@ class Test extends M_Controller
 
         $allow_ip_array = array(
             "112.146.73.238" //사무실
+        ,   "106.243.140.135"   //마포
         );
 
         if( array_search($this->input->ip_address(), $allow_ip_array) === false ) {
@@ -131,7 +132,38 @@ class Test extends M_Controller
 
     public function update_detail(){
 
-exit;
+
+
+//        $sql = "
+//SELECT *
+//FROM product_tb
+//WHERE p_detail REGEXP \"^[\\r\\n]\";
+//
+//        ";
+//
+//        zsView('a');
+//        $oResult = $this->db->query($sql);
+//        $aResult = $oResult->result_array();
+
+
+        exit;
+        foreach ($aResult as $r) {
+            //$text = preg_replace('/\r\n|\r|\n/','',$text);
+
+
+//            $patterns       = "/<center><center><br>/";
+//            $replacements   = '<center><center>';
+//            $r['p_detail'] =  preg_replace($patterns, $replacements, $r['p_detail'],1);
+
+            $r['p_detail'] = preg_replace('/\r\n|\r|\n/','','',$r['p_detail'],1);
+
+            $sql = "UPDATE product_tb SET p_detail = '{$r['p_detail']}' WHERE p_num = '{$r['p_num']}' ; ";
+//            $this->db->query($sql);
+            zsView($sql);
+
+        }
+
+        zsView('c : '.count($aResult));
 
 //        $dir = "/data/shop1/www/uploads/suvin_n";
 //

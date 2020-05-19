@@ -24,6 +24,7 @@ class Cart_model extends M_Model {
         //from 절
         $from_query = "from cart_tb ct ";
         $from_query .= "join product_tb pt on pt.p_num = ct.p_num ";
+        $from_query .= "join snsform_product_tb spt on pt.p_order_code = spt.item_no ";
 
         //where 절
         $where_query = "where 1 AND ct.m_num = '" . $this->m_num . "' ";
@@ -77,7 +78,7 @@ class Cart_model extends M_Model {
         }
         //데이터 추출
         else {
-            $query = "select * ";
+            $query = "select ct.* , pt.* , spt.option_info as product_option_info ";
             $query .= $from_query;
             $query .= $where_query;
             $query .= $order_query;
@@ -85,13 +86,12 @@ class Cart_model extends M_Model {
 
             return $this->db->query($query)->result_array();
         }
-    }//end of get_wish_list()
+    }//end of get_cart_list()
 
 
     public function overlapCart($arrayParams){
 
-        if(
-                empty($arrayParams['p_order_code']) == true
+        if(     empty($arrayParams['p_order_code']) == true
             ||  empty($arrayParams['option_name']) == true
             ||  empty($arrayParams['m_num']) == true
         ){
@@ -116,6 +116,7 @@ class Cart_model extends M_Model {
         $whereQueryString = "";
 
         if(empty($arrayParams['cart_id']) == false) $whereQueryString .= " AND cart_id = '{$arrayParams['cart_id']}' ";
+        if(empty($whereQueryString) == true) return false;
 
         $sql = "SELECT * FROM cart_tb WHERE 1 {$whereQueryString} ";
 

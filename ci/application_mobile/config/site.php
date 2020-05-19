@@ -214,6 +214,7 @@ $config['board_qna_usestate_text_color']['N'] = "#ff0000";
 //API 호출 허용 IP들
 $config['api_allow_ip'] = array(
     "112.146.73.238" //회사내부
+,   "106.243.140.135"   //마포
 ,   "27.102.214.69" //snsform
 ,   "27.102.213.35" //snsform service
 ,   "27.102.213.34" //snsform service
@@ -376,6 +377,7 @@ $config['api_doc_version'] = '1.0';
 /* 외부접속 허용 아이피  */
 $config['sns_allow_ip'] = array(
     '112.146.73.238' //사내 ip
+,   "106.243.140.135"   //마포
 );
 
 $config['isFormTest'] = 'N';

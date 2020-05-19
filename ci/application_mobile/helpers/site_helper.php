@@ -3239,7 +3239,7 @@ function send_app_push($regid, $push_data=array()) {
  * @return boolean
  */
 function zsDebug(){//서울내
-    $aChkIp = array('112.146.73.238');
+    $aChkIp = array('112.146.73.238', "106.243.140.135" );
     if(in_array($_SERVER['REMOTE_ADDR'],$aChkIp)){ return true; }else{ return false; }
 }
 
