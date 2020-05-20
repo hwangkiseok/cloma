@@ -79,7 +79,6 @@ class M_Controller extends CI_Controller {
 
     private function app_login(){
 
-
         if(is_app()){
 
             $headers = apache_request_headers();
@@ -90,10 +89,9 @@ class M_Controller extends CI_Controller {
             }
 
             $this->load->library('encryption');
+            $this->load->model('member_model');
 
             if ($m_num && $m_key) { //네이티브 세션제어
-
-                $this->load->model('member_model');
 
                 $aInput = array(
                     'm_num' => $m_num
@@ -115,25 +113,28 @@ class M_Controller extends CI_Controller {
 
             }else{ // 서브페이지에서 세션시간보다 오래 켜져 로그인이 풀리는경우 쿠키데이터로 대체하여 로그인 처리
 
-                log_message('A','----------- test in');
-                $cookie_sal = get_cookie('cookie_sal');
+                if (member_login_status() == false) {
 
-                $sSnsData = $this->encryption->decrypt($cookie_sal);
-                $aSnsData = explode('|',$sSnsData);
-//                $aSnsData[1]; //sns_site
-//                $aSnsData[2]; //sns_id
+                    $cookie_sal = get_cookie('cookie_sal');
 
-                log_message('A','----------- test in 2 : '.$sSnsData);
+                    if(empty($cookie_sal) == false){
 
-                $member_row = $this->member_model->get_member_row(array('m_sns_site' => $aSnsData[1], 'm_sns_id' => $aSnsData[2]));
+                        $sSnsData = $this->encryption->decrypt($cookie_sal);
+                        $aSnsData = explode('|',$sSnsData);
+//                        $aSnsData[1]; //sns_site
+//                        $aSnsData[2]; //sns_id
 
-                if (empty($member_row) == false) {
-                    log_message('A','----------- test in ok');
-                    set_login_session($member_row);
-                    $this->aMemberInfo = $member_row;
-                    $this->isLogin = 'Y';
-                }else{
-                    log_message('A','----------- test in failed');
+                        $member_row = $this->member_model->get_member_row(array('m_sns_site' => $aSnsData[1], 'm_sns_id' => $aSnsData[2]));
+
+                        if (empty($member_row) == false) {
+                            log_message('A','---------- 서브페이지에서 세션시간보다 오래 켜져 로그인이 풀리는경우 쿠키데이터로 대체하여 로그인 처리');
+                            set_login_session($member_row);
+                            $this->aMemberInfo = $member_row;
+                            $this->isLogin = 'Y';
+                        }
+
+                    }
+
                 }
 
             }
