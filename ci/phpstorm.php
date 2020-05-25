@@ -94,6 +94,7 @@ die('This file is used for development purposes only.');
  * @property popup_model        $popup_model
  * @property main_thema_model   $main_thema_model
  * @property kakao_member_model $kakao_member_model
+ * @property Product_option_model   $Product_option_model
  */
 class CI_Controller {
 

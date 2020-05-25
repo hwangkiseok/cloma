@@ -390,25 +390,7 @@ class Main extends REST_Controller
             }
 
         }
-
-        {// adid / fcmid 저장
-
-            $adid   = $this->get('adid');
-            $fcm_id = $this->get('fcm_id');
-
-            if(( empty($adid) == false || empty($fcm_id) == false ) && empty($_SESSION['session_m_num']) == false ) {
-
-                $this->load->model('member_model');
-
-                if(empty($adid) == false) $aInput['m_adid'] = $adid;
-                if(empty($fcm_id) == false) $aInput['m_reg'] = $fcm_id;
-
-                $this->member_model->update_member($_SESSION['session_m_num'] , $aInput);
-
-            }
-
-        }
-
+        
         $aRollingBanner = self::clearExhibitionField($aRollingBanner,'exhibition');
 
         if(empty($aTopTheme) == false) $aTopTheme = self::clearProductField($aTopTheme , array('campaign' => 'top30_t'));

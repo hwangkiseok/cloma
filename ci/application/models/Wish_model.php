@@ -131,7 +131,6 @@ class Wish_model extends W_Model {
         $where_array['w_product_num'] = $w_product_num;
 
         $sql = " SELECT * FROM wish_tb WHERE w_member_num = '{$where_array['w_member_num']}' AND w_product_num = '{$where_array['w_product_num']}' ; " ;
-        log_message('A',$sql);
         $oResult = $this->db->query($sql);
         $aResult = $oResult->row_array();
 

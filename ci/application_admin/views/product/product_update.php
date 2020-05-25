@@ -539,7 +539,7 @@
                                             <span class="input-group-addon" style="width:110px">상세이미지</span>
                                             <input type="file" name="p_detail_image[]" class="form-control" multiple="multiple" />
                                         </div>
-                                        <p class="help-block">* 다중 선택 가능 / 이미지 파일(JPG, PNG, GIF)만 가능 / 최대 <?php echo $this->config->item('product_detail_image_max_count'); ?>개, 단일 파일 용량 10MB 미만, 총 용량 100MB 미만 업로드 가능</p>
+                                        <p class="help-block">* 다중 선택 가능 / 이미지 파일(JPG, PNG, GIF)만 가능 / <!--최대 <?php echo $this->config->item('product_detail_image_max_count'); ?>개,--> 단일 파일 용량 10MB 미만, 총 용량 100MB 미만 업로드 가능</p>
 
                                         <p class="text-center"><button type="button" onclick="delete_product_image('<?php echo $product_row['p_num']; ?>', '3', '');" class="btn btn-danger btn-xs">모두삭제</button></p>
                                         <div class="mgt10 mgb10" id="detail_image_list" style="border:1px solid #ccc;border-radius:4px;padding:10px;width:100%;overflow:auto;">

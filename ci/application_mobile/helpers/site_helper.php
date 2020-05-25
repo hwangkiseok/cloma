@@ -100,10 +100,6 @@ function set_login_session_from_header() {
             $key = $value;
         }
 
-        if ($header == 'adid') { // API KEY
-            $adid = $value;
-        }
-
     }//endforach;
 
     //네이티브 세션제어
@@ -114,10 +110,6 @@ function set_login_session_from_header() {
 
         if( $member_row->m_num ) {
             set_login_session($member_row);
-        }
-
-        if(empty($adid) == true){
-            $this->member_model->update_member($m_num , array('m_adid' => $adid));
         }
 
     }
@@ -3427,7 +3419,7 @@ function getKakaoStoryShareProduct(){
  * @modify 황기석
  * @params $url , $ref_site : 리퍼러 , $campaign : 캠패인(arrival_source) , $is_web : true > 웹 ; false > 마켓
  * @desc dynamic url 생성
- * @usage create_dynamic_url('http://m.mysdis.co.kr/product/detail/?p_num=3483','','',false);
+ * @usage create_dynamic_url('/product/detail/?p_num=3483','','',false);
  */
 function create_dynamic_url($url,$ref_site='',$campaign='',$is_web = false){
 

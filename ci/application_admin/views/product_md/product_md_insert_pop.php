@@ -1,3 +1,4 @@
+
 <style>
     .list-group { max-height:280px; overflow-y:auto; }
     .list-group-item { padding:5px; }
@@ -5,7 +6,16 @@
     .list-group-item .row p { margin:0; }
     #product_list_group .left { padding-right:5px; }
     #product_list_group .right { padding-left:5px; }
+
+
+    #pop_product_select_list .list-item {
+        /* remove these
+         overflow-x: hidden;
+         overflow-y: auto; */
+    }
+
 </style>
+
 
 <div class="container-fluid">
     <div class="row">
@@ -37,31 +47,23 @@
 
                         <hr />
 
-                        <div class="form-group form-group-sm" id="product_list_group">
-                            <div class="col-md-7 col-md-xs-12 left">
-                                <label>검색된 상품 목록</label>
-                                <!--<div class="form-inline">-->
-                                <!--    <div class="input-group">-->
-                                <!--        <input type="text" name="kwd" class="form-control" placeholder="상품명을 입력하세요" />-->
-                                <!--        <span class="input-group-btn"><button type="button" class="btn btn-primary btn-sm" onclick="product_search();">검색</button></span>-->
-                                <!--    </div>-->
-                                <!--</div>-->
+
+                        <div class="form-group form-group-sm">
+                            <label class="col-sm-2 control-label">검색된 상품 목록</label>
+                            <div class="col-sm-10">
+
                                 <div id="pop_product_list"></div>
-                            </div>
-                            <div class="col-md-5 col-md-xs-12 right">
-                                <div id="field_pmd_product_num">
-                                    <label>선택된 상품 목록</label>
-                                    <ul id="pop_product_select_list" class="list-group"></ul>
-                                </div>
+
                             </div>
                         </div>
-                        <!--<div class="form-group form-group-sm form-inline">-->
-                        <!--    <label class="col-sm-2 control-label">출력순서</label>-->
-                        <!--    <div class="col-sm-10">-->
-                        <!--        <input type="text" id="field_p_name" name="p_name" class="form-control" style="width:100px;" />-->
-                        <!--        <span class="help-inline middle txt-default mgl10">* 미입력시 가장 하위에 노출됩니다.</span>-->
-                        <!--    </div>-->
-                        <!--</div>-->
+
+                        <div class="form-group form-group-sm">
+                            <label class="col-sm-2 control-label">선택된 상품 목록</label>
+                            <div class="col-sm-10">
+                                <div id="pop_product_select_list" class="row" style="border: 1px solid #ddd;"></div>
+                            </div>
+                        </div>
+
                     </form>
                 </div>
             </div>
@@ -69,17 +71,9 @@
     </div>
 </div>
 
-<script>
-    /*
-    //window.paceOptions = {
-    Pace.options = {
-        //target: '#pop_product_list'
-        elements: {
-            selectors: ['#pop_product_list']
-        }
-    };
-    */
 
+
+<script>
     /**
      * 상품 검색
      */
@@ -108,11 +102,6 @@
             //dataType : 'html',
             dataType : 'json',
             success : function (result) {
-                //$('#pop_product_list').html(result);
-
-                //var html = '';
-                //html += '<ul>';
-                //html += '</ul>';
 
                 var html = get_product_list_html(result.data);
                 $('#pop_product_list').html(html);
@@ -152,14 +141,13 @@
 
             html += '<li class="list-group-item">';
             html += '   <div class="row">';
-            html += '       <div class="pull-left"><img style="margin-bottom: 0!important;" class="thumbnail" src="' + item.p_rep_image_array[1] + '" alt="" width="60" /></div>';
-            html += '       <div class="pull-left mgl5">';
-            html += '           <p><b>' + item.p_name + '</b></p>';
+            html += '       <div class="col-sm-4"><img style="margin-bottom: 0!important;" class="thumbnail" src="' + item.p_rep_image_array[1] + '" alt="" width="100%" /></div>';
+            html += '       <div class="col-sm-4">';
+            html += '           <p><b style="font-size: 16px;">' + item.p_name + '</b></p>';
             html += '           <p>' + disp_text + '&nbsp;' + sale_text + '&nbsp;'  + stock_text + '</p>';
+            html += '           <p style="margin-top: 10px"><button type="button" class="btn btn-warning btn-block" onclick="product_select2(\'' + item.p_num + '\', \'' + item.p_name + '\', \'' + item.p_rep_image_array[1] + '\');">선택</button></p>';
             html += '       </div>';
             html += '   </div>';
-            html += '   <div class="clear"></div>';
-            html += '   <div><button type="button" class="btn btn-warning btn-xs" style="width: 100%;padding: 5px 0" onclick="product_select(\'' + item.p_num + '\', \'' + item.p_name + '\', \'' + item.p_rep_image_array[1] + '\');">선택</button></div>';
             html += '</li>';
         });
 
@@ -188,11 +176,11 @@
         var html = '';
         html += '<li class="list-group-item" data-num="' + p_num + '">';
         html += '   <div class="row">';
-        html += '       <div class="pull-left"><img class="thumbnail" src="' + p_img + '" alt="" width="60" /></div>';
-        html += '       <div class="pull-left mgl5">';
-        html += '           <p><b>' + p_name + '</b></p>';
+        html += '       <div class="col-sm-4"><img class="thumbnail" src="' + p_img + '" alt="" width="100%" /></div>';
+        html += '       <div class="col-sm-4">';
+        html += '           <p><b style="font-size: 16px;">' + p_name + '</b></p>';
+        html += '           <button type="button" class="btn btn-danger btn-xs" onclick="product_select_delete(\'' + p_num + '\');">삭제</button>';
         html += '       </div>';
-        html += '       <div class="pull-right"><button type="button" class="btn btn-danger btn-xs" onclick="product_select_delete(\'' + p_num + '\');">삭제</button></div>';
         html += '   </div>';
         html += '</li>';
         $('#pop_product_select_list').append(html);
@@ -205,21 +193,157 @@
             }
         });
 
-        console.log(num_arr);
-        console.log(num_arr.join(':'));
         $('#pop_form [name="pmd_product_num"]').val(num_arr.join(':'));
     }//end of product_select()
+
+
+    /**
+     * 상품 선택
+     */
+    function product_select2(p_num, p_name, p_img) {
+        console.log('product_select', p_num, p_name, p_img);
+        info_message_all_clear();
+
+        if( empty(p_num) ) {
+            alert('잘못된 접근입니다.');
+            return false;
+        }
+
+        //중복체크
+        if( $('#pop_product_select_list div[data-num="' + p_num + '"]').length > 0 ) {
+            return false;
+        }
+
+        var html = '';
+
+        html += '   <div class="col-md-3 col-sm-12 col-xs-12 mgt10 mgb10 text-center list-item" data-num="' + p_num + '">';
+        html += '       <a href="#none" style="font-size:20px;"><i class="fa fa-sort"></i></a>';
+        html += '       <img src="'+p_img+'" style="width:100%;" alt="" />';
+        html += '       <p class="alert alert-warning" style="padding: 5px!important;width: 100%">'+p_name+'</p>';
+        //html += '       <a href="#none" onclick="product_select_delete(\'' + p_num + '\');" class="btn btn-danger btn-xs">삭제</a>';
+        html += '   </div>';
+
+        $('#pop_product_select_list').append(html);
+
+        mod_data();
+
+    }//end of product_select()
+
+    function mod_data(){
+
+        var num_arr = [];
+        $.each($('#pop_product_select_list div'), function(){
+            var num = $(this).attr('data-num');
+            if( !empty(num) ) {
+                num_arr.push(num);
+            }
+        });
+
+        $('#pop_form [name="pmd_product_num"]').val(num_arr.join(':'));
+
+    }
+
+
+    function set_dragable(){
+
+        $('#detail_image_list').sortable({
+            revert: true,
+            helper: "clone",
+            stop : function(e, ui){
+            }
+        });
+        $('#detail_image_list').disableSelection();
+
+    }
+
+    function position_reset(){
+
+        <?/**
+     * @date 170809
+     * @writer 황기석
+     * @desc 반드시 sortable 함수 아래 있을것 / sortable 최장이미지의 세로사이즈를 모든 item에 적용
+     */ ?>
+        var max_img_height = 0;
+        $('.list-item').each(function(){
+            var tmp_height = $(this).height();
+            if(max_img_height < tmp_height){
+                max_img_height = tmp_height;
+            }
+        }).promise().done(function () {
+            $(this).css('min-height',parseInt(max_img_height,10)+'px');
+        });
+        <?/* END */?>
+
+    }
 
     /**
      * 선택된 상품 삭제
      * @param p_num
      */
     function product_select_delete(p_num) {
-        $('#pop_product_select_list li[data-num="' + p_num + '"]').remove();
+        $('#pop_product_select_list div[data-num="' + p_num + '"]').remove();
+    }
+
+
+    function callProduct(){
+
+        $.ajax({
+            url : '/product_md/list_ajax',
+            data : { md_div : $('input[name="pmd_division"]:checked').val() },
+            type : 'post',
+            dataType : 'json',
+            success : function (result) {
+
+                $('#pop_product_select_list').html('');//선택상품 초기화
+
+                $.each(result,function(k,r){
+                    var p_rep_image_array = JSON.parse(r.p_rep_image);
+                    product_select2(r.p_num, r.p_name, p_rep_image_array[1])
+                });
+
+            }
+        });
+
     }
 
     //document.ready
     $(function(){
+
+        callProduct();
+        $('input[name="pmd_division"]').on('change', callProduct )
+
+        /*
+        @date 200525
+        @author 황기석
+        @desc sortable
+        */
+        $('#pop_product_select_list').sortable({
+            revert: true,
+            helper: "clone",
+            update: function( ) {
+                // do stuff
+                mod_data();
+            }
+
+        });
+        $('#pop_product_select_list').disableSelection();
+
+        <?/**
+     * @date 170809
+     * @writer 황기석
+     * @desc 반드시 sortable 함수 아래 있을것 / sortable 최장이미지의 세로사이즈를 모든 item에 적용
+     */ ?>
+        var max_img_height = 0;
+        $('.list-item').each(function(){
+            var tmp_height = $(this).height();
+            if(max_img_height < tmp_height){
+                max_img_height = tmp_height;
+            }
+        }).promise().done(function () {
+            $(this).css('min-height',parseInt(max_img_height,10)+'px');
+        });
+        <?/* END */?>
+
         $('#pop_form input[name="kwd"]').off('keypress').on('keypress', function(e){
             if( e.keyCode == 13 ) {
                 product_search();

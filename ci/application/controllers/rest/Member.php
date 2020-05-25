@@ -401,10 +401,9 @@ class Member extends REST_Controller
     */
     public function info_get()
     {
-
         $this->load->model('member_model');
 
-        if(empty($_SESSION) == false){
+        if(member_login_status() == true){
 
             $aInput = array(
                     'm_num' => $_SESSION['session_m_num']
@@ -420,17 +419,6 @@ class Member extends REST_Controller
                     , REST_Controller::HTTP_OK
                 ); // OK (200) being the HTTP response code;
             }else{
-
-                $query_data = array();
-                if(empty($this->get('app_version')) == false ) $query_data['m_app_version']             = $this->get('app_version');
-                if(empty($this->get('app_version_code')) == false ) $query_data['m_app_version_code']   = $this->get('app_version_code');
-                if(empty($this->get('device_model')) == false ) $query_data['m_device_model']           = $this->get('device_model');
-                if(empty($this->get('os_version')) == false ) $query_data['m_os_version']               = $this->get('os_version');
-                $query_data['m_login_ip']       = $this->input->ip_address();
-                $query_data['m_logindatetime']  = current_datetime();
-
-                $this->member_model->publicUpdate('member_tb' , $query_data , array('m_num' , $aInput['m_num']));
-
                 $this->set_response(
                     result_echo_rest_json(get_status_code("success"), "", true, "", "",
                         array(
@@ -446,6 +434,32 @@ class Member extends REST_Controller
                 result_echo_rest_json(get_status_code("error"), lang('site_error_empty_data'), true, "", "", "" )
                 , REST_Controller::HTTP_OK
             ); // OK (200) being the HTTP response code;
+
+        }
+
+    }
+
+    /**
+     * @date 200520
+     * @modify 황기석
+     * @desc 각종 회원정보 저장
+     */
+    public function save_info_put(){
+
+        if(member_login_status() == true){
+
+            $query_data = array();
+            if(empty($this->put('app_version')) == false ) $query_data['m_app_version']             = $this->put('app_version');
+            if(empty($this->put('app_version_code')) == false ) $query_data['m_app_version_code']   = $this->put('app_version_code');
+            if(empty($this->put('device_model')) == false ) $query_data['m_device_model']           = $this->put('device_model');
+            if(empty($this->put('os_version')) == false ) $query_data['m_os_version']               = $this->put('os_version');
+            if(empty($this->put('adid')) == false ) $query_data['m_adid']                           = $this->put('adid');
+            if(empty($this->put('fcm_id')) == false ) $query_data['m_regid']                        = $this->put('fcm_id');
+
+            $query_data['m_login_ip']       = $this->input->ip_address();
+            $query_data['m_logindatetime']  = current_datetime();
+
+            $this->member_model->publicUpdate('member_tb' , $query_data , array('m_num' , $_SESSION['session_m_num']));
 
         }
 

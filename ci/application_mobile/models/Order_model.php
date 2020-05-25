@@ -139,6 +139,7 @@ class order_model extends M_Model {
                     , A.receiver_addr1                                                                                                                                                                     
                     , A.receiver_addr2                                                                                                                                                                     
                     , A.aorder_memo
+                    , A.order_memo
                     
                 FROM snsform_order_tb A
                 LEFT JOIN snsform_order_cancel_tb B ON A.trade_no = B.trade_no
@@ -184,6 +185,7 @@ class order_model extends M_Model {
                     , A.receiver_addr1                                                                                                                                                                     
                     , A.receiver_addr2                                                                                                                                                                     
                     , A.aorder_memo
+                    , A.order_memo
 
                 FROM snsform_order_tb A
                 LEFT JOIN snsform_order_cancel_tb B ON A.trade_no = B.trade_no

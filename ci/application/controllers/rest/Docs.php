@@ -719,6 +719,34 @@ class Docs extends W_Controller {
      */
     public function member_info_get() {}
 
+    /**
+     * 각종 회원정보 저장 > put
+     *
+     * @ApiDescription(section="Member", description="각종정보 저장")
+     *
+     * @ApiMethod(type="put")
+     * @ApiRoute(name="/rest/member/save_info/")
+     * @ApiHeaders(name="m_key", type="String", nullable=false, description="회원키")
+     * @ApiHeaders(name="m_num", type="integer", nullable=false, description="회원번호")
+     * @ApiParams(name="app_version", type="String", nullable=true, description="앱 버전")
+     * @ApiParams(name="app_version_code", type="Integer", nullable=true, description="앱 버전코드")
+     * @ApiParams(name="device_model", type="String", nullable=true, description="디바이스모델")
+     * @ApiParams(name="os_version", type="Integer", nullable=true, description="OS버전")
+     * @ApiParams(name="adid", type="String", nullable=true, description="광고아이디")
+     * @ApiParams(name="fcm_id", type="String", nullable=true, description="FCM아이디")
+     * @ApiReturn(type="object", sample="
+    {
+    'status': '000',
+    'message': '',
+    'message_type': '',
+    'error_data': '',
+    'data': { },
+    'goUrl': '',
+    'exit': true
+    }
+     * ")
+     */
+    public function member_save_info_post() {}
 
     /**
      * 공유하기 > put

@@ -80,7 +80,8 @@ class Cart extends REST_Controller
             }else{
 
                 /*---------------------------- 옵션별 재고체크 */
-                $bRet2 = false;
+                $bRet2 = false; //재고수량 체크 value
+                $bRet3 = false; //장바구니상품 유무 value
                 foreach ($option_arr as $k => $r) {
 
                     $arrayParams = array(
@@ -95,14 +96,15 @@ class Cart extends REST_Controller
                     );
 
                     $aOverlapInfo = $this->cart_model->overlapCart($arrayParams);
+
                     if(empty($aOverlapInfo) ==true){ //insert
 
                         $bRet2 = self::chk_stock($arrayParams,$r);
 
                     }else{//update
 
-                        $rev_data                   = json_decode($aOverlapInfo['option_info'],true);
-                        $new_data                   = array(
+                        $rev_data = json_decode($aOverlapInfo['option_info'],true);
+                        $new_data = array(
                             'option_price'  => $r['option_price']
                         ,   'option_count'  => (int)$r['option_count'] + (int)$rev_data['option_count']
                         ,   'option_supply' => $r['option_supply']
@@ -112,18 +114,27 @@ class Cart extends REST_Controller
                         );
 
                         $bRet2 = self::chk_stock($arrayParams,$new_data);
+
+                        if($bRet2 == false) $bRet3 = true;
+
                     }
+                    /*---------------------------- 옵션별 재고체크 */
 
                 }
 
-                /*---------------------------- 옵션별 재고체크 */
-
-                if($bRet2 == true){
+                if($bRet2 == true) {
 
                     $this->set_response(
                         result_echo_rest_json(get_status_code("error"), "주문하시려는 상품은 재고가 이미 소진된 상품으로 다시 확인 후 구매해 주시기 바랍니다.", "", true, "", "", ""
                         ), REST_Controller::HTTP_OK
                     ); // NOT_FOUND (404) being the HTTP response code
+
+/*
+                } else if($bRet3 == true){ // 처리방식 확인 / confirm 후 upsert 처리예정
+
+
+
+*/
 
                 }else{
 

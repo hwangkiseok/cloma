@@ -127,7 +127,7 @@ class M_Controller extends CI_Controller {
                         $member_row = $this->member_model->get_member_row(array('m_sns_site' => $aSnsData[1], 'm_sns_id' => $aSnsData[2]));
 
                         if (empty($member_row) == false) {
-                            log_message('A','---------- 서브페이지에서 세션시간보다 오래 켜져 로그인이 풀리는경우 쿠키데이터로 대체하여 로그인 처리');
+                            log_message('A','---------- 서브페이지에서 세션시간보다 오래 켜져 로그인이 풀리는경우 쿠키데이터로 대체하여 로그인 처리 :'.$sSnsData);
                             set_login_session($member_row);
                             $this->aMemberInfo = $member_row;
                             $this->isLogin = 'Y';

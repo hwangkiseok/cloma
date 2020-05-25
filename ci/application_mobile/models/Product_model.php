@@ -30,6 +30,7 @@ class Product_model extends M_Model {
         if( isset($query_array['where']['md_div']) && !empty($query_array['where']['md_div']) ) {
             $from_query .= "join product_md_tb on pmd_product_num = p_num ";
             $where_query .= "and pmd_division = '" . $this->db->escape_str($query_array['where']['md_div']) . "' ";
+            $query_array['orderby'] = ' pmd_order ASC ';
         }
         //등록일
         if( isset($query_array['where']['date1']) && !empty($query_array['where']['date1']) ) {

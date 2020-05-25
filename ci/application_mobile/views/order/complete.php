@@ -157,7 +157,7 @@
                 </li>
                 <li>
                     <span class="fl">&middot; 배송메모</span>
-                    <span class="fr"><?=$aOrderInfo[0]['aorder_memo']?></span>
+                    <span class="fr"><?=$aOrderInfo[0]['order_memo']?></span>
                 </li>
             </ul>
 

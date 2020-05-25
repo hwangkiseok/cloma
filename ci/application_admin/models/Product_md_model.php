@@ -72,7 +72,7 @@ class Product_md_model extends A_Model {
             $order_query = "order by " . $query_array['orderby'] . " ";
         }
         else {
-            $order_query = "order by p_num desc ";
+            $order_query = "order by pmd_order ASC, p_num desc ";
         }
 
         //limit 절
@@ -195,15 +195,16 @@ class Product_md_model extends A_Model {
             "pmd_product_num" => $query_data['pmd_product_num']
         ));
 
-        if( !empty($md_row) ) {
-            return true;
+        if( !empty($md_row) ) { //update
+
+            $sql = "UPDATE product_md_tb SET pmd_order= '{$query_data['pmd_order']}' WHERE pmd_product_num = '{$query_data['pmd_product_num']}' AND pmd_division = '{$query_data['pmd_division']}'; ";
+            return $this->db->query($sql);
+
+        }else{
+
+            return $this->db->insert("product_md_tb", $query_data);
+
         }
-
-        //해당 카테고리의 마지막 항목 정보
-        $last_row = $this->get_last_order_row($query_data['pmd_division']);
-        $query_data['pmd_order'] = $last_row->pmd_order + 1;
-
-        return $this->db->insert("product_md_tb", $query_data);
     }//end of insert_product_md()
 
     /**

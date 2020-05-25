@@ -29,7 +29,6 @@ class Product_md extends A_Controller {
         $req['kfd']             = trim($this->input->post_get('kfd', true));
         $req['kwd']             = trim($this->input->post_get('kwd', true));
         $req['cate']            = trim($this->input->post_get('cate', true));
-        $req['md_div']          = trim($this->input->post_get('md_div', true));
         $req['date1']           = trim($this->input->post_get('date1', true));
         $req['date2']           = trim($this->input->post_get('date2', true));
         $req['md_div']          = trim($this->input->post_get('md_div', true));
@@ -82,6 +81,15 @@ class Product_md extends A_Controller {
      */
     public function product_md_list_ajax() {
         ajax_request_check(true);
+
+        $headers = apache_request_headers();
+
+        foreach ($headers as $header => $value) {
+            if($header == 'Accept'){
+                if( preg_match('/application\/json/',$value) == true) $isDatatype = 'ajax';
+                else $isDatatype = 'html';
+            }
+        }
 
         //request
         $req = $this->_list_req();
@@ -146,18 +154,27 @@ class Product_md extends A_Controller {
         $sort_array[$req['sort_field']][0] = ($req['sort_type'] == "asc") ? "desc" : "asc";
         $sort_array[$req['sort_field']][1] = ($req['sort_type'] == "asc") ? "sorting_asc" : "sorting_desc";
 
-        $this->load->view("/product_md/product_md_list_ajax", array(
-            "req"               => $req,
-            "GV"                => $GV,
-            "PGV"               => $PGV,
-            "sort_array"        => $sort_array,
-            "md_count_array"    => $md_count_array,
-            "list_count"        => $list_count['cnt'],
-            "list_per_page"     => $req['list_per_page'],
-            "page"              => $req['page'],
-            "md_list"           => $md_list,
-            "pagination"        => $page_result['pagination']
-        ));
+        if($isDatatype == 'ajax'){
+
+            echo json_encode_no_slashes($md_list);
+
+        }else{
+
+            $this->load->view("/product_md/product_md_list_ajax", array(
+                "req"               => $req,
+                "GV"                => $GV,
+                "PGV"               => $PGV,
+                "sort_array"        => $sort_array,
+                "md_count_array"    => $md_count_array,
+                "list_count"        => $list_count['cnt'],
+                "list_per_page"     => $req['list_per_page'],
+                "page"              => $req['page'],
+                "md_list"           => $md_list,
+                "pagination"        => $page_result['pagination']
+            ));
+
+        }
+
     }//end of product_md_list_ajax()
 
     /**
@@ -196,12 +213,13 @@ class Product_md extends A_Controller {
             if( empty($form_error_array) ) {
                 $pmd_product_num_array = explode(":", $pmd_product_num);
 
-                foreach($pmd_product_num_array as $p_num) {
+                foreach($pmd_product_num_array as $sort => $p_num) {
                     //등록
                     $query_data = array();
                     $query_data['pmd_division'] = $pmd_division;
                     $query_data['pmd_product_num'] = $p_num;
-                    //$query_data['pmd_order'] = $pmd_order;
+                    $query_data['pmd_order'] = (int)$sort+1;
+
                     $this->product_md_model->insert_product_md($query_data);
                 }
 

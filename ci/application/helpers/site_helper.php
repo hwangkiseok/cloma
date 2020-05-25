@@ -3456,7 +3456,7 @@ function getKakaoStoryShareProduct(){
  * @modify 황기석
  * @params $url , $ref_site : 리퍼러 , $campaign : 캠패인(arrival_source) , $is_web : true > 웹 ; false > 마켓
  * @desc dynamic url 생성
- * @usage create_dynamic_url('http://m.mysdis.co.kr/product/detail/?p_num=3483','','',false);
+ * @usage create_dynamic_url('/product/detail/?p_num=3483','','',false);
  */
 function create_dynamic_url($url,$ref_site='',$campaign='',$is_web = false){
 

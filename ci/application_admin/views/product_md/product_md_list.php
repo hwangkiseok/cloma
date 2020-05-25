@@ -1,3 +1,5 @@
+<link href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" rel="stylesheet" />
+
 <div class="container-fluid">
     <div class="row">
         <h4 class="page-header">상품MD관리 > 목록</h4>
@@ -42,7 +44,7 @@
         <div id="product_list" style="position:relative;"></div>
     </div>
 </div>
-
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 <script>
     /**
      * form submit
@@ -75,7 +77,7 @@
             $('#pop_form').submit();
         });
         modalPop.createCloseButton("취소", "btn btn-default btn-sm", function(){});
-        modalPop.show();
+        modalPop.show({'dialog_class':'modal-lg'});
     }//end of pop_insert_product_md()
 
     /**

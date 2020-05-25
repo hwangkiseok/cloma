@@ -115,6 +115,9 @@ $config['category_md_image_path'] = DOCROOT . $config['category_md_image_path_we
 $config['member_profile_dir'] = "/files/profile_img";
 $config['member_profile_path'] = HOMEPATH . $config['member_profile_dir'];
 
+$config['option_image_path'] = DOCROOT . $config['upload_path_web'] . "/product_option";
+$config['option_image_path_web'] = $config['upload_path_web'] . "/product_option";
+
 
 //이미지 썸네일 사이즈 : [0]가로(px), [1]세로(px), [2]자르기 여부(Y|N)
 $config['product_rep_image_size'][1] = array("720", "430", 'Y');
@@ -218,6 +221,25 @@ $config['product_termlimit_yn']['N'] = "사용안함";
 $config['product_termlimit_yn_text_color']['Y'] = "#0000FF";
 $config['product_termlimit_yn_text_color']['N'] = "#777777";
 
+$config['product_option_use_yn']['Y'] = "사용";
+$config['product_option_use_yn']['N'] = "사용안함";
+$config['product_option_use_yn_text_color']['Y'] = "#0000FF";
+$config['product_option_use_yn_text_color']['N'] = "#777777";
+
+
+$config['product_option_type']['basic'] = "기본";
+$config['product_option_type']['11']    = "1+1";
+$config['product_option_type']['111']   = "1+1+1";
+
+
+$config['product_option_depth']['1'] = "1차 옵션";
+$config['product_option_depth']['2'] = "2차 옵션";
+$config['product_option_depth']['3'] = "3차 옵션";
+
+
+
+
+
 $config['product_display_info1']['today'] = "오늘오픈";
 $config['product_display_info1']['deadline'] = "마감임박";
 $config['product_display_info1']['limit_qty'] = "한정수량";
@@ -252,6 +274,7 @@ $config['product_detail_image_max_count'] = 30;     //한번에 올릴 수 있�
 
 //상품 MD
 $config['product_md_division'][1] = "메인상품30";
+$config['product_md_division'][2] = "메인세로배너";
 
 $config['product_option_buy_cnt_view']['Y'] = "노출함";
 $config['product_option_buy_cnt_view']['N'] = "노출안함";

@@ -139,8 +139,8 @@ class Delivery extends M_Controller
             $aOrderCancelLists[$r['trade_no']] = $r;
         }
 
-
         $this->load->view('/delivery/ajax_list', array('delivery_list' => $delivery_list , 'aOrderCancelLists' => $aOrderCancelLists ) );
+
     }
 
 
