@@ -952,7 +952,12 @@ class Product extends A_Controller {
 
         $this->_header();
 
-        $this->load->view("/product/product_update", array(
+        $file = '/product/product_update';
+        if($this->input->get('dev') == 'Y'){
+            $file = '/product/product_update_zs';
+        }
+
+        $this->load->view($file, array(
             "product_row"  => $product_row,
             "product_detail_image_array"  => $product_detail_image_array,
             //"product_md_list"  => $product_md_list,
@@ -2444,5 +2449,88 @@ class Product extends A_Controller {
         $file_ext = pathinfo($file, PATHINFO_EXTENSION);
         return $path . "/"  . create_session_id() . "." . $file_ext;
     }//end of _get_file_name()
+
+
+    public function product_option(){
+
+        $aInput = array(
+            'type'  => $this->input->get('view_type')
+        ,   'depth' => $this->input->get('depth')
+        ,   'p_num' => $this->input->get('p_num')
+        );
+
+        $this->load->model('product_model');
+        $aProductInfo = $this->product_model->get_product_row($aInput['p_num']);
+
+        if($aInput['type'] == 'basic') $view_file = '/product/product_option'.$aInput['depth'];
+        else $view_file = '/product/product_option';
+
+        $this->load->view($view_file, array(
+                'aInput'        => $aInput
+            ,   'aProductInfo'  => $aProductInfo
+        ));
+
+    }
+
+    public function upsert_option(){
+
+        ajax_request_check();
+
+        $aInput = json_decode( $this->input->post('data_obj') , true );
+
+        $query_data = array();
+
+        foreach ($aInput as $k => $r){
+            foreach ($r as $kk => $v)  {
+                $query_data[$kk]['p_num'] = $this->input->post('p_num') ;
+                $query_data[$kk]['use_img'] = 'N';
+
+                $query_data[$kk][$k] = $v ;
+            }
+        }
+
+        if( isset($_FILES['option_img']['name']) && !empty($_FILES['option_img']['name']) ) {
+
+            //업로드
+            $p_image_path_web = $this->config->item('option_image_path_web') . "/" . date("Y") . "/" . date("md").'/';
+            $p_image_path = DOCROOT.$p_image_path_web;
+
+            create_directory($p_image_path);
+
+            $config = array();
+            $config['upload_path']      = $p_image_path;
+            $config['allowed_types']    = 'gif|jpg|jpeg|png';
+            $config['max_size']	        = $this->config->item('upload_total_max_size');
+            $config['file_ext_tolower'] = true; //확장자 소문자
+            $config['overwrite']        = true; //덮어쓰기
+            $config['encrypt_name']     = true;
+
+            $this->load->library('upload' , $config);
+
+            foreach ($_FILES['option_img']['name'] as $key => $name) {
+
+                $_FILES['userfile']['name']     = $_FILES['option_img']['name'][$key];
+                $_FILES['userfile']['type']     = $_FILES['option_img']['type'][$key];
+                $_FILES['userfile']['tmp_name'] = $_FILES['option_img']['tmp_name'][$key];
+                $_FILES['userfile']['error']    = $_FILES['option_img']['error'][$key];
+                $_FILES['userfile']['size']     = $_FILES['option_img']['size'][$key];
+
+                if( $this->upload->do_upload() ){
+                    $img_data = $this->upload->data();
+                    $query_data[$key]['img_url'] = $p_image_path_web.$img_data['file_name'];
+                    $query_data[$key]['use_img'] = 'Y';
+                }
+            }
+        }
+
+        $this->load->model('Product_option_model');
+        $this->Product_option_model->insert_option($query_data);
+
+        echo json_encode_no_slashes(array('sucess' => true));
+        exit;
+
+
+    }
+
 
 }//end of class Product

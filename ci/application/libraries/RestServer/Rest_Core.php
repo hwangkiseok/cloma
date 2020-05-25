@@ -39,8 +39,6 @@ class Rest_Core  {
 
             if ($header == 'm_num') $m_num = $value;
             if ($header == 'm_key') $m_key = $value;
-            if ($header == 'adid') $adid = $value;
-            if ($header == 'fcm_id') $regid = $value;
             if ($header == 'key') $key = $value;  // API KEY
 
         }
@@ -57,16 +55,6 @@ class Rest_Core  {
                 set_login_session($member_row);
                 $this->aMemberInfo = $member_row;
                 $this->isLogin = 'Y';
-
-                {//회원정보가 있는경우 fcmid 와 adid 체크 후 update
-                    if(empty($regid) == false || empty($adid) == false){
-                        $aInput2 = array();
-                        if(empty($adid) ==false) $aInput2['m_adid'] = $adid;
-                        if(empty($regid) ==false) $aInput2['m_regid'] = $regid;
-                        $this->CI->member_model->update_member($member_row['m_num'] , $aInput2);
-                    }
-                }
-
             }
 
         }
