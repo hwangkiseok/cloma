@@ -8,26 +8,91 @@ class Product_option_model extends A_Model {
         parent::__construct();
     }//end of __construct()
 
-    public function insert_option($arrayparams){
+    public function upsert_option($arrayparams){
 
-        $insert_query = array();
-
-        $date = date('YmdHis');
+        $insert_query   = array();
+        $date           = date('YmdHis');
 
         foreach ($arrayparams as $r) {
-            $insert_query[] = "('{$r['p_num']}','{$r['option_name1']}','{$r['option_name2']}','{$r['option_name3']}','{$r['img_url']}'
-            ,'{$r['use_img']}','{$r['sale_price']}','{$r['org_price']}','{$r['supply_price']}' ,'{$r['stock']}','{$r['add']}','{$date}')";
+
+            if($r['act_type'] == 'update'){
+
+                $sql = "UPDATE product_option_tb
+                        SET
+                          option_1              = '{$r['option_1']}' 
+                        , option_2              = '{$r['option_2']}'
+                        , option_3              = '{$r['option_3']}'
+                        , option_img            = '{$r['option_img']}'
+                        , option_use_img        = '{$r['option_use_img']}'
+                        , option_sale_price     = '{$r['option_sale_price']}'
+                        , option_supply_price   = '{$r['option_supply_price']}'   
+                        , option_org_price      = '{$r['option_org_price']}'
+                        , option_stock          = '{$r['option_stock']}'
+                        , option_add            = '{$r['option_add']}'
+                        , option_sort           = '{$r['option_sort']}'
+                        , mod_date              = '{$date}'
+                        WHERE option_id = '{$r['option_id']}'; 
+                ";
+                $this->db->query($sql);
+
+            }else{
+                $insert_query[] = "('{$r['p_num']}','{$r['option_1']}','{$r['option_2']}','{$r['option_3']}','{$r['option_img']}','{$r['option_use_img']}','{$r['option_sale_price']}','{$r['option_org_price']}','{$r['option_supply_price']}' ,'{$r['option_stock']}','{$r['option_add']}','{$r['option_sort']}','{$date}')";
+            }
         }
 
         $insert_query_str = join(',',$insert_query);
 
-        $sql = "INSERT INTO product_option_tb (p_num , option_1, option_2, option_3, option_img, option_use_img
-                ,option_sale_price,option_supply_price,option_org_price,option_stock,option_add,reg_date ) VALUES
-                {$insert_query_str};
+        $sql = "INSERT INTO product_option_tb (p_num , option_1, option_2, option_3, option_img, option_use_img ,option_sale_price,option_supply_price,option_org_price,option_stock,option_add,option_sort,reg_date ) 
+                VALUES {$insert_query_str};
         ";
 
-        zsView($sql);
+
+        return $this->db->query($sql);
+
+    } // end of insert_option
+
+
+    public function get_option_list($p_num){
+
+        $sql = "SELECT * FROM product_option_tb WHERE p_num = '{$p_num}' ORDER BY option_sort ASC;";
+
+        $oResult = $this->db->query($sql);
+        $aResult = $oResult->result_array();
+
+        return $aResult;
 
     }
 
-}//end of class Product_model
+    public function get_option_row($option_id){
+
+        $sql = "SELECT * FROM product_option_tb WHERE option_id = '{$option_id}' ;";
+
+        $oResult = $this->db->query($sql);
+        $aResult = $oResult->row_array();
+
+        return $aResult;
+
+    }
+
+
+    public function del_option($arrayParams){
+
+        $addQueryString = '';
+
+
+
+        if(empty($arrayParams['option_id']) == false){
+            $addQueryString = " AND option_id = '{$arrayParams['option_id']}' ";
+        }
+
+
+        if(empty($addQueryString) == true) return false;
+
+        $sql = "DELETE FROM product_option_tb WHERE 1 {$addQueryString}; ";
+
+        return $this->db->query($sql);
+
+    }
+
+
+}//end of class Product_option_model

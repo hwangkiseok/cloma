@@ -704,7 +704,7 @@ class M_Controller extends CI_Controller {
             if(empty($link_type) == false ) $arr['link_type'] = $link_type;
             $arr['p_rep_image'] = json_decode($arr['p_rep_image'],true)[0];
 
-            unset($arr['p_banner_image']);
+//            unset($arr['p_banner_image']);
             unset($arr['p_category']);
             unset($arr['p_order_link']);
             unset($arr['p_app_price_yn']);
@@ -762,7 +762,7 @@ class M_Controller extends CI_Controller {
                 if(empty($link_type) == false ) $arr[$k]['link_type'] = $link_type;
                 $arr[$k]['p_rep_image'] = json_decode($r['p_rep_image'],true)[0];
 
-                unset($arr[$k]['p_banner_image']);
+//                unset($arr[$k]['p_banner_image']);
                 unset($arr[$k]['p_category']);
                 unset($arr[$k]['p_order_link']);
                 unset($arr[$k]['p_app_price_yn']);

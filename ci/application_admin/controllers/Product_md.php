@@ -86,7 +86,7 @@ class Product_md extends A_Controller {
 
         foreach ($headers as $header => $value) {
             if($header == 'Accept'){
-                if( preg_match('/application\/json/',$value) == true) $isDatatype = 'ajax';
+                if( preg_match('/application\/json/',$value) == true) $isDatatype = 'json';
                 else $isDatatype = 'html';
             }
         }
@@ -154,7 +154,7 @@ class Product_md extends A_Controller {
         $sort_array[$req['sort_field']][0] = ($req['sort_type'] == "asc") ? "desc" : "asc";
         $sort_array[$req['sort_field']][1] = ($req['sort_type'] == "asc") ? "sorting_asc" : "sorting_desc";
 
-        if($isDatatype == 'ajax'){
+        if($isDatatype == 'json'){
 
             echo json_encode_no_slashes($md_list);
 

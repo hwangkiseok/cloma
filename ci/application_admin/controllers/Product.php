@@ -12,7 +12,9 @@ class Product extends A_Controller {
 
         //model
         $this->load->model('product_model');
+        $this->load->model('product_option_model');
         $this->load->model('product_md_model');
+
     }//end of __construct()
 
     /**
@@ -696,6 +698,8 @@ class Product extends A_Controller {
 
                 if( $this->upload->do_upload('p_banner_image') ){
                     $upload_data_array = $this->upload->data();
+                    $upload_data_array = create_thumb_image($upload_data_array, $p_image_path_web, $this->config->item('banner_image_size'), true);
+
                     $p_banner_image = $p_image_path_web . "/" . $upload_data_array['file_name'];
 
                 }
@@ -2355,8 +2359,6 @@ class Product extends A_Controller {
 
         }
 
-        zsView($_REQUEST);exit;
-
         $rResult = array('success' => false , 'msg' => '새로고침 후 다시시도해주세요!' );
 
         echo json_encode_no_slashes($rResult);
@@ -2451,7 +2453,7 @@ class Product extends A_Controller {
     }//end of _get_file_name()
 
 
-    public function product_option(){
+    public function product_option_pop(){
 
         $aInput = array(
             'type'  => $this->input->get('view_type')
@@ -2462,13 +2464,77 @@ class Product extends A_Controller {
         $this->load->model('product_model');
         $aProductInfo = $this->product_model->get_product_row($aInput['p_num']);
 
-        if($aInput['type'] == 'basic') $view_file = '/product/product_option'.$aInput['depth'];
-        else $view_file = '/product/product_option';
-
-        $this->load->view($view_file, array(
-                'aInput'        => $aInput
-            ,   'aProductInfo'  => $aProductInfo
+        $this->load->view('/product/product_option_pop', array(
+            'aInput'        => $aInput
+        ,   'aProductInfo'  => $aProductInfo
         ));
+
+    }
+
+    public function product_option(){
+
+        $headers = apache_request_headers();
+
+        foreach ($headers as $header => $value) {
+            if($header == 'Accept'){
+                if( preg_match('/application\/json/',$value) == true) $isDatatype = 'json';
+                else $isDatatype = 'html';
+            }
+        }
+
+        $aInput = array(
+            'type'  => $this->input->post('type')
+        ,   'depth' => $this->input->post('depth')
+        ,   'p_num' => $this->input->post('p_num')
+        );
+
+        $this->load->model('product_model');
+
+        $aProductInfo       = $this->product_model->get_product_row($aInput['p_num']);
+        $aProductOptionList = $this->product_option_model->get_option_list($aInput['p_num']);
+
+        if($isDatatype == 'json'){
+
+            echo json_encode_no_slashes($aProductOptionList);
+
+        }else{
+
+            if($aInput['type'] == 'basic') $view_file = '/product/product_option'.$aInput['depth'];
+            else $view_file = '/product/product_option';
+
+            $this->load->view($view_file, array(
+                'aInput'                => $aInput
+            ,   'aProductInfo'          => $aProductInfo
+            ,   'aProductOptionList'    => $aProductOptionList
+            ));
+
+        }
+
+    }
+
+    public function delete_option(){
+
+        ajax_request_check();
+
+        $aInput = array( 'option_id' => $this->input->post('option_id') );
+
+        $aProductOptionInfo = $this->product_option_model->get_option_row($aInput['option_id']);
+
+        if(empty($aProductOptionInfo) == true){
+            echo json_encode_no_slashes(array('success' => false, 'msg' => '옵션정보가 없습니다.'));
+            exit;
+        }
+
+        $bRet = $this->product_option_model->del_option($aInput);
+
+        if(empty($bRet) == true){
+            echo json_encode_no_slashes(array('success' => false, 'msg' => '옵션삭제 실패[DB]'));
+        }else{
+            if($aProductOptionInfo['option_use_img'] == 'Y'){
+                file_delete(1,$aProductOptionInfo['option_img'],DOCROOT);
+            }
+            echo json_encode_no_slashes(array('success' => true, 'msg' => ''));
+        }
 
     }
 
@@ -2476,17 +2542,63 @@ class Product extends A_Controller {
 
         ajax_request_check();
 
-        $aInput = json_decode( $this->input->post('data_obj') , true );
+        $tmp_data = array(
+                'p_num'                 => $this->input->post('p_num')
+            ,   'depth'                 => $this->input->post('depth')
+            ,   'option_id'             => $this->input->post('option_id')
+            ,   'act_type'              => $this->input->post('act_type')
+            ,   'option_sort'           => $this->input->post('option_sort')
+            ,   'option_1'              => $this->input->post('option_1')
+            ,   'option_2'              => $this->input->post('option_2')
+            ,   'option_3'              => $this->input->post('option_3')
+            ,   'option_sale_price'     => $this->input->post('option_sale_price')
+            ,   'option_org_price'      => $this->input->post('option_org_price')
+            ,   'option_supply_price'   => $this->input->post('option_supply_price')
+            ,   'option_stock'          => $this->input->post('option_stock')
+            ,   'option_add'            => $this->input->post('option_add')
+        );
+
+        $aProductInfo = $this->product_model->get_product_row($tmp_data['p_num']);
+
+        if(empty($aProductInfo) == true){
+            echo json_encode_no_slashes(array('success' => false , 'msg' => '상품정보가 없습니다.'));
+            exit;
+        }
 
         $query_data = array();
+        $i = 0;
+        foreach ($tmp_data['option_id'] as $k => $v) {
 
-        foreach ($aInput as $k => $r){
-            foreach ($r as $kk => $v)  {
-                $query_data[$kk]['p_num'] = $this->input->post('p_num') ;
-                $query_data[$kk]['use_img'] = 'N';
+            //각차수에 맞는 옵션명이 비어있는 경우 pass
+            if($tmp_data['depth'] == 1 && empty($tmp_data['option_1'][$k]) == true) continue;
+            else if($tmp_data['depth'] == 2 && ( empty($tmp_data['option_1'][$k]) == true || empty($tmp_data['option_2'][$k]) == true )) continue;
+            else if($tmp_data['depth'] == 3 && ( empty($tmp_data['option_1'][$k]) == true || empty($tmp_data['option_2'][$k]) == true || empty($tmp_data['option_3'][$k]) == true )) continue;
 
-                $query_data[$kk][$k] = $v ;
+            $query_data[$i]['option_id']            = $v;
+            $query_data[$i]['p_num']                = $tmp_data['p_num'];
+            $query_data[$i]['depth']                = $tmp_data['depth'];
+
+            $query_data[$i]['act_type']             = $tmp_data['act_type'][$k];
+            $query_data[$i]['option_sort']          = $tmp_data['option_sort'][$k];
+            $query_data[$i]['option_1']             = $tmp_data['option_1'][$k];
+            $query_data[$i]['option_2']             = $tmp_data['option_2'][$k];
+            $query_data[$i]['option_3']             = $tmp_data['option_3'][$k];
+            $query_data[$i]['option_sale_price']    = $tmp_data['option_sale_price'][$k];
+            $query_data[$i]['option_org_price']     = $tmp_data['option_org_price'][$k];
+            $query_data[$i]['option_supply_price']  = $tmp_data['option_supply_price'][$k];
+            $query_data[$i]['option_stock']         = $tmp_data['option_stock'][$k];
+            $query_data[$i]['option_add']           = $tmp_data['option_add'][$k];
+
+            if(empty($v) == false){
+                $aProductOptionRow = $this->product_option_model->get_option_row($v);
+                $query_data[$i]['option_img']       = $aProductOptionRow['option_img'];
+                $query_data[$i]['option_use_img']   = $aProductOptionRow['option_use_img'];
+            }else{
+                $query_data[$i]['option_use_img']       = 'N';
             }
+
+            $i++;
+
         }
 
         if( isset($_FILES['option_img']['name']) && !empty($_FILES['option_img']['name']) ) {
@@ -2515,22 +2627,24 @@ class Product extends A_Controller {
                 $_FILES['userfile']['error']    = $_FILES['option_img']['error'][$key];
                 $_FILES['userfile']['size']     = $_FILES['option_img']['size'][$key];
 
-                if( $this->upload->do_upload() ){
-                    $img_data = $this->upload->data();
-                    $query_data[$key]['img_url'] = $p_image_path_web.$img_data['file_name'];
-                    $query_data[$key]['use_img'] = 'Y';
+                if(empty($query_data[$key]) == false){
+
+                    if( $this->upload->do_upload() ){
+                        $img_data = $this->upload->data();
+                        $query_data[$key]['option_img'] = $p_image_path_web.$img_data['file_name'];
+                        $query_data[$key]['option_use_img'] = 'Y';
+                    }
+
                 }
             }
         }
 
-        $this->load->model('Product_option_model');
-        $this->Product_option_model->insert_option($query_data);
 
-        echo json_encode_no_slashes(array('sucess' => true));
+        $this->product_option_model->upsert_option($query_data);
+
+        echo json_encode_no_slashes(array('success' => true , 'msg' => '처리완료'));
         exit;
 
-
     }
-
 
 }//end of class Product

@@ -122,7 +122,7 @@ $config['option_image_path_web'] = $config['upload_path_web'] . "/product_option
 //이미지 썸네일 사이즈 : [0]가로(px), [1]세로(px), [2]자르기 여부(Y|N)
 $config['product_rep_image_size'][1] = array("720", "430", 'Y');
 $config['product_detail_image_size'][1] = array("720", "5000", 'N');
-$config['banner_image_size'][1] = array("720", "1280", 'N');
+$config['banner_image_size'][1] = array("360", "540", 'N');
 $config['event_rep_image_size'][1] = array("720", "1280", 'N');
 
 $config['upload_max_size'] = 20000;         //20MB

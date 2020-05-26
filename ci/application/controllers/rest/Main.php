@@ -34,7 +34,7 @@ class Main extends REST_Controller
             }
             $arr['p_rep_image'] = json_decode($arr['p_rep_image'],true)[0];
 
-            unset($arr['p_banner_image']);
+//            unset($arr['p_banner_image']);
             unset($arr['p_category']);
             unset($arr['p_order_link']);
             unset($arr['p_app_price_yn']);
@@ -105,9 +105,6 @@ class Main extends REST_Controller
             unset($arr['p_manufacturer']);
             unset($arr['p_suvin_flag']);
 
-
-
-
         }else{ //순차배열
 
             foreach ($arr as $k => $r) {
@@ -117,7 +114,7 @@ class Main extends REST_Controller
                 }
                 $arr[$k]['p_rep_image'] = json_decode($r['p_rep_image'],true)[0];
 
-                unset($arr[$k]['p_banner_image']);
+//                unset($arr[$k]['p_banner_image']);
                 unset($arr[$k]['p_category']);
                 unset($arr[$k]['p_order_link']);
                 unset($arr[$k]['p_app_price_yn']);
@@ -269,6 +266,23 @@ class Main extends REST_Controller
 
         $notin = array();
 
+
+        {// 세로롤링
+            $aInput = array();
+            $aInput['where']['md_div']      =  '2';
+            $aInput['where']['sale_state']  =  'Y';
+            $aInput['where']['stock_state'] =  'Y';
+            $aInput['orderby']              = ' pmd_order ASC ';
+            $aVerticalProductList = $this->product_model->get_product_list($aInput) ;
+
+            if(empty($aVerticalProductList) == false){
+                foreach ($aVerticalProductList as $r) {
+                    $notin[] = $r['p_num'];
+                }
+            }
+
+        }
+
         $fix_cnt = 15;
 
         if($top15_type == 1 || $top15_type == ''){ // top30_top 상품은 최대 15개
@@ -278,6 +292,7 @@ class Main extends REST_Controller
             $aInput['where']['md_div']      =  '1';
             $aInput['where']['sale_state']  =  'Y';
             $aInput['where']['stock_state'] =  'Y';
+            $aInput['where']['not_pnum']    =  $notin;
             $aInput['orderby']              = ' pmd_order ASC ';
             $addProductList = $this->product_model->get_product_list($aInput) ;
 
@@ -400,6 +415,9 @@ class Main extends REST_Controller
         if(empty($aTmpTheme3) == false) $aTmpTheme3 = self::clearProductField($aTmpTheme3 , array('campaign' => 'thema_new_ctgr'));
         else $aTmpTheme3 = array();
 
+        if(empty($aVerticalProductList) == false) $aVerticalProductList = self::clearProductField($aVerticalProductList , array('campaign' => 'Vertical'));
+        else $aVerticalProductList = array();
+
         $aTheme2 = array(
             'title' => ''
         ,   'view_type' => 'A'
@@ -412,6 +430,11 @@ class Main extends REST_Controller
         ,   'aLists' => $aTmpTheme3
         );
 
+        $aVertical = array(
+            'title' => '세로배너 타이틀'
+        ,   'aLists' => $aVerticalProductList
+        );
+
         $aTheme = array();
 
         if(count($aMainThemaList) > 1){
@@ -420,7 +443,7 @@ class Main extends REST_Controller
 
                 if($k == 1) $aTheme[] = $aTheme2;
 
-                $aRowList = self::clearProductField($r['main_thema_product_lists'], array());
+                $aRowList = self::clearProductField($r['main_thema_product_lists'], array('campaign' => 'main_thema'));
 
                 $aTheme[] = array(
                     'title'     => $r['main_thema_row']['thema_name']
@@ -435,7 +458,7 @@ class Main extends REST_Controller
             if(count($aMainThemaList) == 1){
                 foreach ($aMainThemaList as $k => $r) {
 
-                    $aRowList = self::clearProductField($r['main_thema_product_lists'], array());
+                    $aRowList = self::clearProductField($r['main_thema_product_lists'], array('campaign' => 'main_thema'));
 
                     $aTheme[] = array(
                         'title'     => $r['main_thema_row']['thema_name']
@@ -458,6 +481,7 @@ class Main extends REST_Controller
                 array(  'aRollingBanner'=> $aRollingBanner // 상단 롤링배너
                 ,   'aTopTheme'     => array ( array( 'title' => '' , 'aLists' => $aTopTheme) )        //상단 상품 리스트
                 ,   'aTheme'        => $aTheme //테마 리스트
+                ,   'aVertical'     => $aVertical //세로롤링배너
                 )
 
             ), REST_Controller::HTTP_OK

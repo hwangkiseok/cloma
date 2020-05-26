@@ -477,14 +477,50 @@ class Product_model extends W_Model {
                 }
             }
 
-            $sql        = " SELECT * 
+            $sql        = " SELECT   
+                              pt.p_num 
+                            , pt.p_category
+                            , pt.p_cate1
+                            , pt.p_name
+                            , pt.p_summary
+                            , pt.p_rep_image
+                            , pt.p_today_image
+                            , pt.p_banner_image
+                            , pt.p_order_link
+                            , pt.p_original_price
+                            , pt.p_sale_price
+                            , pt.p_app_price_yn
+                            , pt.p_app_price
+                            , pt.p_price_second_yn
+                            , pt.p_price_second
+                            , pt.p_price_third_yn
+                            , pt.p_price_third
+                            , pt.p_discount_rate
+                            , pt.p_wish_count
+                            , pt.p_share_count
+                            , pt.p_deliveryprice_type
+                            , pt.p_deliveryprice
+                            , pt.p_termlimit_yn
+                            , pt.p_termlimit_datetime1
+                            , pt.p_termlimit_datetime2
+                            , pt.p_display_info
+                            , pt.p_view_count
+                            , pt.p_click_count
+                            , pt.p_stock_state
+                            , pt.p_sale_state
+                            , pt.p_hotdeal_condition_1
+                            , pt.p_hotdeal_condition_2
+                            , pt.p_main_banner_view
+                            , pt.p_tot_order_count
+                            , pt.p_order_code
+                            , pt.p_hash
                             FROM main_thema_product_tb sop
                             INNER JOIN product_tb pt ON pt.p_num = sop.p_num 
                             WHERE sop.parent_seq = '{$row['seq']}'
                             AND pt.p_display_state = 'Y'
                             AND pt.p_sale_state = 'Y'
                             AND pt.p_stock_state = 'Y'
-                            {$where_query}
+                            {$where_query} 
                             ORDER BY sop.sort_num ASC ;
             ";
 

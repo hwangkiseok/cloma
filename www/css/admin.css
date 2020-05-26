@@ -194,3 +194,9 @@ hr.line5 { width:100%; height:1px; color:#ccc; margin:5px 0; }
 .badge.badge-warning { color:#fff !important; background-color:#ffc107; }
 .badge.badge-light { color:#212529 !important; background-color:#f8f9fa; }
 .badge.badge-dark { color:#fff !important; background-color:#343a40; }
+
+/*상품상세 옵션css*/
+#pop_insert_form .option_img {width: 15%;display: inline-block;float:left;}
+#pop_insert_form .option_img a.thumbnail {margin-bottom: 0;height: 65px;}
+#pop_insert_form .option_img a.thumbnail img {height: 55px;}
+#pop_insert_form .option_sel_img {width: 80%;display: inline-block;float:left;margin-left: 10px;}
