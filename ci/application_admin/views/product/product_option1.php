@@ -1,8 +1,9 @@
-
 <form method="post" id="pop_insert_form" action="/product/upsert_option">
 
     <input type="hidden" name="p_num" value="<?=$aProductInfo['p_num']?>" />
     <input type="hidden" name="depth" value="<?=$aInput['depth']?>" />
+    <input type="hidden" name="type" value="<?=$aInput['type']?>" />
+    <input type="hidden" name="option_token" value="<?=$aInput['option_token']?>" />
 
     <div style="border:1px solid #ddd;border-radius: 5px;margin-top: -72px; margin-bottom: 8px;padding: 16px;position: fixed;width: calc(100% - 32px);background: #fff;z-index: 10">
         <button class="btn btn-sm btn-success option_add">옵션추가</button>
@@ -114,7 +115,6 @@
     $(function(){
 
         $('#pop_insert_form').on('submit',function(){
-
         });
 
         $('#pop_insert_form').ajaxForm({

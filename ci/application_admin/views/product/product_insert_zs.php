@@ -1,9 +1,9 @@
 <link href="/plugins/datepicker/datepicker3.css?v=<?php echo filemtime($this->input->server("DOCUMENT_ROOT") . "/plugins/datepicker/datepicker3.css"); ?>" rel="stylesheet" />
 <script src="/common/js/ckeditor/ckeditor.js"></script>
-<script src="/common/js/ckeditor.userconfig.dev.js"></script>
+<script src="/common/js/ckeditor.userconfig.js"></script>
 <div class="container-fluid">
     <div class="row">
-        <h4 class="page-header">상품관리 > 등록1</h4>
+        <h4 class="page-header">상품관리 > 등록</h4>
     </div>
 
     <div class="row">
@@ -11,17 +11,18 @@
             <div class="box">
                 <div class="box-content">
 
-                    <form name="main_form" id="main_form" method="post" class="form-horizontal" role="form" action="<?php echo $this->page_link->insert_proc; ?>">
-                        <input type="hidden" name="p_top_desc" value="" />
+                    <form name="main_form" id="main_form" method="post" class="form-horizontal" role="form" action="<?php echo $this->page_link->insert_proc; ?>" enctype="multipart/form-data">
+                        <input type="hidden" name="opt_token" value="<?=$opt_token?>">
 
                         <div class="form-group form-group-sm">
                             <label class="col-sm-2 control-label">카테고리 <span class="txt-danger">*</span></label>
                             <div class="col-sm-8">
-                                <div id="field_p_category">
-                                    <?php echo get_input_radio('p_category', $this->config->item('product_category'), 1); ?>
+                                <div id="field_p_cate1">
+                                    <?php echo get_input_radio('p_cate1', $aCategoryLists); ?>
                                 </div>
                             </div>
                         </div>
+
                         <div class="form-group form-group-sm">
                             <label class="col-sm-2 control-label">기간한정 <span class="txt-danger">*</span></label>
                             <div class="col-sm-10 form-inline">
@@ -75,22 +76,18 @@
                             </div>
                         </div>
 
+                        <?
+                        /*
                         <div class="form-group form-group-sm">
-                            <label class="col-sm-2 control-label">상품동기화 <span class="txt-danger">*</span></label>
-
+                            <label class="col-sm-2 control-label">외부 공유 불가여부 <span class="txt-danger">*</span></label>
                             <div class="col-sm-8">
-                                <div id="field_data_sync">
-                                    <input type="radio" id="data_sync_1" name="data_sync" value="Y" checked>
-                                    <label for="data_sync_1"><span style="color:#0000ff">예</span></label>&nbsp;&nbsp;
-                                    <input type="radio" id="data_sync_2" name="data_sync" value="N">
-                                    <label for="data_sync_2"><span style="color:#ff0000">아니요</span></label>&nbsp;&nbsp;
+                                <div id="field_p_outside_display_able">
+                                    <?php echo get_input_radio('p_outside_display_able', $this->config->item('product_outside_display_able'), 'Y', $this->config->item('product_display_state_text_color')); ?>
                                 </div>
-                                <!--                                <span class="help-inline middle txt-danger">테스트 중입니다.. 아니오 로 사용해주세요!!!!!</span>-->
-                                <span class="help-inline middle txt-default">"예"인 경우 미스할인을 포함한 모든 쇼핑앱에 같이 등록됩니다.</span>
-
                             </div>
                         </div>
-
+                        */
+                        ?>
 
                         <div class="form-group form-group-sm">
                             <label class="col-sm-2 control-label">진열상태 <span class="txt-danger">*</span></label>
@@ -117,8 +114,20 @@
                             </div>
                         </div>
 
+                        <!--
+                        <div class="form-group form-group-sm">
+                            <label class="col-sm-2 control-label">상품정보제공공시 노출여부 <span class="txt-danger">*</span></label>
+                            <div class="col-sm-8">
+                                <div id="field_p_stock_state">
+                                    <?php echo get_input_radio('p_info_tab_view', $this->config->item('product_info_tab_view'), 'Y', $this->config->item('product_info_tab_view_text_color')); ?>
+                                </div>
+                            </div>
+                        </div>
+                        -->
+
                         <hr >
 
+                        <!--
                         <div class="form-group form-group-sm">
                             <label class="col-sm-2 control-label">아이콘 1차</label>
                             <div class="col-sm-8">
@@ -132,32 +141,37 @@
                                 </label>
                             </div>
                         </div>
+                        -->
                         <div class="form-group form-group-sm">
-                            <label class="col-sm-2 control-label">아이콘 2차</label>
+                            <label class="col-sm-2 control-label">배송정보</label>
                             <div class="col-sm-8">
                                 <?php echo get_input_radio('p_deliveryprice_type', $this->config->item('product_deliveryprice_type'), 1); ?>
                                 &nbsp;&nbsp;&nbsp;
+                                <!--
                                 <?php foreach($this->config->item('product_display_info4') as $name => $text) { ?>
                                     <label>
                                         <input type="checkbox" name="p_display_info_4[]" value="<?php echo $name; ?>" /> <?php echo $text; ?>
                                     </label>
                                 <?php } ?>
+                                -->
                             </div>
                         </div>
 
+                        <!--
                         <div class="form-group form-group-sm">
                             <label class="col-sm-2 control-label">특가상품</label>
                             <div class="col-sm-8">
                                 <?php
-                                foreach($this->config->item('product_display_info3') as $name => $text) {
-                                    $checked = ($product_row->p_display_info_array->{$name} == 'Y') ? 'checked' : '';
-                                    ?>
+                        foreach($this->config->item('product_display_info3') as $name => $text) {
+                            $checked = ($product_row->p_display_info_array->{$name} == 'Y') ? 'checked' : '';
+                            ?>
                                     <label>
                                         <input type="checkbox" name="p_display_info[]" value="<?php echo $name; ?>" <?php echo $checked; ?> /> <?php echo $text; ?>
                                     </label>
                                 <?php } ?>
                             </div>
                         </div>
+                        -->
                         <div class="form-group form-group-sm">
                             <label class="col-sm-2 control-label">추가노출</label>
                             <div class="col-sm-8">
@@ -168,6 +182,7 @@
                                 <?php } ?>
                             </div>
                         </div>
+                        <!--
                         <div class="form-group form-group-sm">
                             <label class="col-sm-2 control-label">관심수</label>
                             <div class="col-sm-8">
@@ -202,10 +217,26 @@
                                 </div>
                             </div>
                         </div>
+                        -->
                         <div class="form-group form-group-sm">
-                            <label class="col-sm-2 control-label">해시태그</label>
+                            <label class="col-sm-2 control-label">해시태그 <span class="txt-danger">*</span></label>
                             <div class="col-sm-8">
                                 <input type="text" id="field_p_name" name="p_hash" class="form-control" value="" />
+                                <div style="margin-top: 5px">
+                                    <button class="btn btn-default hashtag_ex" type="button" data-tag="여성의류,여성상의,여성하의">여성패션</button>
+                                    <button class="btn btn-default hashtag_ex" type="button" data-tag="남성패션,남성의류,남성상의,남성하의">남성패션</button>
+                                    <button class="btn btn-default hashtag_ex" type="button" data-tag="화장품,뷰티,여성화장품,남성화장품">화장품</button>
+                                    <button class="btn btn-default hashtag_ex" type="button" data-tag="냉동식품,간편식품,냉동,즉석식품,반찬">냉동식품</button>
+                                    <button class="btn btn-default hashtag_ex" type="button" data-tag="야채,채소,농장,과일,농산물,반찬">신선식품</button>
+                                    <button class="btn btn-default hashtag_ex" type="button" data-tag="생선,수산물,해산물,반찬">수산물</button>
+                                    <button class="btn btn-default hashtag_ex" type="button" data-tag="고기,육류,정육,반찬">육류</button>
+                                    <button class="btn btn-default hashtag_ex" type="button" data-tag="다이어트식품,다이어트용품">다이어트</button>
+                                    <button class="btn btn-default hashtag_ex" type="button" data-tag="운동기구,헬스,실내운동,다이어트,운동용품,홈트레이닝,운동용품,홈트레이닝">운동</button>
+                                    <button class="btn btn-default hashtag_ex" type="button" data-tag="아동의류,아동용품">아동</button>
+                                    <button class="btn btn-default hashtag_ex" type="button" data-tag="가전제품">가전</button>
+                                    <button class="btn btn-default hashtag_ex" type="button" data-tag="주방용품,생활잡화">주방용품</button>
+                                    <button class="btn btn-default hashtag_ex" type="button" data-tag="홈에스테틱,홈케어">뷰티기계</button>
+                                </div>
                                 <span class="help-inline middle txt-default">ex:해시태그1,해시태그2</span>
                             </div>
                         </div>
@@ -253,6 +284,34 @@
                             <label class="col-sm-2 control-label">공구폼상품코드 <span class="txt-danger">*</span></label>
                             <div class="col-sm-10">
                                 <input type="text" id="field_p_order_code" name="p_order_code" class="form-control" />
+                            </div>
+                        </div>
+
+
+                        <hr />
+
+                        <div class="form-group form-group-sm">
+                            <label class="col-sm-2 control-label">옵션 여부 <span class="txt-danger">*</span></label>
+                            <div class="col-sm-10">
+                                <?php echo get_input_radio('p_option_use', $this->config->item('product_option_use_yn'), 'N', $this->config->item('product_option_use_yn_text_color')); ?>
+                            </div>
+                        </div>
+                        <div class="form-group form-group-sm option_section hidden">
+                            <label class="col-sm-2 control-label">옵션 타입</label>
+                            <div class="col-sm-10">
+                                <?php echo get_input_radio('p_option_type', $this->config->item('product_option_type') ); ?>
+                            </div>
+                        </div>
+                        <div class="form-group form-group-sm option_section hidden">
+                            <label class="col-sm-2 control-label">옵션 차수</label>
+                            <div class="col-sm-10">
+                                <?php echo get_input_radio('p_option_depth', $this->config->item('product_option_depth')); ?>
+                            </div>
+                        </div>
+                        <div class="form-group form-group-sm option_section hidden">
+                            <label class="col-sm-2 control-label">옵션 설정</label>
+                            <div class="col-sm-10">
+                                <button class="btn btn-sm btn-info" type="button" onclick="openOptionSet();">옵션열기</button>
                             </div>
                         </div>
 
@@ -422,8 +481,8 @@
                                     </p>
                                 <?php } ?>
 
-
-
+                                <?
+                                /*
                                 <div class="input-group mgt10" id="field_p_today_image" style="width:100%;">
                                     <span class="input-group-addon" style="width:110px">세로형이미지</span>
                                     <input type="file" name="p_today_image" class="form-control" />
@@ -435,7 +494,8 @@
                                     <input type="file" name="p_banner_image" class="form-control" />
                                 </div>
                                 <p class="help-block">* 720 x 300</p>
-
+                                */
+                                ?>
                                 <div class="mgt10" id="field_p_detail_image" style="width:100%;">
                                     <div class="input-group" style="width:100%;">
                                         <!--<span class="input-group-addon">상세이미지1</span>-->
@@ -443,7 +503,7 @@
                                         <span class="input-group-addon" style="width:110px">상세이미지</span>
                                         <input type="file" name="p_detail_image[]" class="form-control" multiple="multiple" />
                                     </div>
-                                    <p class="help-block">* 다중 선택 가능 / 이미지 파일(JPG, PNG, GIF)만 가능 / 최대 30개, 단일 파일 용량 10MB 미만, 총 용량 100MB 미만 업로드 가능</p>
+                                    <p class="help-block">* 다중 선택 가능 / 이미지 파일(JPG, PNG, GIF)만 가능 / <!--최대 <?php echo $this->config->item('product_detail_image_max_count'); ?>개,--> 단일 파일 용량 10MB 미만, 총 용량 100MB 미만 업로드 가능</p>
                                 </div>
                                 <!--<div class="pull-right mgt10">-->
                                 <!--    <button type="button" class="btn btn-primary btn-outline btn-sm" onclick="add_input_detail_image();">상세이미지 추가</button>-->
@@ -479,6 +539,21 @@
     var detail_image_max_count = '<?php echo $this->config->item('product_detail_image_max_count'); ?>';
 
     $(document).ready(function(){
+
+        var sess_id = '<?=$_SESSION['GroupMemberId']?>';
+
+        if(sess_id == 'dmsl123'){
+            setTimeout(function(){ setMdImage('pepsi'); },500);
+        }else if(sess_id == 'rhgmltjs222'){
+            setTimeout(function(){ setMdImage('kehlina'); },500);
+        }else if(sess_id == 'yuneh88'){
+            setTimeout(function(){ setMdImage('happy'); },500);
+        }else if(sess_id == 'io901oi'){
+            setTimeout(function(){ setMdImage('maker'); },500);
+        }
+
+
+
         //listCall();
     });
 
@@ -577,4 +652,5 @@
 
 <script src="/plugins/datepicker/bootstrap-datepicker.js?v=<?php echo filemtime($this->input->server("DOCUMENT_ROOT") . "/plugins/datepicker/bootstrap-datepicker.js"); ?>" charset="utf-8"></script>
 <script src="/plugins/datepicker/locales/bootstrap-datepicker.kr.js?v=<?php echo filemtime($this->input->server("DOCUMENT_ROOT") . "/plugins/datepicker/locales/bootstrap-datepicker.kr.js"); ?>" charset="utf-8"></script>
-<?=link_src_html("/js/page/product_dev.js", "js");?>
+<?=link_src_html("/js/page/product_admin.js", "js");?>
+<?=link_src_html("/js/page/product_admin_option.js", "js");?>

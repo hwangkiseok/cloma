@@ -623,4 +623,5 @@
 
 <script src="/plugins/datepicker/bootstrap-datepicker.js?v=<?php echo filemtime($this->input->server("DOCUMENT_ROOT") . "/plugins/datepicker/bootstrap-datepicker.js"); ?>" charset="utf-8"></script>
 <script src="/plugins/datepicker/locales/bootstrap-datepicker.kr.js?v=<?php echo filemtime($this->input->server("DOCUMENT_ROOT") . "/plugins/datepicker/locales/bootstrap-datepicker.kr.js"); ?>" charset="utf-8"></script>
-<?=link_src_html("/js/page/product.js", "js");?>
+<?=link_src_html("/js/page/product_admin.js", "js");?>
+<?=link_src_html("/js/page/product_admin_option.js", "js");?>

@@ -164,8 +164,8 @@ $config['product_termlimit_yn']['N'] = "사용안함";
 $config['product_termlimit_yn_text_color']['Y'] = "#000000";
 $config['product_termlimit_yn_text_color']['N'] = "#666666";
 
-$config['product_option_use_yn']['Y'] = "사용";
-$config['product_option_use_yn']['N'] = "사용안함";
+$config['product_option_use_yn']['Y'] = "옵션상품";
+$config['product_option_use_yn']['N'] = "단일상품";
 $config['product_option_use_yn_text_color']['Y'] = "#000000";
 $config['product_option_use_yn_text_color']['N'] = "#666666";
 

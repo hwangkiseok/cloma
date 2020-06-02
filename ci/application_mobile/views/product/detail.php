@@ -295,4 +295,4 @@
 
 </div>
 
-<? link_src_html('/js/product.js' , 'js');  ?>
+<? link_src_html('/js/page/product_www.js' , 'js');  ?>

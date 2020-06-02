@@ -91,8 +91,8 @@ class Cart extends REST_Controller
                     ,   'sess_id'           => create_session_id()
                     ,   'option_name'       => $r['option_name']
                     ,   'option_info'       => json_encode($r,JSON_UNESCAPED_UNICODE)
-                    ,   'set_campaign'      => $req['set_referer']
-                    ,   'set_referer'       => $req['set_campaign']
+                    ,   'set_campaign'      => $req['set_campaign']
+                    ,   'set_referer'       => $req['set_referer']
                     );
 
                     $aOverlapInfo = $this->cart_model->overlapCart($arrayParams);
@@ -147,8 +147,8 @@ class Cart extends REST_Controller
                         ,   'sess_id'           => create_session_id()
                         ,   'option_name'       => $r['option_name']
                         ,   'option_info'       => json_encode($r,JSON_UNESCAPED_UNICODE)
-                        ,   'set_campaign'      => $req['set_referer']
-                        ,   'set_referer'       => $req['set_campaign']
+                        ,   'set_campaign'      => $req['set_campaign']
+                        ,   'set_referer'       => $req['set_referer']
                         );
 
                         $aOverlapInfo = $this->cart_model->overlapCart($arrayParams);

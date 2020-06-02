@@ -221,8 +221,8 @@ $config['product_termlimit_yn']['N'] = "사용안함";
 $config['product_termlimit_yn_text_color']['Y'] = "#0000FF";
 $config['product_termlimit_yn_text_color']['N'] = "#777777";
 
-$config['product_option_use_yn']['Y'] = "사용";
-$config['product_option_use_yn']['N'] = "사용안함";
+$config['product_option_use_yn']['Y'] = "옵션상품";
+$config['product_option_use_yn']['N'] = "단일상품";
 $config['product_option_use_yn_text_color']['Y'] = "#0000FF";
 $config['product_option_use_yn_text_color']['N'] = "#777777";
 
@@ -550,7 +550,7 @@ $config['app_splash_usestate_text_color']['N'] = "#FF0000";
 $config['splash_image_size'][1] = array("1500", "2700", "Y");
 
 //롤링배너 이미지 사이즈
-$config['special_offer_banner_image_size'][1] = array("1000", "426", "Y");
+$config['special_offer_banner_image_size'][1] = array("1000", "500", "Y");
 
 //APP 상태바
 $config['app_statusbar_os_type'][1] = "안드로이드";

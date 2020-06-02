@@ -115,8 +115,6 @@ $tot_price = 0;
 
         }
 
-
-
         $is_sale = false;
         if($r['p_sale_state'] == 'Y' && $r['p_stock_state'] == 'Y' && $is_stock == true) $is_sale = true;
 
@@ -171,12 +169,7 @@ $tot_price = 0;
                         </ul>
                     </div>
                     <div class="clear"></div>
-                    <?if($is_sale == false){?>
-                        <div style="position: absolute ;top: 0;left: 0;width: calc(100% + 16px);height: calc(100% + 16px); background: rgba(0,0,0,0.6);margin: -8px; ">
-                            <span style="font-size: 20px;color: #fff;vertical-align: middle;text-align: center;width: 100%;height: 100%;display: inline-block;padding-top: 13%">해당 상품은 품절되었습니다.</span>
-                        </div>
-                    <?}?>
-
+                    <?=chk_soldout_layer($is_sale)?>
                 </div>
 
             </div>
@@ -287,6 +280,7 @@ $tot_price = 0;
     <input type="hidden" name="a_payway_cd" value="1">
 </form>
 </div>
+
 <script type="text/javascript">
 
     var cart_url    = '/order/cart';
@@ -347,6 +341,12 @@ $tot_price = 0;
 
     $(function(){
 
+
+        $('.cart_soldout_wrap .cart_soldout a').on('click',function(){
+
+            proc_del($(this).parent().parent().parent().data('cart_id'));
+
+        });
 
         if(isApp == 'Y'){
             var min_height = $(window).outerHeight(true) - $('#header').outerHeight(true) ;//- $('#footer').outerHeight(true);
@@ -426,7 +426,7 @@ $tot_price = 0;
                 /**
                  * @date 200227
                  * @modify 황기석
-                 * @desc 옵션없는 상품 고려안됨
+                 * @TODO 옵션없는 상품 고려안됨
                  */
                 ?>
 
@@ -454,10 +454,7 @@ $tot_price = 0;
 
             }
 
-
-
             app_cart_order(form_url,form_data);
-            // $('form[name="cart_form"]').submit(h);
 
             <?}else{?>
 
@@ -641,9 +638,15 @@ $tot_price = 0;
 
         // show_loader();
 
+        proc_del(arr);
+
+    }
+
+    function proc_del(data){
+
         $.ajax({
             url : '<?php echo $this->page_link->delete_proc; ?>',
-            data : {cart_id:arr},
+            data : {cart_id:data},
             type : 'post',
             dataType : 'json',
             success : function(result) {
@@ -652,13 +655,12 @@ $tot_price = 0;
                         alert(result.message);
                     }
                 }
-
                 if( result.status == status_code['success'] ) {
                     location.reload();
                 }
             },
             complete : function() {
-                hide_loader();
+                // hide_loader();
             }
         });
 

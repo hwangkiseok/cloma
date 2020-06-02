@@ -145,10 +145,19 @@ class Order extends M_Controller
 
                     $this->chk_last_cart_order($trade_no,$aInput['act_type']);
 
+                }else if(in_array($payway_cd, array(1,2)) == true && $status_cd < 63){ //발주전 취소 처리 (실제 취소처리)
 
-                }else if(in_array($payway_cd, array(1,2,5)) == true && $status_cd < 63){ //발주전 취소 처리 (실제 취소처리)
+                    //카드, 계좌이체
+                    $aInput = array( 'tno' => $trade_no , 'act_type' => 'CE' );
+                    $resp = getSnsformOrderCancel($aInput);
 
-                    //카드, 휴대폰, 계좌이체
+                    $this->chk_last_cart_order($trade_no,$aInput['act_type']);
+
+                }else if(in_array($payway_cd, array(5)) == true && $status_cd < 63){ //발주전 취소 처리 (실제 취소처리)
+//                    @TODO 휴대폰 결제취소 제한처리
+//                    @TODO 당월, 단일주문만 취소가능
+
+                    //휴대폰
                     $aInput = array( 'tno' => $trade_no , 'act_type' => 'CE' );
                     $resp = getSnsformOrderCancel($aInput);
 

@@ -327,7 +327,12 @@ class Product extends A_Controller {
     public function product_insert() {
         $this->_header();
 
-        $viewFile = "/product/product_insert";
+        if($this->input->get('dev') == 'Y'){
+            $viewFile = "/product/product_insert_zs";
+        }else{
+            $viewFile = "/product/product_insert";
+        }
+
 
         $this->load->model('category_md_model');
         $aCategoryTmpLists = $this->category_md_model->get_category_md_list();
@@ -340,6 +345,7 @@ class Product extends A_Controller {
         $this->load->view($viewFile, array(
                 "list_url"  => $this->_get_list_url()
             ,   "aCategoryLists" => $aCategoryLists
+            ,   'opt_token' => create_session_id()
         ));
 
         $this->_footer();
@@ -430,6 +436,12 @@ class Product extends A_Controller {
             "detail_add_weight" => array("field" => "detail_add_weight", "label" => "용량/중량", "rules" => $this->default_set_rules),
             "detail_add_delivery_info" => array("field" => "detail_add_delivery_info", "label" => "배송정보", "rules" => $this->default_set_rules),
             "detail_add_deliveryprice_text" => array("field" => "detail_add_deliveryprice_text", "label" => "배송비설명", "rules" => $this->default_set_rules),
+
+
+            "p_option_use" => array("field" => "p_option_use", "label" => "옵션 여부", "rules" => $this->default_set_rules),
+            "p_option_type" => array("field" => "p_option_type", "label" => "옵션 타입", "rules" => $this->default_set_rules),
+            "p_option_depth" => array("field" => "p_option_depth", "label" => "옵션 차수", "rules" => $this->default_set_rules),
+            "opt_token" => array("field" => "opt_token", "label" => "옵션 토큰", "rules" => $this->default_set_rules),
 
             // 190412 황기석 새 필드 추가
 //            "p_outside_display_able" => array("field" => "p_outside_display_able", "label" => "노출여부", "rules" => "required|in_list[".get_config_item_keys_string("product_info_tab_view")."]|".$this->default_set_rules),
@@ -525,6 +537,13 @@ class Product extends A_Controller {
             $p_outside_display_able = $this->input->post('p_outside_display_able', true);
             //190703 황기석 새필드 추가
 //            $p_info_tab_view = $this->input->post('p_info_tab_view', true);
+
+
+            $p_option_use = $this->input->post('p_option_use', true);
+            $p_option_type = $this->input->post('p_option_type', true);
+            $p_option_depth = $this->input->post('p_option_depth', true);
+            $opt_token = $this->input->post('opt_token', true);
+
 
             $p_detail_add = "";
             $p_detail_add_array = array();
@@ -671,11 +690,6 @@ class Product extends A_Controller {
             //상세이미지 사용을 위해 init
             unset($_FILES['userfile']);
 
-
-
-
-
-
             //오늘추천이미지 업로드
             if( isset($_FILES['p_today_image']['name']) && !empty($_FILES['p_today_image']['name']) ) {
                 $config['file_name'] = $p_order_code . "_today";      //파일명
@@ -817,6 +831,10 @@ class Product extends A_Controller {
                 $query_data['p_outside_display_able'] = $p_outside_display_able;
 //                $query_data['p_info_tab_view'] = get_yn_value($p_info_tab_view);
 
+                if(empty($p_option_use) == false ) $query_data['p_option_use'] = $p_option_use;
+                if(empty($p_option_type) == false ) $query_data['p_option_type'] = $p_option_type;
+                if(empty($p_option_depth) == false ) $query_data['p_option_depth'] = $p_option_depth;
+
 
                 if($p_rep_image_add != ''){
                     $query_data['p_rep_image_add'] = $p_rep_image_add;
@@ -827,7 +845,21 @@ class Product extends A_Controller {
                 /*상단 고정이미지*/
 
                 $insert_result = $this->product_model->insert_product($query_data);
+
                 if( $insert_result['code'] == get_status_code('success') ) {
+
+                    /**
+                     *@TODO 옵션 매핑관련 테스트 진행예정
+                     **/
+                    if($p_option_use == 'Y'){
+
+                        $aOptionList = $this->product_option_model->get_option_list(array('option_token' => $opt_token));
+                        if(count($aOptionList) > 0){
+                            $this->product_option_model->set_mapping_option(array('p_num' => $insert_result['id'] ,'option_token' => $opt_token , 'option_type' => $p_option_type));
+                        }
+
+                    }
+
                     result_echo_json(get_status_code('success'), lang('site_insert_success'), true, 'alert');
                 }
                 else {
@@ -967,7 +999,8 @@ class Product extends A_Controller {
             //"product_md_list"  => $product_md_list,
             "product_md_division_array"  => $product_md_division_array,
             "list_url"      => $this->_get_list_url(),
-            'aCategoryLists'    => $aCategoryLists
+            'aCategoryLists'    => $aCategoryLists,
+            'opt_token' => create_session_id()
 
         ));
 
@@ -1094,6 +1127,9 @@ class Product extends A_Controller {
             // 190703 황기석 새 필드 추가
 //            "p_info_tab_view" => array("field" => "p_info_tab_view", "label" => "상품정보제공공시 노출여부", "rules" => "required|in_list[".get_config_item_keys_string("product_info_tab_view")."]|".$this->default_set_rules),
 
+            "p_option_use" => array("field" => "p_option_use", "label" => "옵션여부", "rules" => $this->default_set_rules),
+            "p_option_type" => array("field" => "p_option_type", "label" => "옵션타입", "rules" => $this->default_set_rules),
+            "p_option_depth" => array("field" => "p_option_depth", "label" => "옵션차수", "rules" => $this->default_set_rules)
 
         );
 
@@ -1124,6 +1160,7 @@ class Product extends A_Controller {
             $p_stock_state = $this->input->post('p_stock_state', true);
             $p_display_info = $this->input->post('p_display_info', true);
             $p_display_info_4 = $this->input->post('p_display_info_4', true);   //배열
+
             if( !empty($p_display_info) || !empty($p_display_info_4) ) {
                 $p_display_info_array = array();
 
@@ -1209,6 +1246,11 @@ class Product extends A_Controller {
             }
 
             $p_option_buy_cnt_view = $this->input->post('p_option_buy_cnt_view', true);
+
+            $p_option_use = $this->input->post('p_option_use', true);
+            $p_option_type = $this->input->post('p_option_type', true);
+            $p_option_depth = $this->input->post('p_option_depth', true);
+
 
             //할인율, 마진, 마진율 계산
             $p_discount_rate = "0.00";
@@ -1540,8 +1582,11 @@ class Product extends A_Controller {
                 $query_data['p_sale_state'] = get_yn_value($p_sale_state);
                 $query_data['p_stock_state'] = get_yn_value($p_stock_state);
                 $query_data['p_option_buy_cnt_view'] = get_yn_value($p_option_buy_cnt_view);
-
                 $query_data['p_outside_display_able'] = $p_outside_display_able;
+
+                if(empty($p_option_use) == false ) $query_data['p_option_use'] = $p_option_use;
+                if(empty($p_option_type) == false ) $query_data['p_option_type'] = $p_option_type;
+                if(empty($p_option_depth) == false ) $query_data['p_option_depth'] = $p_option_depth;
 
                 if( $this->product_model->update_product($p_num, $query_data) ) {
 
@@ -2453,24 +2498,39 @@ class Product extends A_Controller {
     }//end of _get_file_name()
 
 
+    /**
+     * @date 200528
+     * @author 황기석
+     * @TODO 신규 상품등록시 토큰을 통한 옵션연결작업
+     *
+     * @desc 옵션관련 method
+     */
+
+    /**
+     * @modify 황기석
+     * @desc 옵션팝업
+     */
     public function product_option_pop(){
 
         $aInput = array(
             'type'  => $this->input->get('view_type')
         ,   'depth' => $this->input->get('depth')
         ,   'p_num' => $this->input->get('p_num')
+        ,   'option_token' => $this->input->get('opt_token')
         );
 
         $this->load->model('product_model');
-        $aProductInfo = $this->product_model->get_product_row($aInput['p_num']);
 
         $this->load->view('/product/product_option_pop', array(
             'aInput'        => $aInput
-        ,   'aProductInfo'  => $aProductInfo
         ));
 
     }
 
+    /**
+     * @modify 황기석
+     * @desc 값에 따라 옵션페이지 분기 및 데이터 리스트
+     */
     public function product_option(){
 
         $headers = apache_request_headers();
@@ -2483,24 +2543,25 @@ class Product extends A_Controller {
         }
 
         $aInput = array(
-            'type'  => $this->input->post('type')
+            'type'  => $isDatatype=='html'?$this->input->post('type'):'basic' //데이터타입이 json인 경우 무조건 옵션유무체크를 위한 값(basic)으로 변경
         ,   'depth' => $this->input->post('depth')
         ,   'p_num' => $this->input->post('p_num')
+        ,   'option_token' => $this->input->post('option_token')
         );
 
-        $this->load->model('product_model');
-
         $aProductInfo       = $this->product_model->get_product_row($aInput['p_num']);
-        $aProductOptionList = $this->product_option_model->get_option_list($aInput['p_num']);
+        $aProductOptionList = $this->product_option_model->get_option_list(array('p_num' => $aInput['p_num'] , 'option_token' => $aInput['option_token'] , 'type' => $aInput['type'] ));
 
         if($isDatatype == 'json'){
 
-            echo json_encode_no_slashes($aProductOptionList);
+            echo json_encode_no_slashes(array('success' => true , 'msg' => '' , 'data' => $aProductOptionList));
 
         }else{
 
+            $this->load->model('product_model');
+
             if($aInput['type'] == 'basic') $view_file = '/product/product_option'.$aInput['depth'];
-            else $view_file = '/product/product_option';
+            else $view_file = '/product/product_option'.$aInput['type'];
 
             $this->load->view($view_file, array(
                 'aInput'                => $aInput
@@ -2512,32 +2573,212 @@ class Product extends A_Controller {
 
     }
 
+    /**
+     * @modify 황기석
+     * @desc 옵션삭제
+     */
     public function delete_option(){
 
         ajax_request_check();
 
-        $aInput = array( 'option_id' => $this->input->post('option_id') );
+        $aInput = array(
+                'option_id'         => $this->input->post('option_id')
+            ,   'option_group_id'   => $this->input->post('option_group_id')
+        );
 
-        $aProductOptionInfo = $this->product_option_model->get_option_row($aInput['option_id']);
+        $aProductOptionInfo = $this->product_option_model->get_option_row(array('option_id' => $aInput['option_id']));
+        $aProductOptionGroupInfo = $this->product_option_model->get_option_group_row(array('option_group_id' => $aInput['option_group_id']));
 
-        if(empty($aProductOptionInfo) == true){
+        if(empty($aProductOptionInfo) == true && empty($aProductOptionGroupInfo) == true){
             echo json_encode_no_slashes(array('success' => false, 'msg' => '옵션정보가 없습니다.'));
             exit;
         }
 
-        $bRet = $this->product_option_model->del_option($aInput);
+        if( empty($aInput['option_id']) == false ) $bRet = $this->product_option_model->del_option($aInput, 'single');
+        if( empty($aInput['option_group_id']) == false ) $bRet = $this->product_option_model->del_option($aInput, 'group');
 
-        if(empty($bRet) == true){
+        if($bRet == false){
             echo json_encode_no_slashes(array('success' => false, 'msg' => '옵션삭제 실패[DB]'));
         }else{
-            if($aProductOptionInfo['option_use_img'] == 'Y'){
-                file_delete(1,$aProductOptionInfo['option_img'],DOCROOT);
-            }
+            if($aProductOptionInfo['option_use_img'] == 'Y') file_delete(1,$aProductOptionInfo['option_img'],DOCROOT);
             echo json_encode_no_slashes(array('success' => true, 'msg' => ''));
         }
 
     }
 
+    /**
+     * @modify 황기석
+     * @desc 1+1 / 1+1+1 그룹옵션 관련 등록/수정
+     */
+    public function upsert_option_group(){
+
+        ajax_request_check();
+
+        $tmp_data = array(
+            'p_num'                 => $this->input->post('p_num')
+        ,   'depth'                 => $this->input->post('depth')
+        ,   'type'                  => $this->input->post('type')
+        ,   'option_token'          => $this->input->post('option_token')
+        ,   'option_group_id'       => $this->input->post('option_group_id')
+        ,   'act_type'              => $this->input->post('act_type')
+        ,   'option_group1'         => $this->input->post('option_group1')
+        ,   'option_group2'         => $this->input->post('option_group2')
+        ,   'option_group3'         => $this->input->post('option_group3')
+        ,   'option_sale_price'     => $this->input->post('option_sale_price')
+        ,   'option_org_price'      => $this->input->post('option_org_price')
+        ,   'option_supply_price'   => $this->input->post('option_supply_price')
+        ,   'option_group_stock1'   => $this->input->post('option_group_stock1')
+        ,   'option_group_stock2'   => $this->input->post('option_group_stock2')
+        ,   'option_group_stock3'   => $this->input->post('option_group_stock3')
+
+        );
+
+        $query_data = array();
+        $i = 0;
+        foreach ($tmp_data['option_group_id'] as $k => $v) {
+
+            //각차수에 맞는 옵션명이 비어있는 경우 pass
+//            if($tmp_data['depth'] == 1 && empty($tmp_data['option_group1'][$k]) == true) continue;
+//            else if($tmp_data['depth'] == 2 && ( empty($tmp_data['option_group1'][$k]) == true || empty($tmp_data['option_group2'][$k]) == true )) continue;
+//            else if($tmp_data['depth'] == 3 && ( empty($tmp_data['option_group1'][$k]) == true || empty($tmp_data['option_group2'][$k]) == true || empty($tmp_data['option_group3'][$k]) == true )) continue;
+
+            if(     empty($tmp_data['option_group1'][$k]) == true
+                &&  empty($tmp_data['option_group2'][$k]) == true
+                &&  empty($tmp_data['option_group3'][$k]) == true
+            ) continue;
+
+            $query_data[$i]['option_group_id']      = $v;
+            $query_data[$i]['p_num']                = $tmp_data['p_num']?$tmp_data['p_num']:0;
+            $query_data[$i]['option_depth']         = $tmp_data['depth'];
+            $query_data[$i]['option_type']          = $tmp_data['type'];
+            $query_data[$i]['option_token']         = $tmp_data['option_token'];
+            $query_data[$i]['act_type']             = $tmp_data['act_type'][$k];
+
+            $query_data[$i]['option_group1']        = $tmp_data['option_group1'][$k];
+            $query_data[$i]['option_group2']        = $tmp_data['option_group2'][$k];
+            $query_data[$i]['option_group3']        = $tmp_data['option_group3'][$k];
+            $query_data[$i]['option_sale_price']    = $tmp_data['option_sale_price'][$k]?$tmp_data['option_sale_price'][$k]:0;
+            $query_data[$i]['option_org_price']     = $tmp_data['option_org_price'][$k]?$tmp_data['option_org_price'][$k]:0;
+            $query_data[$i]['option_supply_price']  = $tmp_data['option_supply_price'][$k]?$tmp_data['option_supply_price'][$k]:0;
+            $query_data[$i]['option_group_stock1']  = $tmp_data['option_group_stock1'][$k]?$tmp_data['option_group_stock1'][$k]:0;
+            $query_data[$i]['option_group_stock2']  = $tmp_data['option_group_stock2'][$k]?$tmp_data['option_group_stock2'][$k]:0;
+            $query_data[$i]['option_group_stock3']  = $tmp_data['option_group_stock3'][$k]?$tmp_data['option_group_stock3'][$k]:0;
+
+            $i++;
+
+        }
+
+        $this->product_option_model->upsert_option_group($query_data);
+        $aProductOptionGroupList = $this->product_option_model->get_option_group_list(array('p_num' => $tmp_data['p_num'],'option_token' => $tmp_data['option_token']));
+
+        $query_data = array();
+        $i          = 0;
+        if( $aProductOptionGroupList[0]['option_depth'] == 2 ){
+
+            foreach ($aProductOptionGroupList as $k => $r) {
+
+                foreach ($aProductOptionGroupList as $kk => $rr) {
+
+                    if(empty($r['option_group1']) == true) continue;
+
+                    $aInput             = array('option_group_id1' => $r['option_group_id'], 'option_group_id2' => $rr['option_group_id']);
+                    $aProductOptionInfo = $this->product_option_model->get_option_row($aInput);
+
+                    if(empty($aProductOptionInfo) == false){
+                        $query_data[$i]['option_id']            = $aProductOptionInfo['option_id'];
+                        $query_data[$i]['act_type']             = 'update';
+                    }else{
+                        $query_data[$i]['option_id']            = '';
+                        $query_data[$i]['act_type']             = 'insert';
+                    }
+
+                    $query_data[$i]['p_num']                = $r['p_num'];
+                    $query_data[$i]['option_depth']         = $r['option_depth'];
+                    $query_data[$i]['option_type']          = $r['option_type'];
+                    $query_data[$i]['option_token']         = $r['option_token'];
+                    $query_data[$i]['option_sort']          = (int)$i+1;
+                    $query_data[$i]['option_1']             = $r['option_group1'];
+                    $query_data[$i]['option_2']             = $rr['option_group2'];
+                    $query_data[$i]['option_sale_price']    = $rr['option_sale_price']?$rr['option_sale_price']:0;
+                    $query_data[$i]['option_org_price']     = $rr['option_org_price']?$rr['option_org_price']:0;
+                    $query_data[$i]['option_supply_price']  = $rr['option_supply_price']?$rr['option_supply_price']:0;
+                    $query_data[$i]['option_stock']         = '0';
+                    $query_data[$i]['option_add']           = 'N';
+                    $query_data[$i]['option_use_img']       = 'N';
+
+                    $query_data[$i]['option_group_id1']     = $r['option_group_id'];
+                    $query_data[$i]['option_group_id2']     = $rr['option_group_id'];
+
+                    $i++;
+
+                }
+
+            }
+
+        } else if( $aProductOptionGroupList[0]['option_depth'] == 3 ){
+
+            foreach ($aProductOptionGroupList as $k => $r) {
+
+                foreach ($aProductOptionGroupList as $kk => $rr) {
+
+                    foreach ($aProductOptionGroupList as $kkk => $rrr) {
+
+                        if(empty($r['option_group1']) == true || empty($r['option_group2']) == true) continue;
+
+                        $aInput             = array('option_group_id1' => $r['option_group_id'], 'option_group_id2' => $rr['option_group_id'], 'option_group_id3' => $rrr['option_group_id']);
+                        $aProductOptionInfo = $this->product_option_model->get_option_row($aInput);
+
+                        if(empty($aProductOptionInfo) == false){
+                            $query_data[$i]['option_id']            = $aProductOptionInfo['option_id'];
+                            $query_data[$i]['act_type']             = 'update';
+                        }else{
+                            $query_data[$i]['option_id']            = '';
+                            $query_data[$i]['act_type']             = 'insert';
+                        }
+
+                        $query_data[$i]['p_num']                = $r['p_num'];
+                        $query_data[$i]['option_depth']         = $r['option_depth'];
+                        $query_data[$i]['option_type']          = $r['option_type'];
+                        $query_data[$i]['option_token']         = $r['option_token'];
+                        $query_data[$i]['option_sort']          = (int)$i+1;
+                        $query_data[$i]['option_1']             = $r['option_group1'];
+                        $query_data[$i]['option_2']             = $rr['option_group2'];
+                        $query_data[$i]['option_2']             = $rrr['option_group3'];
+                        $query_data[$i]['option_sale_price']    = $rrr['option_sale_price']?$rrr['option_sale_price']:0;
+                        $query_data[$i]['option_org_price']     = $rrr['option_org_price']?$rrr['option_org_price']:0;
+                        $query_data[$i]['option_supply_price']  = $rrr['option_supply_price']?$rrr['option_supply_price']:0;
+                        $query_data[$i]['option_stock']         = '0';
+                        $query_data[$i]['option_add']           = 'N';
+                        $query_data[$i]['option_use_img']       = 'N';
+
+                        $query_data[$i]['option_group_id1']     = $r['option_group_id'];
+                        $query_data[$i]['option_group_id2']     = $rr['option_group_id'];
+                        $query_data[$i]['option_group_id3']     = $rrr['option_group_id'];
+
+                        $i++;
+
+                    }
+
+                }
+
+            }
+
+        } else { //error
+            echo json_encode_no_slashes(array('success' => false , 'msg' => 'error'));
+            exit;
+        }
+
+        $this->product_option_model->upsert_option($query_data);
+
+        echo json_encode_no_slashes(array('success' => true , 'msg' => '처리완료'));
+        exit;
+
+    }
+
+    /**
+     * @modify 황기석
+     * @desc 단일옵션 관련 등록/수정
+     */
     public function upsert_option(){
 
         ajax_request_check();
@@ -2545,6 +2786,8 @@ class Product extends A_Controller {
         $tmp_data = array(
                 'p_num'                 => $this->input->post('p_num')
             ,   'depth'                 => $this->input->post('depth')
+            ,   'type'                  => $this->input->post('type')
+            ,   'option_token'          => $this->input->post('option_token')
             ,   'option_id'             => $this->input->post('option_id')
             ,   'act_type'              => $this->input->post('act_type')
             ,   'option_sort'           => $this->input->post('option_sort')
@@ -2558,13 +2801,6 @@ class Product extends A_Controller {
             ,   'option_add'            => $this->input->post('option_add')
         );
 
-        $aProductInfo = $this->product_model->get_product_row($tmp_data['p_num']);
-
-        if(empty($aProductInfo) == true){
-            echo json_encode_no_slashes(array('success' => false , 'msg' => '상품정보가 없습니다.'));
-            exit;
-        }
-
         $query_data = array();
         $i = 0;
         foreach ($tmp_data['option_id'] as $k => $v) {
@@ -2575,18 +2811,20 @@ class Product extends A_Controller {
             else if($tmp_data['depth'] == 3 && ( empty($tmp_data['option_1'][$k]) == true || empty($tmp_data['option_2'][$k]) == true || empty($tmp_data['option_3'][$k]) == true )) continue;
 
             $query_data[$i]['option_id']            = $v;
-            $query_data[$i]['p_num']                = $tmp_data['p_num'];
-            $query_data[$i]['depth']                = $tmp_data['depth'];
+            $query_data[$i]['p_num']                = $tmp_data['p_num']?$tmp_data['p_num']:0;
+            $query_data[$i]['option_depth']         = $tmp_data['depth'];
+            $query_data[$i]['option_type']          = $tmp_data['type'];
+            $query_data[$i]['option_token']         = $tmp_data['option_token'];
 
             $query_data[$i]['act_type']             = $tmp_data['act_type'][$k];
             $query_data[$i]['option_sort']          = $tmp_data['option_sort'][$k];
             $query_data[$i]['option_1']             = $tmp_data['option_1'][$k];
             $query_data[$i]['option_2']             = $tmp_data['option_2'][$k];
             $query_data[$i]['option_3']             = $tmp_data['option_3'][$k];
-            $query_data[$i]['option_sale_price']    = $tmp_data['option_sale_price'][$k];
-            $query_data[$i]['option_org_price']     = $tmp_data['option_org_price'][$k];
-            $query_data[$i]['option_supply_price']  = $tmp_data['option_supply_price'][$k];
-            $query_data[$i]['option_stock']         = $tmp_data['option_stock'][$k];
+            $query_data[$i]['option_sale_price']    = $tmp_data['option_sale_price'][$k]?$tmp_data['option_sale_price'][$k]:0;
+            $query_data[$i]['option_org_price']     = $tmp_data['option_org_price'][$k]?$tmp_data['option_org_price'][$k]:0;
+            $query_data[$i]['option_supply_price']  = $tmp_data['option_supply_price'][$k]?$tmp_data['option_supply_price'][$k]:0;
+            $query_data[$i]['option_stock']         = $tmp_data['option_stock'][$k]?$tmp_data['option_stock'][$k]:0;
             $query_data[$i]['option_add']           = $tmp_data['option_add'][$k];
 
             if(empty($v) == false){
@@ -2646,5 +2884,6 @@ class Product extends A_Controller {
         exit;
 
     }
+    /* END OF OPTION METHOD */
 
 }//end of class Product

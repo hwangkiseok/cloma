@@ -345,6 +345,9 @@ class Api extends A_Controller {
                     $aSnsformOrderInfo[$key] = trim($this->input->post($key, true));
                 }
 
+                if(empty($aSnsformOrderInfo['campaign']) == true) $aSnsformOrderInfo['campaign'] = $aSnsformOrderInfo['campaign']=='null'?'':$aSnsformOrderInfo['campaign'];
+                if(empty($aSnsformOrderInfo['referer']) == true) $aSnsformOrderInfo['referer'] = $aSnsformOrderInfo['referer']=='null'?'':$aSnsformOrderInfo['referer'];
+
                 $trade_no = $aSnsformOrderInfo['trade_no'];
 
                 if( $this->snsform_model->bOverlapOrder($trade_no) == true ) { //중복있음

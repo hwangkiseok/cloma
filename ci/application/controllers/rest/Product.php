@@ -411,7 +411,7 @@ class Product extends REST_Controller
             $aSnsformProductInfo = $this->product_model->get_snsform_product_row($aProductInfo['p_order_code']);
 
             //상품상세페이지페이지 진입수 ++ (p_view_count) (새로고침 제외)
-            if( $view_check == 'Y' ) {
+//            if( $view_check == 'Y' ) {
                 $query_data = array();
                 $query_data['p_view_count'] = (int)($aProductInfo['p_view_count']) + 1;
                 $query_data['p_view_today_count'] = (int)($aProductInfo['p_view_today_count']) + 1;
@@ -419,7 +419,7 @@ class Product extends REST_Controller
                 $query_data['p_click_count_week'] = (int)($aProductInfo['p_click_count_week']) + 1;
 
                 $this->product_model->update_product($aProductInfo['p_num'], $query_data);
-            }
+//            }
 
             {//최근 본 상품에 저장
 
@@ -510,7 +510,7 @@ class Product extends REST_Controller
                 result_echo_rest_json(get_status_code("success"), "", true, "", "",
                     array(
                         "aProductInfo"          => $aProductInfo
-                    ,   "aDeliveryInfo"         => $aDeliveryI00nfo
+                    ,   "aDeliveryInfo"         => $aDeliveryInfo
                     ,   "isWish"                => $isWish
                     ,   "isShare"               => $isShare
                     ,   "nComment"              => $nComment['cnt']

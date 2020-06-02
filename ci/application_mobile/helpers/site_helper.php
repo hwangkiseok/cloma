@@ -4691,7 +4691,11 @@ function getSnsformDeliveryInfo($tn){
     return $delivery_row['data'];
 
 }
-
+/**
+ * @date 20200529
+ * @modify 황기석
+ * @desc snsform 주문취소 API
+ */
 function getSnsformOrderCancel($arrayParams){
 
     $CI =& get_instance();
@@ -4704,8 +4708,6 @@ function getSnsformOrderCancel($arrayParams){
     $headers[] = "Cache-Control: no-cache";
     $is_post   = true;
 
-
-
     $postvars = array( 'api_id' => $CI->config->item('form_api_id') );
     $postvars = array_merge($arrayParams,$postvars);
 
@@ -4716,15 +4718,12 @@ function getSnsformOrderCancel($arrayParams){
     curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
     curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($postvars));
 
-
     $response = curl_exec ($ch);
 
     curl_close ($ch);
     $resp = json_decode($response,true);
 
     return $resp;
-
-//    return $delivery_row['data'];
 
 }
 
@@ -4749,4 +4748,15 @@ function unlink_kakao($sns_id){
 
     return $resp;
 
+}
+
+function chk_soldout_layer($b){
+
+    if($b == false){
+        $html  = "";
+        $html .= "<div class=\"cart_soldout_wrap\">";
+        $html .= "    <span class=\"cart_soldout\">해당 상품은 품절되었습니다.<br><a class=\"zs-cp\">삭제하기</a></span>";
+        $html .= "</div>";
+        echo $html;
+    }
 }

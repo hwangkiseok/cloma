@@ -206,7 +206,7 @@ class Member_model extends W_Model {
         $where_array['m_num'] = $m_num;
         $row = $this->db->where($where_array)->get('member_tb')->row_array();
 
-        return $row->rctlyViewPdt;
+        return $row['rctlyViewPdt'];
 
 
     }//end of get_member_view()

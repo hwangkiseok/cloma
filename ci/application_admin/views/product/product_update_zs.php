@@ -23,6 +23,7 @@
 
                     <form name="main_form" id="main_form" method="post" class="form-horizontal" role="form" action="<?php echo $this->page_link->update_proc; ?>"  enctype="multipart/form-data">
                         <input type="hidden" name="p_num" value="<?php echo $product_row['p_num']; ?>" />
+                        <input type="hidden" name="opt_token" value="<?=$opt_token?>">
 
                         <div class="form-group form-group-sm">
 
@@ -344,9 +345,8 @@
 
                             <hr />
 
-
                             <div class="form-group form-group-sm">
-                                <label class="col-sm-2 control-label">옵션 사용여부 <span class="txt-danger">*</span></label>
+                                <label class="col-sm-2 control-label">옵션 여부 <span class="txt-danger">*</span></label>
                                 <div class="col-sm-10">
                                     <?php echo get_input_radio('p_option_use', $this->config->item('product_option_use_yn'), $product_row['p_option_use'], $this->config->item('product_option_use_yn_text_color')); ?>
                                 </div>
@@ -358,154 +358,17 @@
                                 </div>
                             </div>
                             <div class="form-group form-group-sm option_section <?if($product_row['p_option_use'] != 'Y'){?>hidden<?}?>">
-                                <label class="col-sm-2 control-label">옵션뎁스</label>
+                                <label class="col-sm-2 control-label">옵션 차수</label>
                                 <div class="col-sm-10">
                                     <?php echo get_input_radio('p_option_depth', $this->config->item('product_option_depth'), $product_row['p_option_depth']); ?>
                                 </div>
                             </div>
                             <div class="form-group form-group-sm option_section <?if($product_row['p_option_use'] != 'Y'){?>hidden<?}?>">
-                                <label class="col-sm-2 control-label">옵션설정</label>
+                                <label class="col-sm-2 control-label">옵션 설정</label>
                                 <div class="col-sm-10">
-                                    <button class="btn btn-sm btn-info openOptionSet">옵션열기</button>
+                                    <button class="btn btn-sm btn-info" type="button" onclick="openOptionSet();">옵션열기</button>
                                 </div>
                             </div>
-
-
-                            <script>
-
-                                function isOptionChk(){
-
-                                    var ret = true;
-                                    var p_num = '<?=$product_row['p_num']?>';
-
-                                    $.ajax({
-                                        url : '/product/option',
-                                        data : {p_num : p_num},
-                                        type : 'post',
-                                        dataType : 'json',
-                                        async : false,
-                                        success : function(result) {
-                                            if(result.length > 0) ret = false
-                                        }
-                                    });
-
-                                    if( ret == false ) {
-                                        alert('해당상품의 옵션관련 정보를 변경하시려면 기존 옵션데이터 삭제 후 진행해주세요.');
-
-                                        <?
-                                        /*
-                                        @TODO 중간에 변경가능성이 있어 ajax로 값을 가져올수 있도록 처리
-                                        */
-                                        ?>
-                                        $('input[name="p_option_type"][value="<?=$product_row['p_option_type']?>"]').prop('checked',true);
-                                        $('input[name="p_option_depth"][value="<?=$product_row['p_option_depth']?>"]').prop('checked',true);
-                                    }
-
-                                }
-
-                                $(function(){
-
-                                    $('input[name="p_option_use"]').on('change',function(){
-
-                                        if($(this).val() == 'Y'){
-                                            $('.option_section').removeClass('hidden');
-                                        }else{
-                                            $('.option_section').addClass('hidden');
-                                        }
-
-
-                                    });
-
-                                    $('input[name="p_option_type"],input[name="p_option_depth"]').on('change',function(){
-                                        isOptionChk();
-                                    });
-
-                                    $('.openOptionSet').on('click',function(e){
-                                        e.preventDefault()
-
-                                        var option_type     = $('input[name="p_option_type"]:checked').val();
-                                        var option_depth    = $('input[name="p_option_depth"]:checked').val();
-                                        var p_num           = '<?=$product_row['p_num']?>';
-
-                                        if(option_depth == undefined){
-                                            alert('옵션 차수를 선택해주세요');
-                                            return false;
-                                        }
-
-                                        var popup_path  = '/product/option_pop?depth='+option_depth;
-                                            popup_path += '&p_num='+p_num;
-                                            popup_path += '&view_type='+option_type;
-
-                                        var container = $('<div class="option_wrap" style="max-height: 680px;overflow-y: auto;">');
-                                        $(container).load(popup_path);
-
-                                        modalPop.createPop('옵션설정', container);
-                                        modalPop.createButton('설정', 'btn btn-primary btn-sm', function(){
-                                            $('#pop_insert_form').submit();
-                                        });
-                                        modalPop.createCloseButton('닫기', 'btn btn-default btn-sm');
-                                        modalPop.show({'dialog_class':'modal-xlg','backdrop' : 'static'});
-
-                                    });
-
-                                    $(document).on('change','#pop_insert_form input[type="file"]',function(){
-                                        readURL(this);
-                                    })
-
-                                    function readURL(input) {
-                                        if (input.files && input.files[0]) {
-                                            var reader = new FileReader();
-
-                                            reader.onload = function (e) {
-
-                                                if($(input).parent().parent().find('img').length > 0){
-                                                    $(input).parent().parent().find('img').attr('src', e.target.result);
-                                                }else{
-                                                    $(input).parent().parent().find('.option_img .thumbnail').html('<img src="'+e.target.result+'" alt="" />');
-                                                }
-
-                                            }
-
-                                            reader.readAsDataURL(input.files[0]);
-                                        }
-                                    }
-
-                                    $(document).on('click','.option_del',function(e){
-                                        e.preventDefault();
-
-                                        var b = true;
-                                        if($('#pop_insert_form table tbody tr').length < 2){
-                                            if(confirm("현재 옵션이 1개입니다.\n삭제하시겠습니까?") == false) b = false;
-                                        }
-
-                                        if(b == true){
-                                            if( $(this).parent().parent().hasClass('insert') == true ){
-                                                $(this).parent().parent().remove();
-                                            }else{//기 옵션데이터 삭제처리
-
-                                                if(confirm("이미 저장된 옵션입니다.\n삭제 하시겠습니까?") == true){
-
-                                                    $.ajax({
-                                                        url: '/product/delete_option/',
-                                                        data: {option_id : $(this).parent().parent().find('[name="option_id[]"]').val()},
-                                                        type: 'post',
-                                                        dataType: 'json',
-                                                        success: function (result) {
-                                                            if(result.msg) alert(result.msg);
-                                                            if(result.success == true) get_option_page();
-                                                        }
-
-                                                    });
-
-                                                }
-
-                                            }
-                                        }
-                                    });
-
-
-                                });
-                            </script>
 
                             <hr />
 
@@ -843,7 +706,8 @@
 <script src="/plugins/datepicker/bootstrap-datepicker.js?v=<?php echo filemtime($this->input->server("DOCUMENT_ROOT") . "/plugins/datepicker/bootstrap-datepicker.js"); ?>" charset="utf-8"></script>
 <script src="/plugins/datepicker/locales/bootstrap-datepicker.kr.js?v=<?php echo filemtime($this->input->server("DOCUMENT_ROOT") . "/plugins/datepicker/locales/bootstrap-datepicker.kr.js"); ?>" charset="utf-8"></script>
 <script src="/plugins/smarteditor2/js/HuskyEZCreator.js?v=<?php echo filemtime($this->input->server("DOCUMENT_ROOT") . "/plugins/smarteditor2/js/HuskyEZCreator.js"); ?>" charset="utf-8"></script>
-<?=link_src_html("/js/page/product.js", "js");?>
+<?=link_src_html("/js/page/product_admin_option.js", "js");?>
+<?=link_src_html("/js/page/product_admin.js", "js");?>
 
 
 <script type="text/javascript">

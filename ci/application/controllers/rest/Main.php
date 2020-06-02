@@ -431,7 +431,7 @@ class Main extends REST_Controller
         );
 
         $aVertical = array(
-            'title' => '세로배너 타이틀'
+            'title' => '오늘만 이가격'
         ,   'aLists' => $aVerticalProductList
         );
 

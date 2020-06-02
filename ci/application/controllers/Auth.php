@@ -199,8 +199,6 @@ class Auth extends W_Controller {
 
         }
 
-        //TODO:네이버, 페이스북 로그아웃 처리 필요
-
         //$this->session->sess_destroy();
         session_destroy();
 

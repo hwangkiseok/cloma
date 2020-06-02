@@ -11,4 +11,8 @@
     , .header_fixed .header-R a {margin-right: 10px!important;}
 
     .login_sns a {width: 70% !important;}
+
+    /* 장바구니 soldout position */
+    .cart_soldout_wrap .cart_soldout {padding-top: 11.5%}
+
 }

@@ -127,12 +127,14 @@ class M_Controller extends CI_Controller {
                         $member_row = $this->member_model->get_member_row(array('m_sns_site' => $aSnsData[1], 'm_sns_id' => $aSnsData[2]));
 
                         if (empty($member_row) == false) {
-                            log_message('A','---------- 서브페이지에서 세션시간보다 오래 켜져 로그인이 풀리는경우 쿠키데이터로 대체하여 로그인 처리 :'.$sSnsData);
+                            log_message('A','---------- 서브페이지에서 세션시간보다 오래 켜져 로그인이 풀리는경우 쿠키데이터로 대체하여 로그인 처리 : '.$sSnsData.' :: '.$this->router->fetch_class().' // '.$this->router->fetch_method());
                             set_login_session($member_row);
                             $this->aMemberInfo = $member_row;
                             $this->isLogin = 'Y';
                         }
 
+                    }else{
+                        log_message('A','---------- 서브페이지에서 세션시간보다 오래 켜져 로그인이 풀리는경우 쿠키데이터로 대체하여 로그인 처리 : 쿠키없음 :: '.$this->router->fetch_class().' // '.$this->router->fetch_method());
                     }
 
                 }
@@ -294,10 +296,11 @@ class M_Controller extends CI_Controller {
 
         $btm_fix_menu_yn = "N";
 
-        $aRecentlyProduct = get_recently_product(1);
-        $aRecentlyProduct = array_shift($aRecentlyProduct);
+        $aRecentlyProduct = array();
         if($fetch_class == 'main' || $fetch_class == 'exhibition'){
             $btm_fix_menu_yn = 'Y';
+//            $aRecentlyProduct = get_recently_product(1);
+//            $aRecentlyProduct = array_shift($aRecentlyProduct);
         }
         if( !$no_footer ) {
             $this->load->view('footer', array(
