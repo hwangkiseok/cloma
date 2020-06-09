@@ -1,3 +1,4 @@
+
 <?php //link_src_html("/plugins/icheck/skins/square/blue.css", "css"); ?>
 <?php //link_src_html("/plugins/icheck/icheck.min.js", "js"); ?>
 
@@ -9,7 +10,7 @@
     .delivery_row .order-tit_v2 {font-size: 14px!important;margin-bottom: 12px!important;margin-top: 0;}
     .delivery_row .img {width: 35%!important;}
     .delivery_row .img img{box-shadow: none;border: 1px solid #ddd;}
-    .delivery_row .cont {margin-left: 15px;width: calc(65% - 40px) !important}
+    .delivery_row .cont {margin-left: 15px;width: calc(65% - 40px)}
     .delivery_row .cont > ul {line-height: 20px;}
 
 </style>
@@ -227,3 +228,5 @@
 
     });
 </script>
+
+

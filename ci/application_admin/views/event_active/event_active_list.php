@@ -21,7 +21,7 @@
                     <div class="pull-left">
                         <select id="div" name="div" class="form-control">
                             <?php echo get_select_option("", $this->config->item("event_division"), ""); ?>
-                            <option value="naver_search_20170922">미스할인 검색 이벤트</option>
+                            <option value="naver_search_20170922">옷쟁이들 검색 이벤트</option>
                             <option value="event_20171027">추석 이벤트</option>
                             <option value="event_20171205">안마의자 드립니다 이벤트</option>
                             <option value="event_20171206">안마의자 드립니다2 이벤트</option>

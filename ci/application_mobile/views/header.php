@@ -127,6 +127,7 @@
             status_code['overlap'] = '<?php echo get_status_code('overlap'); ?>';
 
         var loader_wrap = $('.loader_wrap');
+        var en_ak = '<?=$en_ak?>';
 
         function show_loader() {
             // $(loader_wrap).show();
@@ -160,4 +161,14 @@
         set_loader_wrap_size();
         // show_loader();
 
+    </script>
+
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-152034681-1"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'UA-152034681-1');
     </script>

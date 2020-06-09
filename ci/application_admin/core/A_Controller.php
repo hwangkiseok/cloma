@@ -65,7 +65,7 @@ class A_Controller extends CI_Controller {
      * @param $method
      */
     function _remap($method){
-        $default_method = $this->router->fetch_class() . "_" . $method;
+        $default_method = $this->router->class . "_" . $method;
 
         if( method_exists($this, $default_method) ) {
             $this->{"{$default_method}"}();

@@ -10,26 +10,36 @@
 
 <? }else{?>
 
-    <? foreach ($aCommentLists as $k => $r) {?>
+    <? foreach ($aCommentLists as $k => $r) { //if(zsDebug()) zsView($r); ?>
 
         <div class="box comment_area no-before">
 
             <div class="box-in comment">
 
                 <div class="question">
+                    <div style="padding-left: 2px;margin-bottom: 8px;">
+                        <a class="zs-cp" style="display: inline-block;width: 100%;height: 100%;" onclick="go_product('<?=$r['p_num']?>','comment')">
+                            <img src="<?=$r['p_today_image']?>" alt="<?=$r['p_name']?>" style="width: 70px;border-radius: 5px;" />
+                            <span><?=$r['p_name']?></span>
+                        </a>
+                    </div>
+                    <!--
                     <div class="fl profile_img" style="margin-right: 10px;">
                         <?if(empty($r['m_sns_profile_img']) == true){?>
-                            <img src="https://via.placeholder.com/40" alt="<?=$r['cmt_name']?>" />
+                            <img src="<?=IMG_HTTP?>/images/no_profile.png" alt="<?=$r['cmt_name']?>" />
                         <?}else{?>
                             <img src="<?=$r['m_sns_profile_img']?>" alt="<?=$r['cmt_name']?>" />
                         <?}?>
                     </div>
                     <div class="fl cmt_name"><?=$r['cmt_name']?></div>
+                    -->
                     <div class="fl cmt_content">
-                        <span class="text"><?=$r['cmt_content']?></span>
-                        <span class="date no_font"><?=view_date_format($r['cmt_regdatetime'],3)?></span>
-                    </div>
+                        <span style="display: inline-block">
+                            <span class="text" style=""><?=$r['cmt_content']?></span><br>
+                            <span class="date no_font fr"><?=view_date_format($r['cmt_regdatetime'],3)?></span>
+                        </span>
 
+                    </div>
                     <div class="clear"></div>
                 </div>
 
@@ -37,11 +47,13 @@
 
                 <div class="answer">
                     <div class="fl" style="margin-right: 10px;">
-                        <img src="https://via.placeholder.com/40"  style="border-radius: 100%;" />
+                        <img src="<?=IMG_HTTP?>/images/300_300_icon.png?<?=time()?>"  style="border-radius: 100%;width: 40px" />
                     </div>
                     <div class="fl cmt_answer">
-                        <span class="text sig_col"><?=nl2br($r['cmt_answer'])?></span>
-                        <span class="date no_font"><?=view_date_format($r['cmt_answertime'],2)?></span>
+                        <span style="display: inline-block">
+                            <span class="text sig_col"><?=nl2br($r['cmt_answer'])?></span><br>
+                            <span class="date no_font fr"><?=view_date_format($r['cmt_answertime'],2)?></span>
+                        </span>
                     </div>
                     <div class="clear"></div>
                 </div>
@@ -49,6 +61,10 @@
                 <?}?>
             </div>
 
+            <div class="clear"></div>
+            <div style="text-align: center;height: 1px;">
+                <div style="display: inline-block;width: 95%;background: #ccc;height: 1px;vertical-align: top;"></div>
+            </div>
         </div>
 
     <? } ?>

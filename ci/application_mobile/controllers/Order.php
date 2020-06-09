@@ -154,18 +154,30 @@ class Order extends M_Controller
                     $this->chk_last_cart_order($trade_no,$aInput['act_type']);
 
                 }else if(in_array($payway_cd, array(5)) == true && $status_cd < 63){ //발주전 취소 처리 (실제 취소처리)
+
+                    $aOrderInfo = $this->order_model->get_order_info($trade_no);
+
 //                    @TODO 휴대폰 결제취소 제한처리
 //                    @TODO 당월, 단일주문만 취소가능
 
-                    //휴대폰
-                    $aInput = array( 'tno' => $trade_no , 'act_type' => 'CE' );
-                    $resp = getSnsformOrderCancel($aInput);
+                    if( substr($aOrderInfo['register_date'], 0, 7) == date('Y-m') && empty($aOrderInfo['m_trade_no']) == true ){
 
-                    $this->chk_last_cart_order($trade_no,$aInput['act_type']);
+                        $aInput = array( 'tno' => $trade_no , 'act_type' => 'CE' );
+                        $resp = getSnsformOrderCancel($aInput);
+
+                        $this->chk_last_cart_order($trade_no,$aInput['act_type']);
+
+                    }else{
+
+                        $resp['sRtnCode'] = '001';
+
+                    };
 
                 }else{ //발주후 취소 요청
                     $resp['sRtnCode'] = '001';
                 }
+
+
 
                 if($resp['sRtnCode'] == '001'){
 
@@ -178,7 +190,8 @@ class Order extends M_Controller
 
                 }else{
 
-                    result_echo_json(get_status_code('error'), '신청실패[API]'.json_encode($resp,JSON_UNESCAPED_UNICODE), true, 'alert' , array('data' => json_encode($resp,JSON_UNESCAPED_UNICODE)));
+                    //json_encode($resp,JSON_UNESCAPED_UNICODE)
+                    result_echo_json(get_status_code('error'), '신청실패[API]', true, 'alert' , array('data' => json_encode($resp,JSON_UNESCAPED_UNICODE)));
 
                 }
 
@@ -272,7 +285,7 @@ class Order extends M_Controller
         $this->_footer();
 
     }
-    
+
     public function order_complete(){
 
         $aInput = array(
@@ -283,10 +296,11 @@ class Order extends M_Controller
         if(empty($aInput['trade_no']) == false){ //단품구매
             $aOrderInfo[] = $this->order_model->get_order_info($aInput['trade_no']);
             $aSnsformOrderInfo = getSnsformDeliveryInfo($aInput['trade_no']);
-
+            $buy_type = 'single';
         }else{//장바구니구매
             $aOrderInfo = $this->order_model->get_basket_info($aInput['m_trade_no']);
             $aSnsformOrderInfo = getSnsformDeliveryInfo($aOrderInfo[0]['trade_no']);
+            $buy_type = 'cart';
         }
 
         $options = array('title' => '주문완료' , 'top_type' => 'back');
@@ -297,9 +311,10 @@ class Order extends M_Controller
             ,   'aOrderInfo'        => $aOrderInfo
             ,   'aSnsformOrderInfo' => $aSnsformOrderInfo
             ,   'tno'               => $aInput['trade_no']?$aInput['trade_no']:$aInput['m_trade_no']
+            ,   'buy_type'          => $buy_type
         ));
 
         $this->_footer();
     }
-    
+
 } // end of order

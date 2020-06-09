@@ -33,6 +33,7 @@ class Main extends REST_Controller
                 foreach ($add_f as $kk => $vv) $arr[$kk] = $vv;
             }
             $arr['p_rep_image'] = json_decode($arr['p_rep_image'],true)[0];
+            $arr['p_discount_rate'] = floor($arr['p_discount_rate']);
 
 //            unset($arr['p_banner_image']);
             unset($arr['p_category']);
@@ -112,8 +113,8 @@ class Main extends REST_Controller
                 if(empty($add_f) == false ) {
                     foreach ($add_f as $kk => $vv) $arr[$k][$kk] = $vv;
                 }
-                $arr[$k]['p_rep_image'] = json_decode($r['p_rep_image'],true)[0];
-
+                $arr[$k]['p_rep_image']     = json_decode($arr[$k]['p_rep_image'],true)[0];
+                $arr[$k]['p_discount_rate'] = floor($arr[$k]['p_discount_rate']);
 //                unset($arr[$k]['p_banner_image']);
                 unset($arr[$k]['p_category']);
                 unset($arr[$k]['p_order_link']);
@@ -807,6 +808,7 @@ class Main extends REST_Controller
 
         $req                    = array();
         $req['ctgr_code']       = $this->get('ctgr_code');
+        $req['sort_type']       = $this->get('sort_type');
         $req['list_per_page']   = $this->get('list_per_page')?$this->get('list_per_page'):50;
         $req['page']            = $this->get('page')?$this->get('page'):1;
 
@@ -854,7 +856,17 @@ class Main extends REST_Controller
 
                 if($isEnd == false){
 
-                    $query_data['orderby'] = ' p_termlimit_datetime1 DESC '; //신상품부터
+                    if($req['sort_type'] == '' || $req['sort_type'] == 'new_desc'){
+                        $query_data['orderby'] = ' p_termlimit_datetime1 DESC '; //신상품부터
+                    }else if($req['sort_type'] == 'ingi_desc'){
+                        $query_data['orderby'] = ' p_view_3day_count DESC ';
+                    }else if($req['sort_type'] == 'discount_desc'){
+                        $query_data['orderby'] = ' p_discount_rate DESC ';
+                    }else if($req['sort_type'] == 'lowprice_desc'){
+                        $query_data['orderby'] = ' p_sale_price ASC ';
+                    }else{
+                        $query_data['orderby'] = ' p_termlimit_datetime1 DESC '; //신상품부터
+                    }
 
                     $aProductList = $this->product_model->get_product_list( $query_data, $page_result['start'], $page_result['limit'] );
                     $aProductList = self::clearProductField($aProductList, array('campaign' => 'fashion'));

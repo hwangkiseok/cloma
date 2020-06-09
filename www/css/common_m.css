@@ -353,16 +353,16 @@ select.form-control {padding: 10px 9px;}
 .cancel_table .cancel_noti{letter-spacing: -1pt;color:#aaa;font-size: 13px;}
 
 /*댓글*/
-.comment {background: #f0f0f0!important;padding: 20px 12px 12px 12px!important;}
+.comment {background: #eff0f4!important;padding: 14px 12px 6px 12px !important;}
 .comment .question .cmt_name {width: calc(100% - 68px);}
-.comment .question .cmt_content {margin-top: 4px;width: calc(100% - 50px);}
-.comment .text {display: inline-block; background: #fff;border-radius: 15px;padding: 8px 12px;border:1px solid #ddd;}
-.comment .date {display: inline-block;padding: 6px; color: #aaa;font-size: 11px }
-.comment .answer {margin-left: 60px;margin-top: 8px;}
-.comment .answer .cmt_answer{margin-top: 4px;width: calc(100% - 50px); }
+.comment .question .cmt_content {margin-top: 4px;width: 100%; /*calc(100% - 50px);*/}
+.comment .text {display: inline-block; background: #fff;border-radius: 15px;padding: 8px 12px;}
+.comment .date {display: inline-block;padding: 3px; color: #ccc;font-size: 11px }
+.comment .answer {margin-left: 15px;margin-top: 8px;}
+.comment .answer .cmt_answer{width: calc(100% - 50px); }
 .comment .answer .cmt_answer .text{border: 1px solid #e6364f;background: #fff;padding: 8px 12px;border-radius: 15px;}
-.comment .cmt_content .text { box-shadow: 3px 3px 3px 0 rgba(0,0,0,0.1); }
-.comment .cmt_answer .text { box-shadow: 3px 3px 3px 0 rgba(230,54,79,0.1); }
+.comment .cmt_content .text { border-top-left-radius: 0!important; }
+.comment .cmt_answer .text {  }
 .comment .question .profile_img img{border-radius: 100%;width: 40px;height: 40px;}
 
 /* 게시판 (공지사항) */
@@ -397,10 +397,19 @@ select.form-control {padding: 10px 9px;}
 .setting .push_set .chk-ani.active .circle {position: absolute; right: 20px; top: 9px; background: #e6364f;-webkit-transition: 0.4s ease-in-out ; transition: 0.4s ease-in-out ;color: #fff;}
 .setting .push_set .chk-ani.active .hr-line {position: absolute; top: 27px; right: 0;height: 2px; width: 50px;background: #e6364f;-webkit-transition: 0.4s ease-in-out ; transition: 0.4s ease-in-out ;}
 
+/*
 .member_withdraw_wrap p {text-align: center;}
 .member_withdraw_wrap ul {width: 70%; margin: 0 auto;min-width: 250px;}
 .member_withdraw_wrap ul li { padding: 6px 25px;text-align: left; }
 .member_withdraw_wrap ul li:first-child{padding-top: 0!important; }
+*/
+
+.member_withdraw_wrap ul.text {padding-left: 40px;}
+.member_withdraw_wrap ul.text li {list-style: disc;line-height: 30px;}
+
+.member_withdraw_wrap ul.reason {padding-left: 15px;margin: 20px 0;}
+.member_withdraw_wrap ul.reason li {line-height: 30px;}
+
 .warning-draw {padding: 10px 0;}
 .warning-draw p {text-align: center; font-size: 16px;}
 
@@ -540,13 +549,14 @@ select.form-control {padding: 10px 9px;}
 #cart_c_pop .cart_wrap .cart_btn_warp a.go_cart{background: #e6364f;}
 
 /*1:1문의*/
-.qna {background: #f0f0f0!important;}
+.qna {background: #eff0f4!important;}
 .qna .qna_question{background:#fff;padding: 8px 16px;border-radius: 15px;border: 1px solid #ccc;box-shadow: 3px 3px 3px rgba(0,0,0,0.1);}
 .qna .qna_question .q_top {padding: 10px 0;border-bottom: 1px solid #ddd;}
 .qna .qna_question .q_top .btn {padding: 2px;font-size: 12px;margin-left: 10px;}
 .qna .qna_question .q_btm {padding: 10px 0}
 .qna .qna_answer {background: #fff;border: 1px solid #aaa;width: 90%; margin: -10px auto 0 auto;padding: 16px;box-shadow: 3px 3px 3px rgba(0,0,0,0.1);}
 .qna .qna_answer .a_cont {padding: 15px 0 ;}
+.qna .qna_answer .a_cont img {width: 100%}
 .qna .qna_answer .a_top .icon_answer { background: url(https://www.cloma.co.kr/images/mb_icon_set_img.png) no-repeat -59px -152px; width: 20px; height: 20px;background-size: 80px!important; display: inline-block;}
 .qna .qna_answer .a_btm .writer {font-weight: bold;}
 .qna .date {font-size: 12px;color:#aaa}
@@ -684,7 +694,10 @@ select.form-control {padding: 10px 9px;}
 .order_complete_wrap .list_info li{padding: 5px 8px;}
 .order_complete_wrap .list_info li:after{content: ""; display: block;clear: both;}
 .order_complete_wrap .vacc_info {margin-bottom: 20px;}
-.order_complete_wrap .vacc_info .highlight{background: #f1f1f1;margin: 10px -8px 0 -8px;padding: 0 15px; line-height: 60px;height: 60px;}
+.order_complete_wrap .vacc_info .highlight{background: #f1f1f1;margin: 10px -8px 0 -8px;padding: 0 15px; line-height: 60px;_height: 60px;}
+.order_complete_wrap .vacc_info .highlight .complete_price_detail{line-height: 22px; padding-bottom: 21px;text-align: right;vertical-align: middle;}
+.order_complete_wrap .vacc_info .highlight .complete_price_detail p span{width: 90px;display: inline-block;line-height: 22px;vertical-align: inherit;}
+
 .order_complete_wrap .delivery_info {margin-bottom: 20px;}
 
 /**/
@@ -692,12 +705,15 @@ select.form-control {padding: 10px 9px;}
 .mypage-top .prof_wrap {  position: relative;display: inline-block;margin: 10px auto 0 auto;}
 .mypage-top .prof_wrap img {width: 80px;height: 80px;}
 .mypage-top .prof_wrap img.prof {border-radius: 100%;border: 1px solid #ddd;}
-
 .mypage-top .nick_wrap {margin: 20px 0 30px 0;}
 .mypage-top .nick_wrap p {display: inline-block}
 .mypage-top .nick_wrap p span.change_nickname {font-size: 18px;font-weight: bold; position: relative;display: inline-block; }
-.mypage-top .nick_wrap p span.warning {color: #888;font-size: 16px;margin-top: 10px;font-weight: normal;display: block;}
 .mypage-top .nick_wrap p i.icon-modify {position: absolute;top: 2px;right:-22px; background:url(https://www.cloma.co.kr/images/mb_icon_set_img.png) no-repeat -43px -243px; display: inline-block;width: 20px;height: 20px;margin: auto;background-size: 85px!important; }
+.mypage-top .nick_wrap .warning {display: inline-block;margin: 10px auto 0 auto;}
+.mypage-top .nick_wrap .warning .icon {background-size: 100px!important; background: url(https://www.cloma.co.kr/images/mb_icon_set_img.png) no-repeat -29px -217px;width: 20px; height: 20px; display: inline-block; margin-right: 5px; }
+.mypage-top .nick_wrap .warning .text {text-align: left;color: #888;font-size: 13px;font-weight: normal;}
+
+
 .change_nickname .name_txt{display: none; }
 .change_nickname .name_input{display: none;}
 .change_nickname .name_input input {padding: 8px; width: 140px;}

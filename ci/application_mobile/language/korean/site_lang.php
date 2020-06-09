@@ -27,8 +27,8 @@ $lang['site_delete_fail']	    = "삭제 실패!!";
 $lang['site_unauthorized']	    = "권한이 없습니다.";
 $lang['site_no_data']	        = "데이터가 없습니다.";
 
-$lang['site_app_down_confirm'] = "미스할인 앱에서 사용가능한 기능입니다.\n\"확인\"을 누르시고 앱을 다운로드 받으세요.";
-$lang['site_app_down_alert'] = "미스할인 앱에서 사용가능한 기능입니다.";
+$lang['site_app_down_confirm'] = "옷쟁이들 앱에서 사용가능한 기능입니다.\n\"확인\"을 누르시고 앱을 다운로드 받으세요.";
+$lang['site_app_down_alert'] = "옷쟁이들 앱에서 사용가능한 기능입니다.";
 
 //출석체크
 $lang['site_attend_extra_message'] = " 출석체크를 한 유저분들이 많이 구매한 상품페이지로 이동합니다!";
@@ -36,13 +36,13 @@ $lang['site_attend_extra_message_0'] = "";
 //MD상품으로 이동
 $lang['site_attend_extra_message_1'] = "출석체크를 한 유저분들이 많이 구매한 상품페이지로 이동합니다!";
 //구글마켓으로 이동
-$lang['site_attend_extra_message_2'] = "미스할인을 응원해주세요!\n여러분의 응원을 먹고사는 미스할인에게\n사랑을 담은 별★리뷰 부탁드려요.";
+$lang['site_attend_extra_message_2'] = "옷쟁이들을 응원해주세요!\n여러분의 응원을 먹고사는 옷쟁이들에게\n사랑을 담은 별★리뷰 부탁드려요.";
 //카스공유
-$lang['site_attend_extra_message_3'] = "혼자 알고 있긴 아까운 미스할인 출석이벤트!\n카스 친구들에게 소문내고 응원메세지도 부탁해요^^";
+$lang['site_attend_extra_message_3'] = "혼자 알고 있긴 아까운 옷쟁이들 출석이벤트!\n카스 친구들에게 소문내고 응원메세지도 부탁해요^^";
 $lang['site_attend_alreay'] = "이미 출석하셨습니다.";
 
 //회원탈퇴시
-$lang['site_withdraw_complete'] = "회원탈퇴가 완료되었습니다.\n그동안 미스할인을 이용해 주셔서 감사합니다.";
+$lang['site_withdraw_complete'] = "회원탈퇴가 완료되었습니다.\n그동안 옷쟁이들을 이용해 주셔서 감사합니다.";
 
 //매일응모
 $lang['site_everyday_no_win'] = "아쉽지만.. 꽝ㅠㅠ\n\n너무 서운해마시고 다시 도전!\n\n행운의 기를 팍팍 드릴께요♡";

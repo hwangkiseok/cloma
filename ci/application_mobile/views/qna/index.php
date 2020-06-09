@@ -65,9 +65,9 @@
 
         if(isApp == 'Y'){
             var min_height = $(window).outerHeight(true) - $('#header').outerHeight(true) ;//- $('#footer').outerHeight(true);
-            $('.qna_list').css({'min-height': min_height+'px' , 'background-color' : '#f0f0f0'});
+            $('.qna_list').css({'min-height': min_height+'px' , 'background-color' : '#eff0f4'});
         }else{
-            $('#container').css({'background-color' : '#f0f0f0'});
+            $('#container').css({'background-color' : '#eff0f4'});
         }
 
         $('.popQna').on('click',function(){

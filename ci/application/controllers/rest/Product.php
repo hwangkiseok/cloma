@@ -255,6 +255,7 @@ class Product extends REST_Controller
             if(empty($link_type) == false ) $arr['link_type'] = $link_type;
             $arr['p_rep_image'] = json_decode($arr['p_rep_image'],true)[0];
             $arr['p_detail_image'] = json_decode($arr['p_detail_image'],true);
+            $arr['p_discount_rate'] = floor($arr['p_discount_rate']);
 
             if(count($arr['p_detail_image']) > 0){
                 foreach ($arr['p_detail_image'] as $k => $r) {
@@ -320,6 +321,7 @@ class Product extends REST_Controller
 
                 if(empty($link_type) == false ) $arr[$k]['link_type'] = $link_type;
                 $arr[$k]['p_rep_image'] = json_decode($r['p_rep_image'],true)[0];
+                $arr[$k]['p_discount_rate'] = floor($arr[$k]['p_discount_rate']);
 
 //                unset($arr[$k]['p_banner_image']);
                 unset($arr[$k]['p_category']);

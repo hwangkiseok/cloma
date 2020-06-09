@@ -69,6 +69,12 @@ if ( ! function_exists('set_cookie'))
 	 */
 	function set_cookie($name, $value = '', $expire = '', $domain = '', $path = '/', $prefix = '', $secure = FALSE, $httponly = FALSE)
 	{
+	    if($name == 'cookie_sal'){
+            get_instance()->load->library('encryption');
+            $value2 = get_instance()->encryption->decrypt($value);
+            log_message('A','CALL set_cookie :: '.$value2);
+        }
+
 		// Set the config file options
 		get_instance()->input->set_cookie($name, $value, $expire, $domain, $path, $prefix, $secure, $httponly);
 	}

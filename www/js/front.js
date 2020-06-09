@@ -604,8 +604,12 @@ function go_link(url , newWin='N' , newBrowser='N' , sub = '' , moveType = 'H'){
                 appNewWin(url);
             }else{
 
-                if(moveType == 'R'){
+                var tmp_url = url.split('?');
 
+                if(tmp_url.length > 1) url = url + '&en_ak='+en_ak; //query string  있는 경우
+                else url = url + '?en_ak='+en_ak;
+
+                if(moveType == 'R'){
                     location.replace(url);
                 }else{
                     location.href = url;

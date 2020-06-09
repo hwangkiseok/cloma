@@ -5,7 +5,9 @@
 
     $(function(){
 
-        var ctrl_top = $('.ctrl-line').offset().top;
+        if($('.ctrl-line').length > 0) var ctrl_top = $('.ctrl-line').offset().top;
+        else var ctrl_top = 0;
+
 
         $(window).scroll(function() {
 
@@ -234,8 +236,12 @@ $tot_price = 0;
 </div>
 
 <div class="btm_fix_area cart_btm">
-    <div class="fl main_btn">메인바로가기</div>
-    <div class="fl pay_btn">구매하기</div>
+    <?if($tot_price > 0){?>
+        <div class="fl main_btn">메인바로가기</div>
+        <div class="fl pay_btn">구매하기</div>
+    <?}else{?>
+        <div class="fl main_btn" style="width: 92%;margin-right:4% ">메인바로가기</div>
+    <?}?>
 </div>
 
 <form name="cart_form" action="" method="post">

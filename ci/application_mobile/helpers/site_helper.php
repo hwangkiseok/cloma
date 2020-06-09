@@ -1485,9 +1485,22 @@ function is_app() {
     //에이전트에서 문자열 검색
     if( preg_match("/(android|kr.co.cloma.app)/", $CI->input->user_agent()) ) {
         return true;
+    }else{
+
+        $headers = apache_request_headers();
+
+        foreach ($headers as $header => $value) {
+            if ($header == 'is_app') $is_app = $value;
+        }
+
+        if($is_app == 'Y'){
+            return true;
+        }else{
+            return false;
+        }
+
     }
 
-    return false;
 }//end of is_app()
 
 /**
@@ -3394,7 +3407,7 @@ function getKakaoStoryShareProduct(){
         $sHash       = str_replace(',',' #',$product_row['p_hash']);
         $sHash       = '#'.$sHash;
     }else{
-        $sHash       = '#미스할인';
+        $sHash       = '#옷쟁이들';
     }
     $p_detail    = strip_tags(str_replace("\n\n","\n",str_replace(array("><","&nbsp;"),array(">\n<","") ,($product_row['p_detail']))));
 
@@ -4513,7 +4526,7 @@ function product_view_plus($p_code){
  *
  * @retrun err_code
  *  000 ==> 정상발급
- *  100 ==> 적립금발급정보없음(미스할인)
+ *  100 ==> 적립금발급정보없음(옷쟁이들)
  *  200 ==> 적립금중복발급
  *  300 ==> 적립금정보없음(09sns)
  *  400 ==> 앱로그인 여부실패

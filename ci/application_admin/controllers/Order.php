@@ -128,6 +128,39 @@ class Order extends A_Controller {
 
     }
 
+    public function order_proc_flag() {
+        ajax_request_check();
+
+        //request
+        $req['seq'] = $this->input->post_get('seq', true);
+        $req['proc_flag'] = $this->input->post_get('proc_flag', true);
+
+        //글정보
+        $order_row = $this->order_model->get_cancel_order_row($req['seq']);
+
+        if( empty($order_row) ) {
+            result_echo_json(get_status_code('error'), lang('site_error_empty_data'), true, 'alert');
+        }
+
+        // 참고처리
+        $query_data['proc_flag'] = $req['proc_flag'];
+        if( $req['proc_flag'] == "Y" ) {
+            $query_data['proc_date'] = current_datetime();
+        }
+        else {
+            $query_data['proc_date'] = "";
+        }
+
+        if( $this->order_model->update_cancel_order($req['seq'],$query_data) ) {
+            result_echo_json(get_status_code('success'), lang('site_update_success'), true, 'alert');
+        }
+        else {
+            result_echo_json(get_status_code('error'), lang('site_update_fail'), true, 'alert');
+        }
+
+    }//end of offer_proc_flag()
+
+
     public function order_update_cancel_proc() {
 
         ajax_request_check();

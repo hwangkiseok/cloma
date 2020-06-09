@@ -203,7 +203,7 @@ class Cart extends REST_Controller
     private function chk_stock($arrayParams,$data){
 
         $oSnsformProductInfo = $this->product_model->get_snsform_product_row($arrayParams['p_order_code']);
-        $option_info        = json_decode($oSnsformProductInfo['option_info'] , true);
+        $option_info         = json_decode($oSnsformProductInfo['option_info'] , true);
 
         $ret = false;
 

@@ -427,7 +427,7 @@ class Event_gift extends A_Controller {
             $eg_event_gift = $this->input->post('eg_event_gift', true);
 
             if($eg_event_num == '2' && $eg_event_gift == ''){ //네이버검색이벤트 인 경우 상품을 필수 입력정보로 한다.
-                result_echo_json(get_status_code('success'), '미스할인 네이버검색 이벤트는 상품을 선택해야합니다.', true, 'alert');
+                result_echo_json(get_status_code('success'), '옷쟁이들 네이버검색 이벤트는 상품을 선택해야합니다.', true, 'alert');
                 exit;
             }
 

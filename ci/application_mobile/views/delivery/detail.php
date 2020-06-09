@@ -144,6 +144,8 @@
             </li>
         </ul>
 
+        <?// zsView($aSnsformOrderInfo); ?>
+
         <div class="expended" role="button" data-expended="4">
             <span class="fl tit">결제정보</span>
             <span class="fr"><i class="arrow-top"></i></span>
@@ -178,20 +180,32 @@
                 <span class="fr"><?=$this->config->item($aSnsformOrderInfo['payway_cd'],'form_payway_cd')?></span>
             </li>
 
-            <? if($aSnsformOrderInfo['payway_cd'] == '3'){?>
+            <? if($aSnsformOrderInfo['payway_cd'] == '3' || $aSnsformOrderInfo['payway_cd'] == '7'){?>
 
-                <li>
-                    <span class="fl">입금자</span>
-                    <span class="fr"><?=$aSnsformOrderInfo['vcnt_check_name']?></span>
-                </li>
+                <?if($aSnsformOrderInfo['payway_cd'] != '7'){?>
+
+                    <li>
+                        <span class="fl">입금자</span>
+                        <span class="fr"><?=$aSnsformOrderInfo['vcnt_check_name']?></span>
+                    </li>
+
+                <?}?>
+
                 <li>
                     <span class="fl">계좌은행</span>
                     <span class="fr"><?=$aSnsformOrderInfo['vcnt_bank_cd']?></span>
                 </li>
-                <li>
-                    <span class="fl">예금주</span>
-                    <span class="fr"><?=$aSnsformOrderInfo['vcnt_acct_name']?></span>
-                </li>
+                <?if($aSnsformOrderInfo['payway_cd'] != '7'){?>
+                    <li>
+                        <span class="fl">예금주</span>
+                        <span class="fr"><?=$aSnsformOrderInfo['vcnt_acct_name']?></span>
+                    </li>
+                <?}else{?>
+                    <li>
+                        <span class="fl">예금주</span>
+                        <span class="fr">SNS Form</span>
+                    </li>
+                <?}?>
                 <li>
                     <span class="fl">계좌번호</span>
                     <span class="fr"><em class="no_font"><?=$aSnsformOrderInfo['vcnt_acct_no']?></em></span>

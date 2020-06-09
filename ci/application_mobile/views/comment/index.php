@@ -24,9 +24,9 @@
 
         if(isApp == 'Y'){
             var min_height = $(window).outerHeight(true) - $('#header').outerHeight(true) ;//- $('#footer').outerHeight(true);
-            $('.comment_my_wrap').css({'min-height': min_height+'px','background':'#f0f0f0'});
+            $('.comment_my_wrap').css({'min-height': min_height+'px','background':'#eff0f4'});
         }
 
-        $('#container').css('background','#f0f0f0');
+        $('#container').css('background','#eff0f4');
     })
 </script>

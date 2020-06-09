@@ -581,7 +581,17 @@ function getTextLength(str) {
     return len;
 }
 
-function chkString(){
+function only_string(str){
+
+    if( empty(str) ) {
+        return '';
+    }
+    var regExp = /[\{\}\[\]\/?.,;:|\)*~`!^\-_+<>@\#$%&\\\=\(\'\"]/gi;
+
+    str = str.replace(/\s/gi, "");     // 위와 같이 모든 공백을 제거
+    str = str.replace(regExp,"");
+
+    return str;
 
 }
 

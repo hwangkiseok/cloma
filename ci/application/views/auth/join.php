@@ -20,7 +20,7 @@
             <input type="hidden" name="return_url" value="<?=$return_url?>" >
                 <button type="submit" class="btn btn-yellow btn-xxlarge" style="background:#fff;color:#ff3c63;font-size:23px;">가입완료</button>
                 <div class="checkbox_group">
-                    가입 시 미스할인의 <a href="#none" id="btn_agreement" >이용약관</a>, <a href="#none" id="btn_privacy">개인정보취급방침</a>,
+                    가입 시 옷쟁이들의 <a href="#none" id="btn_agreement" >이용약관</a>, <a href="#none" id="btn_privacy">개인정보취급방침</a>,
                     <a href="#none" id="btn_agreemaketing" >이벤트/쇼핑정보 수신동의</a> 에 동의하신 것으로 확인합니다.
                 </div>
             </form>
@@ -66,7 +66,7 @@
             async: false,
             cache: false,
             beforeSubmit: function(formData, jqForm, options) {
-                var cf = confirm('미스할인의 서비스 이용약관, 개인정보취급방침, 이벤트/쇼핑정보 수신동의에 동의합니다.');
+                var cf = confirm('옷쟁이들의 서비스 이용약관, 개인정보취급방침, 이벤트/쇼핑정보 수신동의에 동의합니다.');
                 if(cf == false) return false;
 
             },

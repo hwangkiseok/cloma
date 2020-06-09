@@ -40,7 +40,9 @@ class Snoopy
     var $proxy_user = ""; // proxy user to use
     var $proxy_pass = ""; // proxy password to use
 
-    var $agent = "Snoopy v2.0.0"; // agent we masquerade as
+    //var $agent = "Snoopy v2.0.0"; // agent we masquerade as
+    var $agent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.61 Safari/537.36"; // agent we masquerade as
+
     var $referer = ""; // referer info to pass
     var $cookies = array(); // array of cookies to pass
     // $cookies["username"]="joe";
@@ -108,6 +110,8 @@ class Snoopy
     var $_isproxy = false; // set if using a proxy server
     var $_fp_timeout = 30; // timeout for socket connection
 
+    var $_adbrix = false; //애드브릭스로 로그인인경우 강제 value setting
+    var $_adbrix_auth = ''; //애드브릭스 사용시 auth_key
     /*======================================================================*\
         Function:	fetch
         Purpose:	fetch the contents of a web page
@@ -648,8 +652,10 @@ class Snoopy
                     E_USER_NOTICE);
             }
         }
-        if (!empty($this->referer))
+        if (!empty($this->referer)){
             $headers .= "Referer: " . $this->referer . "\r\n";
+            if($this->_adbrix == true) $headers .= "Refspa-referrer: " . $this->referer . "\r\n";
+        }
         if (!empty($this->cookies)) {
             if (!is_array($this->cookies))
                 $this->cookies = (array)$this->cookies;
@@ -683,6 +689,10 @@ class Snoopy
         //add proxy auth headers
         if (!empty($this->proxy_user))
             $headers .= 'Proxy-Authorization: ' . 'Basic ' . base64_encode($this->proxy_user . ':' . $this->proxy_pass) . "\r\n";
+
+        if( $this->_adbrix == true && empty($this->_adbrix_auth) == false )
+            $headers .= 'Auth: ' . $this->_adbrix_auth .  "\r\n";
+
 
 
         $headers .= "\r\n";
@@ -925,6 +935,7 @@ class Snoopy
 
     function _prepare_post_body($formvars, $formfiles)
     {
+        $formvars_t = $formvars;
         settype($formvars, "array");
         settype($formfiles, "array");
         $postdata = '';
@@ -933,6 +944,11 @@ class Snoopy
             return;
 
         switch ($this->_submit_type) {
+            case "application/json; charset=utf-8;":
+
+                if ( $this->_adbrix == true ) $postdata .= $formvars_t;
+
+                break;
             case "application/x-www-form-urlencoded":
                 reset($formvars);
                 while (list($key, $val) = each($formvars)) {

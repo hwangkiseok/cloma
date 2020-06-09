@@ -1,14 +1,15 @@
-
 <?php link_src_html("/plugins/icheck/skins/square/blue.css", "css"); ?>
 <?php link_src_html("/plugins/icheck/icheck.min.js", "js"); ?>
 
 <form id="wForm" class="wForm" action="/mypage/withdraw_proc">
 
-    <p>정말로 회원탈퇴를 하시겠습니까 !!!</p>
-    <p>&nbsp;</p>
-    <p>불편하셨던 사항을 남겨주시면<br>서비스에 적극 반영하도록 하겠습니다.</p>
-    <p>&nbsp;</p>
-    <ul>
+    <ul class="text">
+        <li>회원 탈퇴시  <?=$this->config->item('site_name_kr')?> 서비스에서 탈퇴 처리됩니다.</li>
+        <li>탈퇴 시 서비스 이용 기록이 모두 삭제되며 삭제된 데이터의 복구는 불가능합니다.</li>
+        <li>다만 거래하신 내역이 있을 경우, 판매 거래 정보관리 및 문의응대를 위해<br> 거래(결제) 내역에 대한 기본 정보는 탈퇴 후 5년간 보관됩니다.</li>
+    </ul>
+
+    <ul class="reason">
         <? foreach ($member_withdraw_list as $v => $txt) { ?>
             <li> <label><input type="radio" name="withdraw_reason" value="<?=$v?>" />&nbsp;&nbsp;<?=$txt?></label> </li>
         <? } ?>

@@ -32,7 +32,8 @@ class Exhibition extends REST_Controller
             if(empty($add_f) == false ) {
                 foreach ($add_f as $kk => $vv) $arr[$kk] = $vv;
             }
-            $arr['p_rep_image'] = json_decode($arr['p_rep_image'],true)[0];
+            $arr['p_rep_image']     = json_decode($arr['p_rep_image'],true)[0];
+            $arr['p_discount_rate'] = floor($arr['p_discount_rate']);
 
 //            unset($arr['p_banner_image']);
             unset($arr['p_category']);
@@ -116,6 +117,7 @@ class Exhibition extends REST_Controller
                     foreach ($add_f as $kk => $vv) $arr[$k][$kk] = $vv;
                 }
                 $arr[$k]['p_rep_image'] = json_decode($r['p_rep_image'],true)[0];
+                $arr[$k]['p_discount_rate'] = floor($arr[$k]['p_discount_rate']);
 
 //                unset($arr[$k]['p_banner_image']);
                 unset($arr[$k]['p_category']);

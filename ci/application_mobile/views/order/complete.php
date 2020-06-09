@@ -24,7 +24,7 @@
 
         <div class="tit">
             <i></i><span
-                style="letter-spacing: -.5px">고객님의 주문이 정상적으로 완료되었습니다.</span>
+                    style="letter-spacing: -.5px">고객님의 주문이 정상적으로 완료되었습니다.</span>
         </div>
 
         <div class="clear" style="height: 8px;"></div>
@@ -43,30 +43,30 @@
 
                 $r['option_info'] = json_decode($r['option_list'],true);
                 $tot_amt         += (int)$r['buy_amt'];
-            ?>
+                ?>
 
-            <div class="sub_prod_list delivery_row" style="margin-bottom: 15px;">
+                <div class="sub_prod_list delivery_row" style="margin-bottom: 15px;">
 
-                <div class="img fl"><img src="<?=$r['p_today_image']?>" width="100%" alt="alt" /></div>
-                <div class="cont fl" >
-                    <ul style="line-height: 20px;">
-                        <li class="p_name"><?=$r['item_name']?></li>
-                        <li style="font-size: 15px;"><em class="no_font" style="letter-spacing: 0;" ><?=number_format((int)$r['buy_amt']-(int)$r['delivery_amt'])?></em>원<!-- | <em class="no_font"><?=number_format($r['buy_count'])?></em>개--></li>
-                        <li class="opt">주문일 : <em class="no_font" style="letter-spacing: -.1pt;"><?=rtrim($r['register_date'],'.0')?></em></li>
+                    <div class="img fl"><img src="<?=$r['p_today_image']?>" width="100%" alt="alt" /></div>
+                    <div class="cont fl" >
+                        <ul style="line-height: 20px;">
+                            <li class="p_name"><?=$r['item_name']?></li>
+                            <li style="font-size: 15px;"><em class="no_font" style="letter-spacing: 0;" ><?=number_format((int)$r['buy_amt']-(int)$r['delivery_amt'])?></em>원<!-- | <em class="no_font"><?=number_format($r['buy_count'])?></em>개--></li>
+                            <li class="opt">주문일 : <em class="no_font" style="letter-spacing: -.1pt;"><?=rtrim($r['register_date'],'.0')?></em></li>
 
-                        <?if(empty($r['option_info']) == false){?>
-                            <li class="opt" style="margin-bottom: 10px;">
-                                <span class="fl">옵션&nbsp;:&nbsp;</span>
-                                <span class="fl">
+                            <?if(empty($r['option_info']) == false){?>
+                                <li class="opt" style="margin-bottom: 10px;">
+                                    <span class="fl">옵션&nbsp;:&nbsp;</span>
+                                    <span class="fl">
                                             <? foreach ($r['option_info'] as $kk => $rr) {?>
                                                 <?=$kk > 0 ? '<br>' : ''?><?=$rr['option_name']?>
                                             <?}?>
                                         </span>
-                                <div class="clear"></div>
-                            </li>
-                        <?}?>
+                                    <div class="clear"></div>
+                                </li>
+                            <?}?>
 
-                        <!---
+                            <!---
                         <li class="btn_area">
 
                             <? if($r['status_cd'] == '66'){?>
@@ -86,11 +86,11 @@
                             <div class="clear"></div>
                         </li>
                         -->
-                    </ul>
+                        </ul>
 
+                    </div>
+                    <div class="clear"></div>
                 </div>
-                <div class="clear"></div>
-            </div>
 
             <? } ?>
 
@@ -127,13 +127,19 @@
                 </ul>
 
             <?}?>
+
             <div class="highlight">
+
                 <span class="fl">
                     <button class="btn btn-default" style="padding: 10px 30px;border-radius: 20px;font-weight: normal">결제금액</button>
                 </span>
-                <!--<span class="fr no_font" style="font-weight: bold;font-size: 18px">총 <?=number_format($tot_amt+(int)$aSnsformOrderInfo['total_delivery_amt'])?> 원</span>-->
-                <span class="fr no_font" style="font-weight: bold;font-size: 18px">총 <?=number_format($tot_amt)?> 원</span>
+                <span class="fr no_font" style="font-weight: bold;font-size: 18px">총 <?=number_format($aSnsformOrderInfo['total_buy_amt'])?> 원</span>
                 <div class="clear"></div>
+                <div class="complete_price_detail">
+                    <p>상품금액 <span><?=number_format($aSnsformOrderInfo['total_item_amt'])?>원</span></p>
+                    <p>배송비 <span><?=number_format($aSnsformOrderInfo['total_delivery_amt'])?>원</span></p>
+                </div>
+
             </div>
 
         </div>
@@ -152,7 +158,7 @@
                     <span class="fr" style="width: 65%;display: inline-block;text-align: right;"><?=$aOrderInfo[0]['receiver_addr1']. ' ' . $aOrderInfo[0]['receiver_addr2']?></span>
                 </li>
                 <li>
-                    <span class="fl">&middot; 연착처</span>
+                    <span class="fl">&middot; 연락처 </span>
                     <span class="fr"><?=$aOrderInfo[0]['receiver_tel']?></span>
                 </li>
                 <li>
@@ -191,28 +197,28 @@
 
 <? if( is_app() == true ) {?>
 
-<script type="text/javascript">
+    <script type="text/javascript">
 
-    $(function(){
+        $(function(){
 
-        var a_receiver_name = '<?=$aOrderInfo[0]['receiver_name']?>';
-        var a_receiver_hhp = '<?=$aOrderInfo[0]['receiver_tel']?>';
-        var a_receiver_zip = '<?=$aOrderInfo[0]['receiver_zip']?>';
-        var a_receiver_addr1 = '<?=$aOrderInfo[0]['receiver_addr1']?>';
-        var a_receiver_addr2 = '<?=$aOrderInfo[0]['receiver_addr2']?>';
-        var buyer_name      = '<?=$aOrderInfo[0]['buyer_name']?>';
-        var buyer_hhp       = '<?=$aOrderInfo[0]['buyer_hhp']?>';
+            var a_receiver_name = '<?=$aOrderInfo[0]['receiver_name']?>';
+            var a_receiver_hhp = '<?=$aOrderInfo[0]['receiver_tel']?>';
+            var a_receiver_zip = '<?=$aOrderInfo[0]['receiver_zip']?>';
+            var a_receiver_addr1 = '<?=$aOrderInfo[0]['receiver_addr1']?>';
+            var a_receiver_addr2 = '<?=$aOrderInfo[0]['receiver_addr2']?>';
+            var buyer_name      = '<?=$aOrderInfo[0]['buyer_name']?>';
+            var buyer_hhp       = '<?=$aOrderInfo[0]['buyer_hhp']?>';
 
-        appSavePrefSetting('a_receiver_name' , a_receiver_name);
-        appSavePrefSetting('a_receiver_hhp' , a_receiver_hhp);
-        appSavePrefSetting('a_receiver_zip' , a_receiver_zip);
-        appSavePrefSetting('a_receiver_addr1' , a_receiver_addr1);
-        appSavePrefSetting('a_receiver_addr2' , a_receiver_addr2);
-        appSavePrefSetting('a_buyer_name' , buyer_name);
-        appSavePrefSetting('a_buyer_hhp' , buyer_hhp);
+            appSavePrefSetting('a_receiver_name' , a_receiver_name);
+            appSavePrefSetting('a_receiver_hhp' , a_receiver_hhp);
+            appSavePrefSetting('a_receiver_zip' , a_receiver_zip);
+            appSavePrefSetting('a_receiver_addr1' , a_receiver_addr1);
+            appSavePrefSetting('a_receiver_addr2' , a_receiver_addr2);
+            appSavePrefSetting('a_buyer_name' , buyer_name);
+            appSavePrefSetting('a_buyer_hhp' , buyer_hhp);
 
-    });
+        });
 
-</script>
+    </script>
 
 <? } ?>

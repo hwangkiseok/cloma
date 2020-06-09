@@ -54,6 +54,80 @@ class Test extends M_Controller
     }//end of login()
 
 
+    public function ttt(){
+        $this->load->view('/test/excel' );
+    }
+    public function send(){
+
+        $this->load->library('Snoopy');
+
+        $url = "https://m.cloma.co.kr/test/login/55";
+
+        $params = array();
+
+        $this->snoopy->submit($url,$params);
+
+        $this->snoopy->setcookies();
+
+        $uri = 'https://m.cloma.co.kr/delivery';
+
+        $this->snoopy->fetch($uri);
+        zsView($this->snoopy->results);
+        exit;
+// https://api-console.adbrix.io/api/v1/User/Login
+    }
+
+
+    public function send_v2(){
+
+        $this->load->library('Snoopy');
+
+        $url = "https://api-console.adbrix.io/api/v1/User/Login";
+
+        $params = "{'email' : 'ordersuvin@gmail.com' , 'password' : 'Fflw*84200'}"; //array('email' => 'ordersuvin@gmail.com' , 'password' => 'Fflw*84200' ) ;
+//        $params             = new stdClass();
+//        $params->email      = 'ordersuvin@gmail.com';
+//        $params->pasword    = 'Fflw*84200';
+
+
+        $this->snoopy->_adbrix = true;
+        $this->snoopy->_httpmethod = 'post';
+        $this->snoopy->_submit_type = 'application/json; charset=utf-8;';
+
+        $ret = $this->snoopy->submit($url,$params);
+        $this->snoopy->setcookies();
+
+        zsView($ret);
+        zsView('-----------------------------------------------------------------------------------------------');
+
+        unset($params);
+
+
+
+//        $this->snoopy->referer = 'https://console.adbrix.io/8TdID8XlgEaZLi15gzVRbw/attributions/UDvd4XedQ0CrceXhCwoYbg/ad-tracking';
+
+        $params = "{'appkey': 'UDvd4XedQ0CrceXhCwoYbg', 'ignore': false, 'first_index': 0, 'length': 2500}";
+        $uri = 'https://api-console.adbrix.io/api/v1/AdCampaign/GetAdCampaigns';
+
+        $this->snoopy->_adbrix_auth = '';
+
+        $ret = $this->snoopy->submit($uri,$params);
+
+
+        zsView($ret);
+
+        exit;
+
+//
+    }
+
+
+    public function take(){
+        $var = json_encode($_POST);
+        echo $var;
+    }
+
+
 //    public function excel(){
 //        $this->_header();
 //        $this->load->view('/test/excel' );

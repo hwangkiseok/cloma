@@ -16,12 +16,13 @@ class M_Controller extends CI_Controller {
     var $isAuthNo_chk = "N";
     var $market_url = "";
     var $aMemberInfo = array();
+    public $en_ak = '';
 
     function __construct() {
         parent::__construct();
 
         //CLI 요청일때 세션 라이브러리 사용안함
-        if( !$this->input->is_cli_request() ) {
+        if( !is_cli() ) {
             header('P3P: CP="NOI CURa ADMa DEVa TAIa OUR DELa BUS IND PHY ONL UNI COM NAV INT DEM PRE"');
             session_start();
         }
@@ -79,14 +80,15 @@ class M_Controller extends CI_Controller {
 
     private function app_login(){
 
-        if(is_app()){
+        $headers = apache_request_headers();
 
-            $headers = apache_request_headers();
+        foreach ($headers as $header => $value) {
+            if ($header == 'm_num') $m_num = $value;
+            if ($header == 'm_key') $m_key = $value;
+            if ($header == 'is_app') $is_app = $value;
+        }
 
-            foreach ($headers as $header => $value) {
-                if ($header == 'm_num') $m_num = $value;
-                if ($header == 'm_key') $m_key = $value;
-            }
+        if(is_app() || $is_app == 'Y') {
 
             $this->load->library('encryption');
             $this->load->model('member_model');
@@ -102,22 +104,26 @@ class M_Controller extends CI_Controller {
 
                 if (empty($member_row) == false) {
                     set_login_session($member_row);
-
                     //로그인 유지 쿠키
-                    $auto_login_enc =  $this->encryption->encrypt(time() . "|".$member_row['m_sns_site']."|" . $member_row['m_sns_id']);
+                    $auto_login_enc = $this->encryption->encrypt(time() . "|" . $member_row['m_sns_site'] . "|" . $member_row['m_sns_id']);
                     set_cookie('cookie_sal', $auto_login_enc, get_strtotime_diff("+1 years"));
 
                     $this->aMemberInfo = $member_row;
                     $this->isLogin = 'Y';
+                    $this->en_ak = $auto_login_enc;
                 }
 
             }else{ // 서브페이지에서 세션시간보다 오래 켜져 로그인이 풀리는경우 쿠키데이터로 대체하여 로그인 처리
 
-                if (member_login_status() == false) {
+                if ($this->isLogin != 'Y') {
 
-                    $cookie_sal = get_cookie('cookie_sal');
+                    $cookie_sal     = get_cookie('cookie_sal');
+                    $fetch_class    = $this->router->class;
+                    $fetch_method   = $this->router->method;
 
                     if(empty($cookie_sal) == false){
+
+                        $this->en_ak = $cookie_sal;
 
                         $sSnsData = $this->encryption->decrypt($cookie_sal);
                         $aSnsData = explode('|',$sSnsData);
@@ -127,14 +133,45 @@ class M_Controller extends CI_Controller {
                         $member_row = $this->member_model->get_member_row(array('m_sns_site' => $aSnsData[1], 'm_sns_id' => $aSnsData[2]));
 
                         if (empty($member_row) == false) {
-                            log_message('A','---------- 서브페이지에서 세션시간보다 오래 켜져 로그인이 풀리는경우 쿠키데이터로 대체하여 로그인 처리 : '.$sSnsData.' :: '.$this->router->fetch_class().' // '.$this->router->fetch_method());
+                            log_message('A','---------- 서브페이지에서 세션시간보다 오래 켜져 로그인이 풀리는경우 쿠키데이터로 대체하여 로그인 처리 : '.$sSnsData.' :: '.$fetch_class.' // '.$fetch_method);
                             set_login_session($member_row);
                             $this->aMemberInfo = $member_row;
                             $this->isLogin = 'Y';
+                        }else{
+                            log_message('A','---------- 서브페이지에서 세션시간보다 오래 켜져 로그인이 풀리는경우 쿠키데이터로 대체하여 로그인 처리 : 쿠키있으나 회원정보 없음 :: '.$sSnsData.' :: '.$fetch_class.' // '.$fetch_method);
                         }
 
                     }else{
-                        log_message('A','---------- 서브페이지에서 세션시간보다 오래 켜져 로그인이 풀리는경우 쿠키데이터로 대체하여 로그인 처리 : 쿠키없음 :: '.$this->router->fetch_class().' // '.$this->router->fetch_method());
+
+                        if($fetch_class != 'product') log_message('A','---------- 서브페이지에서 세션시간보다 오래 켜져 로그인이 풀리는경우 쿠키데이터로 대체하여 로그인 처리 : 쿠키없음 :: '.$fetch_class.' // '.$fetch_method);
+
+                    }
+
+                }
+
+            }
+
+            if($this->isLogin != 'Y') { //위 방법으로 로그인이 안되는 경우 넘겨지는 파라메터가 있는지 확인 후 로그인 처리
+
+                $fetch_class    = $this->router->class;
+                $fetch_method   = $this->router->method;
+                $loc_en_ak = $this->input->get('en_ak');
+
+                if(empty($loc_en_ak) == false){
+
+                    $aSnsData = $this->encryption->decrypt($loc_en_ak);
+                    $this->en_ak = $loc_en_ak;
+                    log_message('A','---------- 위 방법으로 로그인이 안되는 경우 넘겨지는 파라메터가 있는지 확인 후 로그인 처리 :: '.$aSnsData.' :: '.$fetch_class.' // '.$fetch_method);
+
+                    $aSnsData = explode('|', $sSnsData);
+    //              $aSnsData[1]; //sns_site
+    //              $aSnsData[2]; //sns_id
+                    $member_row = $this->member_model->get_member_row(array('m_sns_site' => $aSnsData[1], 'm_sns_id' => $aSnsData[2]));
+
+                    if (empty($member_row) == false) {
+                        set_login_session($member_row);
+                        $this->aMemberInfo = $member_row;
+                        $this->isLogin = 'Y';
                     }
 
                 }
@@ -150,7 +187,7 @@ class M_Controller extends CI_Controller {
      * @param $method
      */
     function _remap($method){
-        $default_method = $this->router->fetch_class() . "_" . $method;
+        $default_method = $this->router->class . "_" . $method;
 
         if( method_exists($this, $default_method) ) {
             $this->{"{$default_method}"}();
@@ -245,7 +282,8 @@ class M_Controller extends CI_Controller {
             'options'               => $options,
             'no_header'             => $no_header,
             'isLogin'               => $this->isLogin,
-            'meta_content_array'    => $meta_content_array
+            'meta_content_array'    => $meta_content_array,
+            'en_ak'                 => $this->en_ak
         ));
 
         if( is_app() ) $no_header = true;
@@ -657,7 +695,8 @@ class M_Controller extends CI_Controller {
 
         if($type == 'my'){
             $aInput['where'] = array(
-                'm_num'        => $num
+                'm_num' => $num
+            ,   'my'    => 'Y'
             );
             $file_name = 'comment_my';
         }else{
@@ -706,6 +745,7 @@ class M_Controller extends CI_Controller {
 
             if(empty($link_type) == false ) $arr['link_type'] = $link_type;
             $arr['p_rep_image'] = json_decode($arr['p_rep_image'],true)[0];
+            $arr['p_discount_rate'] = floor($arr['p_discount_rate']);
 
 //            unset($arr['p_banner_image']);
             unset($arr['p_category']);
@@ -764,6 +804,7 @@ class M_Controller extends CI_Controller {
 
                 if(empty($link_type) == false ) $arr[$k]['link_type'] = $link_type;
                 $arr[$k]['p_rep_image'] = json_decode($r['p_rep_image'],true)[0];
+                $arr[$k]['p_discount_rate'] = floor($arr[$k]['p_discount_rate']);
 
 //                unset($arr[$k]['p_banner_image']);
                 unset($arr[$k]['p_category']);

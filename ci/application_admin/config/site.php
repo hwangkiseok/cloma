@@ -316,9 +316,14 @@ $config['faq_category'][7] = "구매확정";
 $config['faq_category'][8] = "교환";
 
 //게시판 (1:1문의)
-$config['board_qna_category'][1] = "제품문의";
-$config['board_qna_category'][2] = "배송문의";
-$config['board_qna_category'][3] = "결제문의";
+$config['board_qna_category'][1] = "제품 문의";
+$config['board_qna_category'][2] = "배송 문의";
+$config['board_qna_category'][3] = "결제 문의";
+$config['board_qna_category'][4] = "취소/환불 문의";
+$config['board_qna_category'][5] = "반품 문의";
+$config['board_qna_category'][6] = "교환 문의";
+$config['board_qna_category'][7] = "이벤트 문의";
+$config['board_qna_category'][8] = "기타 문의";
 
 $config['board_qna_secret']['Y'] = "비밀글";
 $config['board_qna_secret']['N'] = "공개글";
@@ -750,14 +755,14 @@ $config['form_status_cd'] = array(
     //status_cd
     60  => '주문대기'
 ,   61  => '입금확인 중'
-,   62  => '신규주문'
+,   62  => '입금완료'
 ,   63  => '배송준비 중'
 ,   64  => '배송중'
 ,   65  => '배송완료'
     //after_status_cd
-,   66  => '취소관리'
-,   67  => '교환관리'
-,   68  => '반품관리'
+,   66  => '취소신청완료' //취소관리
+,   67  => '교환신청완료' //교환관리
+,   68  => '반품신청완료' //반품관리
 ,   166  => '취소완료'
 ,   167  => '교환완료'
 ,   168  => '반품완료'

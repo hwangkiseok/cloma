@@ -20,6 +20,9 @@ class Auth extends W_Controller {
         $this->load->library('encryption');
         $this->load->library('user_agent');
 
+
+        log_message('A','CALL Auth Class :: error');
+
         //APP 접근일때
         if ( $this->agent->is_mobile() ) {
             $this->join_path = "2";

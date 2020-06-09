@@ -4,7 +4,7 @@
         <? if(count($aPushLists) < 1 ){?>
 
             <div class="push_area">
-                <div class="cont" style="text-align: center;padding: 10px 0;">등록된 알림 메시지가 없습니다.</div>
+                <div class="cont" style="text-align: center;padding: 10px 0;">받은 알림 메시지가 없습니다.</div>
             </div>
 
         <?}else{ ?>
@@ -53,5 +53,8 @@
             go_product(seq,'push');
         });
         window.history.replaceState({} , '', window.location.pathname);
+        $('#container').css('background','#eff0f4');
+
+
     });
 </script>

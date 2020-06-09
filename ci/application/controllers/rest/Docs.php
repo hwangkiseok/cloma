@@ -109,6 +109,8 @@ class Docs extends W_Controller {
      * @ApiParams(name="ctgr_code", type="integer", nullable=false, description="하위카테고리 값", sample="1:패션잡화 | 2:아우터 | 3:상의 | 4:하의 | 5:원피스 | 6:홈웨어 ")
      * @ApiParams(name="list_per_page", type="integer", nullable=false, description="페이지당 노출상품 수", sample="default : 50")
      * @ApiParams(name="page", type="integer", nullable=false, description="페이지")
+     * @ApiParams(name="sort_type", type="string", nullable=true, description="정렬순서", sample="new_desc:신상품 | ingi_desc:인기순 | discount_desc:할인순 | lowprice_desc:낮은 가격순 ")
+     *
      *
      * @ApiReturn(type="object", sample="
      * {

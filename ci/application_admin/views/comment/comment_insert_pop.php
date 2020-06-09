@@ -37,7 +37,7 @@
                             <label class="col-sm-2 control-label">작성자 <span class="txt-danger">*</span></label>
                             <div class="col-sm-10">
                                 <input type="text" id="field_cmt_name" name="cmt_name" class="form-control" style="width:200px;" value="<?//php echo $this->config->item("admin_name"); ?>" />
-                                <p class="alert alert-danger" style="position: absolute;left: 240px;top: 0; display: inline-block;vertical-align: top;padding:  5px 10px!important;">주의 : 댓글작업시 작성자 확인요망(미스할인으로 적으면 안됨!)</p>
+                                <p class="alert alert-danger" style="position: absolute;left: 240px;top: 0; display: inline-block;vertical-align: top;padding:  5px 10px!important;">주의 : 댓글작업시 작성자 확인요망(옷쟁이들으로 적으면 안됨!)</p>
                             </div>
                         </div>
 
@@ -259,8 +259,8 @@
                 return false;
             }
 
-            if( $(form + ' [name="cmt_name"]').val() == '미스할인' ) {
-                if(confirm('작업 댓글의 작성자는 "미스할인" 일수 없습니다.\n등록을 진행하시겠습니까? ') == false){
+            if( $(form + ' [name="cmt_name"]').val() == '옷쟁이들' ) {
+                if(confirm('작업 댓글의 작성자는 "옷쟁이들" 일수 없습니다.\n등록을 진행하시겠습니까? ') == false){
                     return false;
                 }
             }

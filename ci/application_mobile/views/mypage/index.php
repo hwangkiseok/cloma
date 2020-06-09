@@ -97,6 +97,10 @@
             }
         });
 
+        $('input[name="temp_nickname"]').on('keyup',function(){
+            var value = only_string($(this).val());
+            $(this).val(value);
+        });
 
     });
 
@@ -124,11 +128,17 @@
                     <span class="change_nickname zs-cp">
                         <span class="name_txt on"><?=$aMemberInfo['m_nickname']?><i class="icon-modify"></i></span>
                         <span class="name_input">
-                            <input type="text" name="temp_nickname" value="<?=$aMemberInfo['m_nickname']?>" title="" />
+                            <input type="text" name="temp_nickname" maxlength="8" value="<?=$aMemberInfo['m_nickname']?>" title="" />
                         </span>
                     </span>
-                    <span class="warning"> 이름입력시 개인정보 입력은 자제해 주세요. </span>
                 </p>
+
+                <div class="clear"></div>
+                <div class="warning">
+                    <span class="icon fl"></span>
+                    <span class="text fl">전화번호 등 개인정보를 포함하지 않은 닉네임을 사용해 주세요.<br>특수문자, 공백을 제외하여 최대 8자까지 입력이 가능합니다.</span>
+                    <div class="clear"></div>
+                </div>
             </div>
 
         </div>

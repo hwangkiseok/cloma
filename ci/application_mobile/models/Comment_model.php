@@ -49,7 +49,7 @@ class Comment_model extends M_Model {
 
         if( $query_array['where']['is_product']  == true ){
             $where_query .= "and cmt_parent_num = 0 ";
-            $where_query .= "and cmt_name <> '미스할인' ";
+            $where_query .= "and cmt_name <> '옷쟁이들' ";
         }
 
         //order by 절
@@ -97,6 +97,9 @@ class Comment_model extends M_Model {
             if ($query_array['where']['my'] == 'Y') {
                 $addField = "
                 , product_tb.p_sale_state
+                , product_tb.p_name
+                , product_tb.p_today_image
+                , product_tb.p_num
                 , event_tb.e_proc_state
                 ";
             }
@@ -115,8 +118,6 @@ class Comment_model extends M_Model {
                     {$order_query}
                     {$limit_query}
             ";
-
-
 
             $cmt_list = $this->db->query($query)->result_array();
 
