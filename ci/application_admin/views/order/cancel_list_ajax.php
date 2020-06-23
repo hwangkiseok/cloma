@@ -8,6 +8,7 @@
             <th style="width:120px;">주문번호</th>
             <th style="width:120px;">회원정보</th>
             <th style="width:120px;">상품명</th>
+            <th style="width:120px;">결제수단</th>
             <th style="width:120px;">주문상태</th>
             <th style="width:120px;">취소상태</th>
             <th style="width:120px;">취소사유</th>
@@ -27,8 +28,9 @@
                 <td><?=$row['trade_no']?></td>
                 <td><a href="#none" onclick="member_update_pop('<?php echo $row['m_num']; ?>');"><?php echo $row['m_nickname']; ?></a></td>
                 <td><?=$row['item_name']?></td>
+                <td><?=$this->config->item($row['payway_cd'],'form_payway_cd')?></td>
                 <td><button class="btn btn-info btn-xs"><?=$this->config->item($row['status_cd'],'form_status_cd')?></button></td>
-                <td><button class="btn btn-danger btn-xs"><?=$this->config->item($row['after_status_cd'],'form_status_cd')?></button></td>
+                <td><button class="btn btn-danger btn-xs"><?=$this->config->item($row['after_status_cd'],'after_form_status_cd')?></button></td>
                 <td><?=$this->config->item($row['cancel_gubun'],'order_cancel_gubun')?></td>
                 <td><?=view_date_format($row['reg_date'],3)?></td>
                 <td>

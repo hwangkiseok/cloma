@@ -37,7 +37,8 @@
                                 <option value="m_key">회원 KEY</option>
                                 <option value="m_regid">FCM ID</option>
                                 <option value="m_authno">휴대폰번호</option>
-                                <option value="m_tag">회원태그</option>
+<!--                                <option value="m_tag">회원태그</option>-->
+                                <option value="m_order_phone">주문연락처</option>
                             </select>
                         </span>
                         <input type="text" class="form-control" id="kwd" name="kwd" value="<?php echo $req['kwd']; ?>" style="width:auto;border-left:0;" />

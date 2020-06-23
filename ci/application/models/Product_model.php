@@ -198,7 +198,6 @@ class Product_model extends W_Model {
                 {$order_query}
                 {$limit_query}
             ";
-
             return $this->db->query($query)->result_array();
         }
     }//end of get_product_list()
@@ -291,14 +290,21 @@ class Product_model extends W_Model {
         if(empty($arrayParams['p_num']) == false) $addQueryString .= " AND p_num = '{$arrayParams['p_num']}' ";
         if(empty($arrayParams['p_code']) == false) $addQueryString .= " AND p_code = '{$arrayParams['p_code']}' ";
 
-        if(empty($arrayParams['p_display_state']) == true) $addQueryString .= " AND p_display_state = 'Y' ";
-        else $addQueryString .= " AND p_display_state = '{$where_array['p_display_state']}' ";
 
-        if(empty($arrayParams['p_sale_state']) == true)  $addQueryString .= " AND p_sale_state = 'Y' ";
-        else $addQueryString .= " AND p_sale_state = '{$where_array['p_sale_state']}' ";
+        if($arrayParams['p_num'] == '776' && zsDebug() == true){
 
-        if(empty($arrayParams['p_stock_state']) == true) $addQueryString .= " AND p_stock_state = 'Y' ";
-        else $addQueryString .= " AND p_stock_state = '{$where_array['p_stock_state']}' ";
+        }else{
+
+            if(empty($arrayParams['p_display_state']) == true) $addQueryString .= " AND p_display_state = 'Y' ";
+            else $addQueryString .= " AND p_display_state = '{$where_array['p_display_state']}' ";
+
+            if(empty($arrayParams['p_sale_state']) == true)  $addQueryString .= " AND p_sale_state = 'Y' ";
+            else $addQueryString .= " AND p_sale_state = '{$where_array['p_sale_state']}' ";
+
+            if(empty($arrayParams['p_stock_state']) == true) $addQueryString .= " AND p_stock_state = 'Y' ";
+            else $addQueryString .= " AND p_stock_state = '{$where_array['p_stock_state']}' ";
+
+        }
 
         $sql = "SELECT 
                 * 

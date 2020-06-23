@@ -64,4 +64,12 @@ class Common extends M_Controller
 
     }//end of UseEventNoti()
 
+
+    public function srh_addr()
+    {
+
+        $this->load->view('/common/srh_addr');
+
+    }//end of Privacy()
+
 }//end of class Comment

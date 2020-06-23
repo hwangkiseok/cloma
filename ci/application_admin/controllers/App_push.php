@@ -328,10 +328,9 @@ class App_push extends A_Controller {
             //-- 190409 황기석 적립금관련 field 추가
 
             $ap_os_type = $this->input->post('ap_os_type', true);
-            $ap_subject = $this->input->post('ap_subject', true);
-            $ap_message = $this->input->post('ap_message', true);
+            $ap_subject = rawurlencode($this->input->post('ap_subject', true));
+            $ap_message = rawurlencode($this->input->post('ap_message', true));
             $ap_summary = $this->input->post('ap_summary', true);
-
 
             $ap_new_push = $this->input->post('ap_new_push', true);
             $ap_list_comment = $this->input->post('ap_list_comment', true);
@@ -597,10 +596,11 @@ class App_push extends A_Controller {
             //-- 190409 황기석 적립금관련 field 추가
 
             $ap_os_type = $this->input->post('ap_os_type', true);
-            $ap_subject = $this->input->post('ap_subject', true);
-            $ap_message = $this->input->post('ap_message', true);
+            $ap_subject = rawurlencode($this->input->post('ap_subject', true));
+            $ap_message = rawurlencode($this->input->post('ap_message', true));
             $ap_summary = $this->input->post('ap_summary', true);
             $ap_stock_flag = $this->input->post('ap_stock_flag', true);
+
 
 
             $ap_new_push = $this->input->post('ap_new_push', true);
@@ -925,8 +925,8 @@ class App_push extends A_Controller {
 
         foreach($regid_list as $k => $r) {
             $fields                         = array();
-            $fields['title']        = $push_row['ap_subject'];    //제목
-            $fields['body']         = $push_row['ap_message'];    //내용
+            $fields['title']        = rawurldecode($push_row['ap_subject']);     //제목
+            $fields['body']         = rawurldecode($push_row['ap_message']);    //내용
             $fields['seq']          = $push_row['ap_num'];      //내용
             $fields['badge']        = 'Y';                      //뱃지올리기여부(Y/N)
 
@@ -934,7 +934,7 @@ class App_push extends A_Controller {
                 $fields['seq']      = $push_row['ap_pnum'];
                 $fields['page']     = 'push';
             }else{
-                $fields['seq']      = $push_row['ap_num'];
+                $fields['seq']      = $push_row['ap_pnum'];
                 $fields['page']     = 'product';
             }
 

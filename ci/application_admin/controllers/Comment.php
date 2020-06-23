@@ -633,10 +633,6 @@ class Comment extends A_Controller {
             $comment_row['cmt_name'] = $member_row['m_nickname'];
         }
 
-        if($req['send_push'] == 'Y') {
-//            $this->_send_push($member_row);
-        }
-
         //등록
         $query_data                     = array();
         $query_data['cmt_answer']       = $req['cmt_content'];
@@ -647,6 +643,28 @@ class Comment extends A_Controller {
         if( $this->comment_model->update_comment($seq , $query_data) == false ) {
             result_echo_json(get_status_code('success'), lang('site_insert_fail'), true, 'alert');
         }
+
+        if(empty($comment_row['cmt_answertime']) == true) {
+
+            if($comment_row['cmt_table'] == 'product'){
+                $sql = "SELECT * FROM product_tb WHERE p_num = '{$comment_row['cmt_table_num']}';";
+                $oResult = $this->db->query($sql);
+                $aResult = $oResult->row_array();
+                $title_str = $aResult['p_name'];
+            }
+
+            if(mb_strlen($title_str) > 5) $title_str = mb_substr($title_str, 0, 5, 'utf-8')."...";
+            else $title_str = $title_str;
+
+            $push_data = array();
+            $push_data['title'] = "[{$title_str}] 상품에 새로운 대댓글이 달렸습니다.";
+            $push_data['body']  = "";
+            $push_data['page']  = "comment";
+
+            send_app_push_log($comment_row['cmt_member_num'], $push_data);
+
+        }
+
 
         result_echo_json(get_status_code('success'), lang('site_insert_success'), true, 'alert');
 

@@ -31,7 +31,14 @@
                 <td><?=$row['friend_flag']=='added'?'채널추가':'차단'?></td>
                 <td><?=$row['nickname']?></td>
                 <td><?=$row['age_range']?></td>
-                <td><?=$row['birthyear']?>.<?=substr($row['birthday'],0,2)?>.<?=substr($row['birthday'],2,2)?></td>
+                <td>
+                    
+                    <? if(empty($row['birthyear']) == false){?>
+                        <?=$row['birthyear']?>년
+                    <?}?>
+                    <?if(empty($row['birthday']) == false){?>
+                        <?=substr($row['birthday'],0,2)?>월 <?=substr($row['birthday'],2,2)?>일</td>
+                    <?}?>
                 <td><?=$row['email']?></td>
                 <td><?=$row['gender']=='male'?'남성':'여성'?></td>
                 <td><?=ph_slice($row['phone_number'])?></td>

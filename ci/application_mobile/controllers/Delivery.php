@@ -261,6 +261,8 @@ class Delivery extends M_Controller
 
         $aSnsformOrderInfo = getSnsformDeliveryInfo($tn);
 
+
+
         $this->load->model('order_model');
         $aOrderInfo = $this->order_model->get_order_info($tn);
 

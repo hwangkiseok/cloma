@@ -1,3 +1,18 @@
+<? link_src_html('/js/page/push.js','js'); ?>
+
+<div class="box no-before">
+    <div class="box-in push-top">
+        <div class="date_set">
+            <ul>
+                <li data-type="info">쇼핑 정보</li>
+                <li class="active" data-type="product">할인/이벤트 정보</li>
+            </ul>
+            <div class="clear"></div>
+        </div>
+    </div>
+</div>
+
+
 <div class="box no-before">
     <div class="box-in push" style="padding-top:18px;">
 
@@ -13,7 +28,7 @@
                 $list_image = json_decode($r['p_rep_image'] , true)[0];
                 ?>
 
-                <div class="push_area" data-seq="<?=$r['ap_pnum']?>" role="button">
+                <div class="push_area product_list" data-seq="<?=$r['ap_pnum']?>" role="button">
                     <div class="img">
                         <img src="<?=$list_image?>" alt="img1" />
                     </div>
@@ -52,7 +67,13 @@
             var seq = $(this).data('seq');
             go_product(seq,'push');
         });
+
+        <?if($callApp == true){?>
+        window.history.replaceState({} , '', window.location.pathname+'?type=product');
+        <?}else{?>
         window.history.replaceState({} , '', window.location.pathname);
+        <?}?>
+
         $('#container').css('background','#eff0f4');
 
 

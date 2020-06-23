@@ -276,11 +276,15 @@ class Main extends REST_Controller
             $aInput['orderby']              = ' pmd_order ASC ';
             $aVerticalProductList = $this->product_model->get_product_list($aInput) ;
 
-            if(empty($aVerticalProductList) == false){
-                foreach ($aVerticalProductList as $r) {
-                    $notin[] = $r['p_num'];
-                }
-            }
+            shuffle($aVerticalProductList);
+
+
+//            세로롤링 상품은 아래 영역에 중복으로 처리되도록 처리 ( 이경림과장 요청사항 - 200616 )
+//            if(empty($aVerticalProductList) == false){
+//                foreach ($aVerticalProductList as $r) {
+//                    $notin[] = $r['p_num'];
+//                }
+//            }
 
         }
 
@@ -295,7 +299,7 @@ class Main extends REST_Controller
             $aInput['where']['stock_state'] =  'Y';
             $aInput['where']['not_pnum']    =  $notin;
             $aInput['orderby']              = ' pmd_order ASC ';
-            $addProductList = $this->product_model->get_product_list($aInput) ;
+            $addProductList = $this->product_model->get_product_list($aInput , 0 , $fix_cnt) ;
 
             if(empty($addProductList) == false){
                 foreach ($addProductList as $r) {
@@ -303,15 +307,30 @@ class Main extends REST_Controller
                 }
             }
 
-            $e_limit    = $fix_cnt - count($addProductList);
-            $aInput     = array('not_pnum'  => $notin);
+            if(count($addProductList) >= 15){
 
-            $aTop10Lists = $this->product_model->get_main_product($aInput, 0 , $e_limit);
-            $aTopTheme  = array_merge($addProductList,$aTop10Lists);
+                $aTopTheme = $addProductList;
+
+            }else{
+                $e_limit    = $fix_cnt - count($addProductList);
+                $aInput     = array('not_pnum'  => $notin);
+
+                $aTop10Lists = $this->product_model->get_main_product($aInput, 0 , $e_limit);
+                $aTopTheme  = array_merge($addProductList,$aTop10Lists);
+            }
+            foreach ($aTopTheme as $r)  $notin[] = $r['p_num'];
+
+        }else if($top15_type == 2){ // 총 주문수 / 진입 수
+
+            $aInput = array();
+            $aInput['where']['sale_state']  =  'Y';
+            $aInput['where']['stock_state'] =  'Y';
+            $aInput['orderby']              = ' p_order_count DESC , p_view_count DESC ';
+            $aTopTheme = $this->product_model->get_product_list($aInput , 0 , $fix_cnt) ;
 
             foreach ($aTopTheme as $r)  $notin[] = $r['p_num'];
 
-        }else if($top15_type == 2){ //최근 본상품 + 마진높은 상품
+        }else if($top15_type == 3){ //최근 2주간 잘판린 상품
 
             $addProductList = get_recently_product('',true);
             if(empty($addProductList) == false){
@@ -330,22 +349,18 @@ class Main extends REST_Controller
                 $aInput['where']['sale_state']  =  'Y';
                 $aInput['where']['stock_state'] =  'Y';
                 $aInput['where']['not_pnum']    =  $notin;
-                $aInput['orderby']              = ' p_margin_price DESC ';
-                $aTop10Lists = $this->product_model->get_product_list($aInput , 0 , $e_limit) ;
+                $aInput['orderby']              = ' p_termlimit_datetime1 DESC ';
+                $aTop10Lists_temp = $this->product_model->get_product_list($aInput , 0 , 50) ;
+
+                shuffle($aTop10Lists_temp);
+
+                for ($i = 0; $i <  $e_limit; $i++) {
+                    $aTop10Lists[] = $aTop10Lists_temp[$i];
+                }
 
             }
 
             $aTopTheme  = array_merge($addProductList,$aTop10Lists);
-
-            foreach ($aTopTheme as $r)  $notin[] = $r['p_num'];
-
-        }else if($top15_type == 3){ //최근 2주간 잘판린 상품
-
-            $aInput = array();
-            $aInput['where']['sale_state']  =  'Y';
-            $aInput['where']['stock_state'] =  'Y';
-            $aInput['orderby']              = ' p_order_count_week+p_order_count_last_week DESC ';
-            $aTopTheme = $this->product_model->get_product_list($aInput , 0 , $fix_cnt) ;
 
             foreach ($aTopTheme as $r)  $notin[] = $r['p_num'];
 
@@ -401,7 +416,7 @@ class Main extends REST_Controller
                 $aInput['orderby']              = ' p_termlimit_datetime1 DESC ';
                 $tmp_result = $this->product_model->get_product_list($aInput, 0 , 20 ) ;
 
-                $aTmpTheme3 = array_merge($tmp_result,$aTmpTheme3);
+                $aTmpTheme3 = array_merge($aTmpTheme3,$tmp_result);
 
             }
 
@@ -432,7 +447,7 @@ class Main extends REST_Controller
         );
 
         $aVertical = array(
-            'title' => '오늘만 이가격'
+            'title' => '오늘만 이 가격'
         ,   'aLists' => $aVerticalProductList
         );
 
@@ -822,7 +837,7 @@ class Main extends REST_Controller
 
             $this->load->model('category_md_model');
             $aCategoryInfo = $this->category_md_model->get_category_md_row( array('cmd_num' => $req['ctgr_code']) );
-            $req['cmd_name'] = $aCategoryInfo['cmd_name'];
+            $req['cmd_name'] = $aCategoryInfo['cmd_product_cate'];
 
             if(empty($aCategoryInfo) == true){
                 $this->set_response(
@@ -859,7 +874,7 @@ class Main extends REST_Controller
                     if($req['sort_type'] == '' || $req['sort_type'] == 'new_desc'){
                         $query_data['orderby'] = ' p_termlimit_datetime1 DESC '; //신상품부터
                     }else if($req['sort_type'] == 'ingi_desc'){
-                        $query_data['orderby'] = ' p_view_3day_count DESC ';
+                        $query_data['orderby'] = ' p_view_3day_count DESC , p_order_count DESC ';
                     }else if($req['sort_type'] == 'discount_desc'){
                         $query_data['orderby'] = ' p_discount_rate DESC ';
                     }else if($req['sort_type'] == 'lowprice_desc'){
@@ -870,6 +885,7 @@ class Main extends REST_Controller
 
                     $aProductList = $this->product_model->get_product_list( $query_data, $page_result['start'], $page_result['limit'] );
                     $aProductList = self::clearProductField($aProductList, array('campaign' => 'fashion'));
+
                 }
 
                 if(empty($aProductList) == true){

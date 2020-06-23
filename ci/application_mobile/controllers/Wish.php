@@ -61,10 +61,16 @@ class Wish extends M_Controller
             $row['p_display_info_array'] = json_decode($row['p_display_info'], true);
         }//end of foreach()
 
+        if(count($wish_prod_list) < 1){
+            $recommandProductExt = parent::get_recommand_product(6);
+        }
+
+
         $this->load->view("/wish/wish_list", array(
             'req'           => $req,
             'list_count'    => $list_count,
-            'wish_prod_list' => $wish_prod_list
+            'wish_prod_list' => $wish_prod_list,
+            'recommandProductExt' => $recommandProductExt
         ));
 
         $this->_footer($options);

@@ -139,7 +139,6 @@ class Product extends REST_Controller
             unset($arr['p_easy_admin_code']);
 
 
-
         }else{ //순차배열
 
             foreach ($arr as $k => $r) {
@@ -418,7 +417,6 @@ class Product extends REST_Controller
                 $query_data['p_view_count'] = (int)($aProductInfo['p_view_count']) + 1;
                 $query_data['p_view_today_count'] = (int)($aProductInfo['p_view_today_count']) + 1;
                 $query_data['p_view_3day_count'] = (int)($aProductInfo['p_view_3day_count']) + 1;
-                $query_data['p_click_count_week'] = (int)($aProductInfo['p_click_count_week']) + 1;
 
                 $this->product_model->update_product($aProductInfo['p_num'], $query_data);
 //            }

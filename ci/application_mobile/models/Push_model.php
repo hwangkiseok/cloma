@@ -31,7 +31,13 @@ class push_model extends M_Model {
         $from_query .= " left join product_tb B ON A.ap_pnum = B.p_num ";
 
         //where 절
-        $where_query = " where ap_state = 3 ";
+        if(zsDebug()){
+            //$where_query = " where 1 ";
+            $where_query = " where ap_state = 3 ";
+        }else{
+            $where_query = " where ap_state = 3 ";
+        }
+
 
         //order by 절
         if( isset($query_array['orderby']) && !empty($query_array['orderby']) ) {
@@ -56,7 +62,7 @@ class push_model extends M_Model {
         }
         //데이터 추출
         else {
-            $query = "select * ";
+            $query = "select * , DATE_FORMAT(A.ap_regdatetime,'%Y.%m.%d') AS reg_date_str ";
             $query .= $from_query;
             $query .= $where_query;
             $query .= $order_query;
@@ -65,5 +71,21 @@ class push_model extends M_Model {
             return $this->db->query($query)->result_array();
         }
     }//end of get_board_qna_list()
+
+
+    public function get_info_list(){
+
+        $sql        = "SELECT * , DATE_FORMAT(reg_date,'%Y.%m.%d') AS reg_date_str FROM noti_tb WHERE m_num = '{$_SESSION['session_m_num']}' AND view_flag = 'N' ORDER BY reg_date DESC; ";
+        $oResult    = $this->db->query($sql);
+        $aResult_N  = $oResult->result_array();
+
+        $sql        = "SELECT * , DATE_FORMAT(reg_date,'%Y.%m.%d') AS reg_date_str FROM noti_tb WHERE m_num = '{$_SESSION['session_m_num']}' AND view_flag = 'Y' ORDER BY reg_date DESC LIMIT 20; ";
+        $oResult    = $this->db->query($sql);
+        $aResult_Y  = $oResult->result_array();
+
+        return array_merge($aResult_N,$aResult_Y);
+
+    }
+
 
 }//end of class push_model

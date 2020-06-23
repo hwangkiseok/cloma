@@ -128,7 +128,8 @@
             var disp_text = '<span class="badge badge-primary">진열함</span>';
             var sale_text = '<span class="badge badge-primary">판매중</span>';
             var stock_text = '<span class="badge badge-primary">재고있음</span>';
-
+            var ctgr = '';
+            var price = '';
             if( item.p_display_state == 'N' ) {
                 disp_text = '<span class="badge badge-danger">진열안함</span>';
             }
@@ -139,12 +140,16 @@
                 stock_text = '<span class="badge badge-danger">품절</span>';
             }
 
+            if(empty(item.p_cate1) == false ) ctgr = '<span class="badge badge-primary">'+item.p_cate1+'</span>';
+            if(empty(item.p_cate1) == false ) price = '<span class="badge badge-primary">'+item.p_sale_price.comma()+' 원</span>';
+
+
             html += '<li class="list-group-item">';
             html += '   <div class="row">';
             html += '       <div class="col-sm-4"><img style="margin-bottom: 0!important;" class="thumbnail" src="' + item.p_rep_image_array[1] + '" alt="" width="100%" /></div>';
-            html += '       <div class="col-sm-4">';
+            html += '       <div class="col-sm-6">';
             html += '           <p><b style="font-size: 16px;">' + item.p_name + '</b></p>';
-            html += '           <p>' + disp_text + '&nbsp;' + sale_text + '&nbsp;'  + stock_text + '</p>';
+            html += '           <p>' + disp_text + '&nbsp;' + sale_text + '&nbsp;'  + stock_text + '&nbsp;'  + ctgr + '&nbsp;'  + price + '</p>';
             html += '           <p style="margin-top: 10px"><button type="button" class="btn btn-warning btn-block" onclick="product_select2(\'' + item.p_num + '\', \'' + item.p_name + '\', \'' + item.p_rep_image_array[1] + '\');">선택</button></p>';
             html += '       </div>';
             html += '   </div>';

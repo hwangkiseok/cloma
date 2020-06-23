@@ -30,6 +30,10 @@ class Order extends A_Controller {
         $req['page']            = trim($this->input->post_get('page', true));
         $req['list_per_page']   = trim($this->input->post_get('list_per_page', true));
 
+        $req['form_status_cd']  = trim($this->input->post_get('form_status_cd', true));
+        $req['after_form_status_cd'] = trim($this->input->post_get('after_form_status_cd', true));
+
+
         if( empty($req['page']) ) {
             $req['page'] = 1;
         }

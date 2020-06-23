@@ -278,9 +278,10 @@ class Cron_model extends A_Model
                         ,   B.p_num
                         ,   'best' AS gubun 
                         ,   COUNT(*) AS cnt 
-                        ,   COUNT(*) * B.p_margin_price AS chk_point
+                        #,   COUNT(*) * B.p_margin_price AS chk_point
+                        ,   COUNT(*) AS chk_point
                         FROM snsform_order_tb A
-                        INNER JOIN product_tb B ON B.p_order_code = A.item_no #AND A.register_date >= DATE_FORMAT(DATE_ADD(NOW() , INTERVAL -1 DAY) , '%Y-%m-%d 00:00:00')
+                        INNER JOIN product_tb B ON B.p_order_code = A.item_no AND A.register_date >= DATE_FORMAT(DATE_ADD(NOW() , INTERVAL -1 DAY) , '%Y-%m-%d 00:00:00')
                         WHERE 1
                         AND B.p_order_code NOT IN ({$not_in})
                         AND B.p_display_state = 'Y' 
@@ -339,7 +340,8 @@ class Cron_model extends A_Model
                 {//신상
 
                     $sql = "SELECT 
-                                T.cnt * T.p_margin_price AS chk_point
+                                #T.cnt * T.p_margin_price AS chk_point
+                                T.cnt AS chk_point
                             ,	T.cnt
                             ,	T.p_order_code
                             ,	T.p_num
@@ -353,7 +355,7 @@ class Cron_model extends A_Model
                                 ,   COUNT(B.seq) AS cnt 
                                 FROM main_product_tb A
                                 INNER JOIN product_tb C ON A.p_num = C.p_num
-                                LEFT JOIN snsform_order_tb B ON A.p_order_code = B.item_no #AND B.register_date >= DATE_FORMAT(DATE_ADD(NOW() , INTERVAL -1 DAY) , '%Y-%m-%d 00:00:00')
+                                LEFT JOIN snsform_order_tb B ON A.p_order_code = B.item_no AND B.register_date >= DATE_FORMAT(DATE_ADD(NOW() , INTERVAL -1 DAY) , '%Y-%m-%d 00:00:00')
                                 WHERE A.gubun = 'new'
                                 AND A.use_flag= 'Y'
                                 GROUP BY A.p_order_code
@@ -381,9 +383,10 @@ class Cron_model extends A_Model
                             ,   B.p_num
                             ,   'best' AS gubun 
                             ,   COUNT(*) AS cnt 
-                            ,   COUNT(*) * B.p_margin_price AS chk_point 
+                            #,   COUNT(*) * B.p_margin_price AS chk_point 
+                            ,   COUNT(*) AS chk_point
                             FROM snsform_order_tb A
-                            INNER JOIN product_tb B ON B.p_order_code = A.item_no #AND A.register_date >= DATE_FORMAT(DATE_ADD(NOW() , INTERVAL -1 DAY) , '%Y-%m-%d 00:00:00')
+                            INNER JOIN product_tb B ON B.p_order_code = A.item_no AND A.register_date >= DATE_FORMAT(DATE_ADD(NOW() , INTERVAL -1 DAY) , '%Y-%m-%d 00:00:00')
                             WHERE 1
                             AND B.p_order_code NOT IN ({$not_in})
                             AND B.p_display_state = 'Y' 
@@ -465,9 +468,10 @@ class Cron_model extends A_Model
                         ,   B.p_num
                         ,   'best' AS gubun 
                         ,   COUNT(*) AS cnt 
-                        ,   COUNT(*) * B.p_supply_price AS chk_point
+                        #,   COUNT(*) * B.p_supply_price AS chk_point
+                        ,   COUNT(*) AS chk_point
                         FROM snsform_order_tb A 
-                        INNER JOIN product_tb B ON B.p_order_code = A.item_no #AND A.register_date >= DATE_FORMAT(DATE_ADD(NOW() , INTERVAL -1 DAY) , '%Y-%m-%d 00:00:00')
+                        INNER JOIN product_tb B ON B.p_order_code = A.item_no AND A.register_date >= DATE_FORMAT(DATE_ADD(NOW() , INTERVAL -1 DAY) , '%Y-%m-%d 00:00:00')
                         WHERE 1
                         AND B.p_display_state = 'Y' 
                         AND B.p_sale_state = 'Y' 
@@ -535,42 +539,102 @@ class Cron_model extends A_Model
         $aBestOrderLists = $oResult->result_array();
 
         foreach ($aBestOrderLists as $r) {
-            $sql = "UPDATE product_tb SET p_order_count_twoday = '{$r['cnt']}' WHERE p_order_code = '{$r['item_no']}';   ";
+            $sql = "UPDATE product_tb SET p_order_count_month = '{$r['cnt']}' WHERE p_order_code = '{$r['item_no']}';   ";
             $this->db->query($sql);
         }
+
+        $sql = " SELECT   
+                    item_no 
+                ,   COUNT(*) AS cnt 
+                FROM `snsform_order_tb` 
+                WHERE register_date >= DATE_FORMAT(DATE_ADD(NOW() , INTERVAL -60 DAY) , '%Y-%m-%d 00:00:00')
+                AND item_no <> '0000000000'
+                GROUP BY item_no;
+        ";
+
+        $oResult         = $this->db->query($sql);
+        $aBestOrderLists = $oResult->result_array();
+
+        foreach ($aBestOrderLists as $r) {
+            $sql = "UPDATE product_tb SET p_order_count_twomonth = '{$r['cnt']}' WHERE p_order_code = '{$r['item_no']}';   ";
+            $this->db->query($sql);
+        }
+
 
     }
 
     public function product_static_week_order($debug){
 
-//        $sql = "UPDATE product_tb SET p_order_count_last_week = p_order_count_week WHERE p_order_count_week > 0 ; ";
-//        $this->db->query($sql);
-//        $sql = "UPDATE product_tb SET p_order_count_week = 0 WHERE p_order_count_week > 0 ; ";
-//        $this->db->query($sql);
+        $sql = "UPDATE product_tb SET p_order_count_last_week = p_order_count_week WHERE p_order_count_week > 0 ; ";
+        $this->db->query($sql);
+        $sql = "UPDATE product_tb SET p_order_count_week = 0 WHERE p_order_count_week > 0 ; ";
+        $this->db->query($sql);
 
     }
 
     public function product_static_yesterday_order($debug){
 
-//        $sql = "UPDATE product_tb SET p_order_count_twoday = 0 ; ";
-//        $this->db->query($sql);
-//
-//        $sql = " SELECT
-//                    item_no
-//                ,   COUNT(*) AS cnt
-//                FROM `snsform_order_tb`
-//                WHERE register_date >= DATE_FORMAT(DATE_ADD(NOW() , INTERVAL -1 DAY) , '%Y-%m-%d 00:00:00')
-//                AND item_no <> '0000000000'
-//                GROUP BY item_no;
-//        ";
-//
-//        $oResult         = $this->db->query($sql);
-//        $aBestOrderLists = $oResult->result_array();
-//
-//        foreach ($aBestOrderLists as $r) {
-//            $sql = "UPDATE product_tb SET p_order_count_twoday = '{$r['cnt']}' WHERE p_order_code = '{$r['item_no']}';   ";
-//            $this->db->query($sql);
-//        }
+        $sql = "UPDATE product_tb SET p_order_count_twoday = 0 ; ";
+        $this->db->query($sql);
+
+        $sql = " SELECT
+                    item_no
+                ,   COUNT(*) AS cnt
+                FROM `snsform_order_tb`
+                WHERE register_date >= DATE_FORMAT(DATE_ADD(NOW() , INTERVAL -1 DAY) , '%Y-%m-%d 00:00:00')
+                AND item_no <> '0000000000'
+                GROUP BY item_no;
+        ";
+
+        $oResult         = $this->db->query($sql);
+        $aBestOrderLists = $oResult->result_array();
+
+        foreach ($aBestOrderLists as $r) {
+            $sql = "UPDATE product_tb SET p_order_count_twoday = '{$r['cnt']}' WHERE p_order_code = '{$r['item_no']}';   ";
+            $this->db->query($sql);
+        }
+
+    }
+    public function  get_sending_push_target($debug){
+
+        $sql     = "SELECT  
+                        A.*
+                    ,   B.p_name 
+                    FROM snsform_order_tb A
+                    INNER JOIN product_tb B ON A.item_no = B.p_order_code
+                    WHERE delivery_push_yn = 'N' 
+                    AND status_cd = '64' 
+                    AND invoice_no <> '000'
+                    AND item_no <> '0000000000'
+                    AND req_push_cnt <= 2; 
+        ";
+        $oResult = $this->db->query($sql);
+        $aResult = $oResult->result_array();
+
+        return $aResult;
+    }
+
+    public function product_static_view($debug){
+
+        $query = "
+            update product_tb
+            set p_view_3day_count = p_view_yesterday_count + p_view_today_count
+            WHERE p_view_yesterday_count > 0 OR p_view_today_count > 0
+        ";
+        $this->db->query($query);
+
+        $query = "
+            update product_tb
+            set p_view_yesterday_count = p_view_today_count
+            WHERE p_view_today_count > 0
+        ";
+        $this->db->query($query);
+
+        $query = "
+            update product_tb
+            set p_view_today_count = '0'
+        ";
+        $this->db->query($query);
 
     }
 

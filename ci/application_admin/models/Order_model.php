@@ -22,7 +22,8 @@ class Order_model extends A_Model {
         $from_query .= " LEFT JOIN member_tb C ON C.m_num = B.partner_buyer_id ";
 
         //where 절
-        $where_query = "where 1 = 1 ";
+        $where_query   = "where 1 = 1 ";
+//        $where_query  .= "AND B.status_cd > 61";
 
         //날짜검색1
         if( isset($query_array['where']['date1']) && !empty($query_array['where']['date1']) ) {
@@ -52,8 +53,11 @@ class Order_model extends A_Model {
             if( $query_array['where']['kfd'] == 'all' ) {
 
                 $where_query .= " AND ( ";
-                $where_query .= " C.m_nickname like '%" . $this->db->escape_str($query_array['where']['kwd']) . "%' ";
-                $where_query .= " OR A.account_holder like '%" . $this->db->escape_str($query_array['where']['kwd']) . "%' ";
+                $where_query .= "       C.m_nickname like '%" . $this->db->escape_str($query_array['where']['kwd']) . "%' ";
+                $where_query .= " OR    A.account_holder like '%" . $this->db->escape_str($query_array['where']['kwd']) . "%' ";
+                $where_query .= " OR    B.receiver_tel like '%" . $this->db->escape_str($query_array['where']['kwd']) . "%' ";
+                $where_query .= " OR    B.trade_no like '%" . $this->db->escape_str($query_array['where']['kwd']) . "%' ";
+                $where_query .= " OR    B.receiver_name like '%" . $this->db->escape_str($query_array['where']['kwd']) . "%' ";
                 $where_query .= " ) ";
 
             }  else {
@@ -62,6 +66,17 @@ class Order_model extends A_Model {
 
             }
         }
+
+        if(empty($query_array['where']['form_status_cd']) == false){
+            $where_query .= " AND B.status_cd = '{$query_array['where']['form_status_cd']}' ";
+        }
+
+        if(empty($query_array['where']['after_form_status_cd']) == false){
+            $where_query .= " AND A.after_status_cd = '{$query_array['where']['after_form_status_cd']}' ";
+        }
+
+
+
 
         //order by 절
         if( isset($query_array['orderby']) && !empty($query_array['orderby']) ) {
@@ -82,7 +97,6 @@ class Order_model extends A_Model {
             $query = "select count(*) cnt ";
             $query .= $from_query;
             $query .= $where_query;
-
             //echo $query;
             return $this->db->query($query)->row_array('cnt');
         }

@@ -168,7 +168,7 @@
                         </div>
                     </div>
                     <div class="form-group form-group-sm">
-                        <label class="col-sm-2 control-label">공구폼상품코드 </label>
+                        <label class="col-sm-2 control-label">상품코드 </label>
                         <div class="col-sm-10">
                             <p><?php echo $product_row['p_order_code']; ?></p>
                         </div>

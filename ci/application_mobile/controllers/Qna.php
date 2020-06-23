@@ -67,8 +67,12 @@ class Qna extends M_Controller
 
         $options = array('title' => '1:1문의' , 'top_type' => 'back');
         $this->_header($options);
-
-        $this->load->view('/qna/index', array(
+        if(zsDebug()){
+            $viewfile= '/qna/index_v2';
+        }else{
+            $viewfile= '/qna/index';
+        }
+        $this->load->view($viewfile, array(
             'req'           => $req,
             'list_count'    => $list_count,
             'total_page'    => $page_result['total_page'],
@@ -82,7 +86,11 @@ class Qna extends M_Controller
 
     public function qna_insert_pop(){
 
-        $this->load->view('/qna/pop', array( ));
+        if(zsDebug()){
+            $this->load->view('/qna/pop_v2', array( ));
+        }else{
+            $this->load->view('/qna/pop', array( ));
+        }
 
     }
 
@@ -111,12 +119,41 @@ class Qna extends M_Controller
 
         $qna_list = $this->board_qna_model->get_board_qna_list($query_data, $page_result['start'], $page_result['limit']);
 
-        $this->load->view('/qna/ajax_list', array(
+        $view_file = '/qna/ajax_list';
+
+        if(zsDebug()){
+            $view_file = '/qna/ajax_list_v2';
+        }
+
+        $this->load->view($view_file, array(
             'req'           => $req,
             'list_count'    => $list_count,
             'total_page'    => $page_result['total_page'],
             'qna_list'      => $qna_list
         ));
+
+    }
+
+    public function delete_proc(){
+        ajax_request_check();
+
+        $aInput = array('bq_num' => $this->input->post('seq') );
+
+        $state_arr = array('bq_display_state_1' => 'N');
+
+        if(is_array($aInput['bq_num']) == true){
+            $ret = true;
+            foreach ($aInput['bq_num'] as $v) {
+                if( $this->board_qna_model->update_board_qna($v , $state_arr) == false ) $ret = false;
+            }
+        }else{
+            $ret = $this->board_qna_model->update_board_qna($aInput['bq_num'] , $state_arr);
+        }
+
+        echo  json_encode_no_slashes(array('success' => $ret , 'msg' => '' , 'data' => array() ));
+
+
+
 
     }
 
@@ -169,22 +206,29 @@ class Qna extends M_Controller
             }
 
             if( empty($form_error_array) ) {
+
                 //첨부파일 업로드
-                $bq_file_path_db = $this->config->item('qna_file_head') . "/" . date("Y") . "/" . date("md");
-                $bq_file_path = HOMEPATH . $bq_file_path_db;
+                $bq_file_path = $this->config->item('qna_img_path') . "/" . date("Y") . "/" . date("md");
+                $bq_file_path_web = $this->config->item('qna_img_path_web') . "/" . date("Y") . "/" . date("md");
+
                 create_directory($bq_file_path);
 
-                if(count($_FILES['board_qna_file']['name']) > 0){
+                if(count($_FILES['qna_img']['name']) > 0){
 
                     //이미지 경로arr
                     $bg_img_arr = array();
 
-                    foreach ($_FILES['board_qna_file'] as $key => $row) {
-                        foreach ($row as $kkey => $val) {
-                            $_FILES['board_qna_file'.$kkey][$key] = $val;
+                    foreach ($_FILES['qna_img'] as $key => $row) {
+                        if($key < 3){
+                            foreach ($row as $kkey => $val) {
+                                $_FILES['board_qna_file'.$kkey][$key] = $val;
+                            }
                         }
                     }
-                    unset($_FILES['board_qna_file']);
+
+                    log_message('A',json_encode_no_slashes($_FILES));
+
+                    unset($_FILES['qna_img']);
 
                     foreach ($_FILES as $key => $FILE) {
 
@@ -195,17 +239,14 @@ class Qna extends M_Controller
                         $config['encrypt_name'] = true;
 
                         $this->load->library('upload');
-
-
                         $this->upload->initialize($config);
-
 
                         if ( $this->upload->do_upload($key) ) {
 
                             //업로드 이미지정보
                             $upload_data_array = $this->upload->data();
                             //이미지 org정보
-                            $bg_img_arr[] = $bq_file_path_db.'/'.$upload_data_array['file_name'];
+                            $bg_img_arr[] = $bq_file_path_web.'/'.$upload_data_array['file_name'];
                             @chmod($upload_data_array['full_path'], 0775);
 
                         }else{

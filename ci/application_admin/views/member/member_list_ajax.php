@@ -71,7 +71,8 @@
      * 회원 주문내역 팝업
      */
     function member_order_list_pop (url) {
-        new_win_open(url, '', 800, 600);
+        return false;
+        //new_win_open(url, '', 800, 600);
     }//end of member_order_list_pop()
 
 

@@ -217,7 +217,7 @@ class Board_qna extends A_Controller {
             if( $this->form_validation->run() === true ) {
                 $bq_num = $this->input->post('bq_num', true);
                 $bq_answer_content = $this->input->post('bq_answer_content');
-                $push_yn = $this->input->post('push_yn');
+                //$push_yn = $this->input->post('push_yn');
 
                 if( empty($form_error_array) ) {
                     $query_data = array();
@@ -231,16 +231,28 @@ class Board_qna extends A_Controller {
                     if( $this->board_qna_model->update_board_qna($bq_num, $query_data) ) {
 
                         // 수동푸시 활성화 또는 첫 답변일때 푸시 발송
-                        if($push_yn == 'Y' || $board_qna_row['bq_answerdatetime'] == '') {
+                        //if($push_yn == 'Y' || $board_qna_row['bq_answerdatetime'] == '') {
+
+                        // 첫 답변일때 푸시 발송
+                        if($board_qna_row['bq_answerdatetime'] == '') {
 
                             //앱 푸시 발송
                             if (!empty($board_qna_row['m_regid'])) {
-
+                                /*
                                 $push_data = array();
                                 $push_data['title'] = "1:1문의 답변이 등록되었습니다.";
                                 $push_data['body']  = "고객님이 문의하신 1:1문의글의 답변을 확인하세요.";
                                 $push_data['page']  = "qna";
                                 $resp = send_app_push($board_qna_row['m_regid'], $push_data);
+                                */
+
+                                $push_data = array();
+                                $push_data['title'] = "1:1문의 답변이 등록되었습니다.";
+                                $push_data['body']  = "고객센터로 문의하신 사항에 답변이 도착했습니다.";
+                                $push_data['page']  = "qna";
+
+                                send_app_push_log($board_qna_row['m_num'], $push_data);
+
                             }
                         }
 

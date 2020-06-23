@@ -336,7 +336,7 @@
                                 </div>
                             </div>
                             <div class="form-group form-group-sm">
-                                <label class="col-sm-2 control-label">공구폼상품코드 <span class="txt-danger">*</span></label>
+                                <label class="col-sm-2 control-label">상품코드 <span class="txt-danger">*</span></label>
                                 <div class="col-sm-10">
                                     <input type="text" id="field_p_order_code" name="p_order_code" class="form-control" value="<?php echo $product_row['p_order_code']; ?>" />
                                 </div>

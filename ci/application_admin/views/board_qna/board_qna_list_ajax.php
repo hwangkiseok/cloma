@@ -62,7 +62,12 @@
                         <?php if ( !empty($row['bq_file']) ) { $bq_file_arr = json_decode($row['bq_file']);
                             if(count($bq_file_arr) > 0){
                                 foreach ($bq_file_arr as $v) {?>
-                                    첨부파일 : <a href="#none" onclick="new_win_open('/download/?m=view&f=<?=$v?>', 'file_win', '1000', '700');"><?= pathinfo($v, PATHINFO_BASENAME)?></a><br />
+
+                                    <a href="#none" onclick="new_win_open('<?=$v?>', 'img_pop', 800, 600);" style="display: inline-block;width: 70px;height: 70px;overflow: hidden;margin-right: 5px; " >
+                                        <img src="<?=$v?>">
+                                    </a>
+
+                                    <!--첨부파일 : <a href="#none" onclick="new_win_open('/download/?m=view&f=<?=$v?>', 'file_win', '1000', '700');"><?= pathinfo($v, PATHINFO_BASENAME)?></a><br />-->
                                 <?}?>
                             <?}else{?>
                                 첨부파일 : <a href="#none" onclick="new_win_open('/download/?m=view&f=<?=$row['bq_file']?>', 'file_win', '1000', '700');"><?= pathinfo($row['bq_file'], PATHINFO_BASENAME)?></a><br />

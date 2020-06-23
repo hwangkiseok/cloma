@@ -1627,6 +1627,37 @@ function get_long_url_yourls($short_url) {
     return $data->longurl;
 }//end get_long_url_yourls;
 
+function send_app_push_log($m_num, $push_data, $isCompl_send = false){
+
+    if(empty($m_num) == true) return false;
+    if(empty($push_data['title']) == true ||  empty($push_data['page']) == true ) return false;
+
+    $CI =& get_instance();
+
+    $sql     = "SELECT m_regid FROM member_tb WHERE m_num = '{$m_num}';";
+    $oResult = $CI->db->query($sql);
+    $aResult = $oResult->row_array();
+
+    //푸시발송
+    $resp = send_app_push($aResult['m_regid'],$push_data );
+
+    if($resp['success'] == true || $isCompl_send == true){
+        $sql = "INSERT INTO noti_tb
+                SET m_num           = '{$m_num}' 
+                ,   noti_subject    = '{$push_data['title']}'
+                ,   noti_content    = '{$push_data['body']}'
+                ,   loc_type        = '{$push_data['page']}'
+                ,   reg_date        = DATE_FORMAT(NOW(),'%Y%m%d%H%i%s')
+             ";
+
+        $CI->db->query($sql);
+    };
+
+    return $resp;
+
+}
+
+
 /**
  * 푸시 발송
  * @param $regid
@@ -1639,7 +1670,7 @@ function send_app_push($regid, $push_data=array()) {
     }
 
     //필수값 체크
-    if( empty($push_data['title']) || empty($push_data['body']) ) {
+    if( empty($push_data['title'])  ) {
         return false;
     }
 

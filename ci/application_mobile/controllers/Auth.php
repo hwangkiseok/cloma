@@ -13,6 +13,9 @@ class Auth extends M_Controller {
     public function __construct() {
         parent::__construct();
 
+
+        log_message('A','CALL mobile Auth Class :: error :: ');
+
         //model
         $this->load->model('member_model');
 

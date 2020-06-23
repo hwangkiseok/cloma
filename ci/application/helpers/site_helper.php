@@ -3173,6 +3173,35 @@ function product_view_chk($arrayParams){
 
 }
 
+function send_app_push_log($m_num, $push_data){
+
+    if(empty($m_num) == true) return false;
+    if(empty($push_data['title']) == true ||  empty($push_data['page']) == true ) return false;
+
+    $CI =& get_instance();
+
+    $sql     = "SELECT m_regid FROM member_tb WHERE m_num = '{$m_num}';";
+    $oResult = $CI->db->query($sql);
+    $aResult = $oResult->row_array();
+
+    //푸시발송
+    $resp = send_app_push($aResult['m_regid'],$push_data );
+
+    if($resp['success'] == true){
+        $sql = "INSERT INTO noti_tb
+                    SET m_num           = '{$m_num}'
+                    ,   noti_subject    = '{$push_data['title']}'
+                    ,   noti_content    = '{$push_data['body']}'
+                    ,   loc_type        = '{$push_data['page']}'
+                    ,   reg_date        = DATE_FORMAT(NOW(),'%Y%m%d%H%i%s')
+             ";
+
+        $CI->db->query($sql);
+    };
+    return $resp;
+}
+
+
 /**
  * 푸시 발송
  * @param $regid
@@ -3266,7 +3295,7 @@ function send_app_push($regid, $push_data=array()) {
  * @return boolean
  */
 function zsDebug(){//서울내
-    $aChkIp = array('121.131.27.155', '183.96.170.17', '118.33.75.76', '183.96.170.219', '118.33.75.56', '14.39.148.80', '211.217.209.180');
+    $aChkIp = array('121.131.27.155', '183.96.170.17', '118.33.75.76', '183.96.170.219', '118.33.75.56', '14.39.148.80', '211.217.209.180','106.243.140.135');
     if(in_array($_SERVER['REMOTE_ADDR'],$aChkIp)){ return true; }else{ return false; }
 }
 function zsDebug_a(){ //창원&서울공유

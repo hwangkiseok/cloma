@@ -32,14 +32,16 @@ class auto_comment extends A_Controller {
         $sInsertParams = implode(',',$aInsertParams);
 
         $sql = " INSERT INTO comment_tb (cmt_table , cmt_table_num, cmt_name , cmt_content , cmt_regdatetime) VALUES {$sInsertParams} ";
-        $this->db->query($sql);
+        $ret = $this->db->query($sql);
 
-        $sql = "UPDATE auto_cmt_tb ACT 
-                INNER JOIN product_tb PT ON ACT.p_num = PT.p_num
-                SET proc_flag = 'Y' , proc_date = '{$curr_datetime}'
-                WHERE ACT.proc_flag = 'N'
-                AND DATE_FORMAT(DATE_ADD(PT.p_termlimit_datetime1 , INTERVAL + ACT.reg_min MINUTE) , '%Y-%m-%d %H:%i:%s') <= NOW() ; ";
-        $this->db->query($sql);
+        if($ret == true){
+            $sql = "UPDATE auto_cmt_tb ACT 
+                    INNER JOIN product_tb PT ON ACT.p_num = PT.p_num
+                    SET proc_flag = 'Y' , proc_date = '{$curr_datetime}'
+                    WHERE ACT.proc_flag = 'N'
+                    AND DATE_FORMAT(DATE_ADD(PT.p_termlimit_datetime1 , INTERVAL + ACT.reg_min MINUTE) , '%Y-%m-%d %H:%i:%s') <= NOW() ; ";
+            $this->db->query($sql);
+        }
 
     }//end of index()
 

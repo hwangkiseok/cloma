@@ -55,6 +55,7 @@
 
                         <hr />
 
+                        <!--
                         <div class="form-group form-group-sm form-inline">
                             <div class="input-group">
                                 <span class="input-group-addon">푸시발송</span>
@@ -63,7 +64,7 @@
                                 </div>
                             </div>
                         </div>
-
+                        -->
                         <div class="form-group form-group-sm form-inline">
                             <div class="input-group">
                                 <span class="input-group-addon">문구선택</span>
@@ -90,10 +91,9 @@
                             </div>
                             <div><font color='red'><b>※  구분선입력시에만 1,2,3차 답변이 구분됨을 유의하세요.</b></font></div>
                         </div>
-
                         <div class="form-group form-group-sm">
                             <div id="field_bq_answer_content">
-                                <textarea name="bq_answer_content" id="bq_answer_content" style="width:100%; height:200px; visibility:hidden;"><?php echo $board_qna_row->bq_answer_content; ?></textarea>
+                                <textarea name="bq_answer_content" id="bq_answer_content" style="width:100%; height:200px; visibility:hidden;"><?php echo $board_qna_row['bq_answer_content']; ?></textarea>
                             </div>
                         </div>
                     </form>

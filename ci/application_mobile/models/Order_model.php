@@ -129,7 +129,8 @@ class order_model extends M_Model {
                   ,A.delivery_amt
                   ,A.register_date
                   ,A.option_list
-                  ,C.p_today_image 
+                  ,C.p_today_image
+                  ,C.p_name 
 
                     , A.trade_no 
                     , A.receiver_zip
@@ -140,6 +141,8 @@ class order_model extends M_Model {
                     , A.receiver_addr2                                                                                                                                                                     
                     , A.aorder_memo
                     , A.order_memo
+                    , A.complete_push_yn
+                    , A.delivery_push_yn
                     
                 FROM snsform_order_tb A
                 LEFT JOIN snsform_order_cancel_tb B ON A.trade_no = B.trade_no
@@ -173,6 +176,7 @@ class order_model extends M_Model {
                     ,A.option_list
                     ,A.m_trade_no
                     ,C.p_today_image
+                    ,C.p_name
                     , A.trade_no
                     
                     , A.buyer_name                                                                                                                                                                     
@@ -186,6 +190,8 @@ class order_model extends M_Model {
                     , A.receiver_addr2                                                                                                                                                                     
                     , A.aorder_memo
                     , A.order_memo
+                    , A.complete_push_yn
+                    , A.delivery_push_yn
 
                 FROM snsform_order_tb A
                 LEFT JOIN snsform_order_cancel_tb B ON A.trade_no = B.trade_no
@@ -196,13 +202,18 @@ class order_model extends M_Model {
         $oResult = $this->db->query($sql);
         $aResult = $oResult->row_array();
 
+        $aResult['tot_buy_cnt'] = 0;
+        $aResult['cart_del_amt'] = 0;
         if(empty($aResult['m_trade_no']) == false){
             $sql = "SELECT COUNT(*) AS cnt FROM snsform_order_tb WHERE m_trade_no = '{$aResult['m_trade_no']}' AND item_no <> '0000000000'; ";
             $oSubResult = $this->db->query($sql);
             $aSubResult = $oSubResult->row_array();
             $aResult['tot_buy_cnt'] = $aSubResult['cnt'];
-        }else{
-            $aResult['tot_buy_cnt'] = 0;
+
+            $sql = "SELECT delivery_amt FROM snsform_order_tb WHERE m_trade_no = '{$aResult['m_trade_no']}' AND item_no = '0000000000'; ";
+            $oSubResult = $this->db->query($sql);
+            $aSubResult = $oSubResult->row_array();
+            $aResult['cart_del_amt'] = $aSubResult['delivery_amt'];
         }
 
         return $aResult;

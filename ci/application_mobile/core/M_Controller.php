@@ -27,6 +27,16 @@ class M_Controller extends CI_Controller {
             session_start();
         }
 
+
+        if(is_app() == false){
+
+            $allow_c = array(
+                'common'
+            );
+
+            if( in_array($this->router->class,$allow_c) == true || zsDebug() == false ) header('Location: https://m.cloma.co.kr/intro.php' );
+        }
+
 //        if(1){ //benchmark
 //            $this->load->library('Profiler');
 //            $this->output->enable_profiler(TRUE);
@@ -862,6 +872,16 @@ class M_Controller extends CI_Controller {
         }
 
         return $arr;
+
+    }
+
+
+    public function get_recommand_product($limit){
+
+        $this->load->model('product_model');
+        $aRecommandProduct = $this->product_model->get_recommand_product($limit);
+        $recommand_product_ext  = $this->load->view('/product/mostview_2', array( 'tit' => '추천 상품' , 'e_naming' => 'recommand' , 'aProductLists' => $aRecommandProduct ) , true );
+        return $recommand_product_ext;
 
     }
 

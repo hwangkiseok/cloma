@@ -14,7 +14,7 @@ define("GOOGLE_SERVER_KEY", "AAAANUo0amk:APA91bFF0qu2gymOWaj3wimBnE8ZzFaoTpfu_Dy
 $req_url = 'https://fcm.googleapis.com/fcm/send';
 
 //DB 커넥션
-require_once 'db_conn.php';
+require_once CRONHOME.'/db_conn.php';
 
 //동시 실행 갯수
 $MOD = 2;

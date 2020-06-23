@@ -4,19 +4,19 @@
  */
 
 //사이트 정보
-$config['site_name_ceo'] = "조은순";
-$config['site_name_cpo'] = "이규면";//개인정보책임관리자
+$config['site_name_ceo'] = "구자욱";
+$config['site_name_cpo'] = "조은순";//개인정보책임관리자
 
-$config['company_name_kr'] = "(주)인사이트 드림";
-$config['company_name_en'] = "Insight Dream";
+$config['company_name_kr'] = "(주)옷잘입는 언니";
+$config['company_name_en'] = "GoodLook Sister";
 $config['site_name_kr'] = "옷쟁이들";
 $config['site_name_en'] = "Cloma";
-$config['site_help_tel'] = "070-4808-2390";
+$config['site_help_tel'] = "1522-7944";
 $config['site_help_email'] = "suvinshop@naver.com";
 $config['site_zip_code'] = "02146";
-$config['site_addr'] = "서울특별시 중랑구 면목로 419 (면목동) 6층";
-$config['biz_no'] = "398-87-00626";
-$config['tongsin'] = "제2017-서울중랑-0501호";
+$config['site_addr'] = "경기도 구리시 갈매동 235번지 27호 제조업소 및 사무소";
+$config['biz_no'] = "197-81-01132";
+$config['tongsin'] = "제2018-경기구리-0298호";
 
 $config['site_description'] = "";
 $config['site_domain'] = str_replace(array("http://", "https://"), array("", ""), $_SERVER['HTTP_HOST']);
@@ -77,6 +77,10 @@ $config['seed_iv'] = "!i@n#s:i%g^h&t*(d)r_e+a|m_iv";
 //AES 256 암호키 (32byte 여야함)
 $config['aes256_key'] = "CKAtHbVY8sDWqiXoTPlhMzaUIBmJ534k";
 
+//juso.go.kr 승인키 => 주소검색 API
+$config['juso_key'] = 'U01TX0FVVEgyMDIwMDYxMDE0MDI0NDEwOTg1MTI=';
+$config['juso_url'] = 'http://www.juso.go.kr/addrlink/addrLinkApiJsonp.do';
+
 //앱 관련
 $config['app_id'] = "kr.co.cloma.app";
 $config['ios_link_key'] = "";
@@ -114,9 +118,9 @@ $config['member_profile_img_admin'] = IMG_HTTP . "/images/app_icon_192.png";
 $config['member_profile_dir'] = "/files/profile_img";
 $config['member_profile_path'] = HOMEPATH . $config['member_profile_dir'];
 
-//파일 경로
-$config['qna_file_head'] = "/files/qna";
-$config['qna_file_path'] = HOMEPATH . $config['qna_file_head'];
+//1:1문의 경로 관련
+$config['qna_img_path'] = DOCROOT . "/uploads/qna";
+$config['qna_img_path_web'] = "/uploads/qna";
 
 
 $config['member_nickname_bannedwords'] = array(
@@ -336,21 +340,53 @@ $config['cmt_gubun']= array(
 );
 
 $config['order_cancel_gubun']= array(
-    'A' => '배송지연'
-,   'B' => '배송오류'
-,   'C' => '배송지 수정'
-,   'D' => '고객변심'
-,   'E' => '상품하자'
-,   'F' => '결제오류'
+    'A' => '단순 변심'
+,   'B' => '다른 상품과 다시 결제'
+,   'C' => '잘못 결제'
+,   'D' => '배송 지연'
+,   'E' => '배송지 수정'
 );
 
+$config['order_exchange_gubun']= array(
+    'A' => '상품 하자'
+,   'B' => '다른 상품 배송'
+,   'C' => '상품 정보 상이'
+,   'D' => '색상/사이즈 등 옵션 변경희망'
+);
+
+$config['order_refund_gubun']= array(
+    'A' => '단순 변심'
+,   'B' => '배송 지연'
+,   'C' => '상품 하자'
+,   'D' => '다른 상품 배송'
+,   'E' => '상품 정보 상이'
+,   'F' => '다른곳의 가격이 더 저렴함'
+,   'G' => '색상/사이즈가 기대와 다름'
+);
+
+$config['order_cancel_gubun']= array(
+    'A' => '단순변심'
+,   'B' => '다른 상품과 다시 결제'
+,   'C' => '잘못 결제'
+,   'D' => '배송지 지연'
+,   'E' => '배송지 수정'
+);
+
+//취소 환불정보가 보여야하는 결제수단
+$config['refund_view_cd'] = array(
+    2 //실시간계좌이체 // TODO :: 입금일체크 가능 후 변경예정
+,   3 //무통장입금
+,   7 //가상계좌
+);
+
+
+
 $config['order_cancel_gubun_admin']= array(
-    'A' => '배송지연'
-,   'B' => '배송오류'
-,   'C' => '배송지 수정'
-,   'D' => '고객변심'
-,   'E' => '상품하자'
-,   'F' => '결제오류'
+    'A' => '단순변심'
+,   'B' => '다른 상품과 다시 결제'
+,   'C' => '잘못 결제'
+,   'D' => '배송지 지연'
+,   'E' => '배송지 수정'
 ,   'Z' => '관리자취소'
 );
 

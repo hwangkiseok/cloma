@@ -40,7 +40,7 @@
 
         <div class="copyright">
 
-            <a class="copyright_toggle zs-cp">(주)인사이트드림 사업자정보 확인<i></i></a>
+            <a class="copyright_toggle zs-cp"><?=$this->config->item('company_name_kr')?> 사업자정보 확인<i></i></a>
 
             <div class="copyright_cont">
                 <p>상호 : <?=$this->config->item('company_name_kr')?> / 대표자 : <?=$this->config->item('site_name_ceo')?>  /  개인정보책임자 : <?=$this->config->item('site_name_cpo')?></p>

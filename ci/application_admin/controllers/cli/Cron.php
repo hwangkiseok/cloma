@@ -81,6 +81,56 @@ class Cron extends A_Controller {
         $this->cron_model->product_static_yesterday_order($debug);
     }
 
+    public function product_static_view($debug){
+        $this->cron_model->product_static_view($debug);
+    }
+
+    //배송중 푸시발송
+    public function sending_push($debug){
+
+        $aResult = $this->cron_model->get_sending_push_target($debug);
+
+        $target_arr1 = array();
+        $target_arr2 = array();
+        foreach ($aResult as $k => $r) {
+
+            if(empty($r['m_trade_no']) == false) $r['isCart'] = true;
+            else $r['isCart'] = false;
+
+            $target_arr1[$r['invoice_no']][] = $r;
+
+        }
+
+        foreach ($target_arr1 as $k => $r) {
+
+            $nOrderInfo     = (int)count($r) - 1 ;
+            $isCompl_send   = $r['req_push_cnt'] >= 3 ? true : false;
+
+            if(mb_strlen($r[0]['p_name']) > 5) $p_name = mb_substr($r[0]['p_name'], 0, 5, 'utf-8')."...";
+            else $p_name = $r[0]['p_name'];
+
+            $push_data  = array();
+            if($r[0]['isCart'] == true && $nOrderInfo > 0) $push_data['title'] = "[{$p_name}] 외 {$nOrderInfo}건의 배송이 시작되었습니다.";
+            else $push_data['title'] = "[{$p_name}]의 배송이 시작되었습니다.";;
+            $push_data['body']  = "";
+            $push_data['page']  = "delivery";
+
+            $resp = send_app_push_log($r[0]['partner_buyer_id'], $push_data, $isCompl_send);
+            log_message('A','sending_push >>>>>> '.json_encode($resp));
+
+            //푸시발송 cnt
+            $sql = "UPDATE snsform_order_tb SET req_push_cnt = req_push_cnt + 1 WHERE invoice_no = '{$k}'; ";
+            $this->db->query($sql);
+
+            if( $resp['success'] == true || $isCompl_send = true ){
+                $sql = "UPDATE snsform_order_tb SET delivery_push_yn = 'Y' WHERE invoice_no = '{$k}'; ";
+                $this->db->query($sql);
+            }
+
+        }
+
+    }
+
     /**
      * 상품 판매상태 업데이트
      */

@@ -9,6 +9,7 @@
         else var ctrl_top = 0;
 
 
+        <?if(count($cart_prod_list) > 0) {?>
         $(window).scroll(function() {
 
             var x = parseInt($(this).scrollTop());
@@ -66,6 +67,8 @@
             <?}?>
 
         });
+
+        <?}?>
 
     });
 

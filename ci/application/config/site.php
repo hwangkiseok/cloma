@@ -4,19 +4,19 @@
  */
 
 //사이트 정보
-$config['site_name_ceo'] = "조은순";
-$config['site_name_cpo'] = "이규면";//개인정보책임관리자
+$config['site_name_ceo'] = "구자욱";
+$config['site_name_cpo'] = "조은순";//개인정보책임관리자
 
-$config['company_name_kr'] = "(주)인사이트 드림";
-$config['company_name_en'] = "Insight Dream";
+$config['company_name_kr'] = "(주)옷잘입는 언니";
+$config['company_name_en'] = "GoodLook Sister";
 $config['site_name_kr'] = "옷쟁이들";
 $config['site_name_en'] = "Cloma";
-$config['site_help_tel'] = "070-4808-2390";
+$config['site_help_tel'] = "1522-7944";
 $config['site_help_email'] = "suvinshop@naver.com";
 $config['site_zip_code'] = "02146";
-$config['site_addr'] = "서울특별시 중랑구 면목로 419 (면목동) 6층";
-$config['biz_no'] = "398-87-00626";
-$config['tongsin'] = "제2017-서울중랑-0501호";
+$config['site_addr'] = "경기도 구리시 갈매동 235번지 27호 제조업소 및 사무소";
+$config['biz_no'] = "197-81-01132";
+$config['tongsin'] = "제2018-경기구리-0298호";
 
 $config['site_description'] = "";
 $config['site_domain'] = str_replace(array("http://", "https://"), array("", ""), $_SERVER['HTTP_HOST']);
@@ -114,9 +114,9 @@ $config['member_profile_img_admin'] = IMG_HTTP . "/images/app_icon_192.png";
 $config['member_profile_dir'] = "/files/profile_img";
 $config['member_profile_path'] = HOMEPATH . $config['member_profile_dir'];
 
-//파일 경로
-$config['qna_file_head'] = "/files/qna";
-$config['qna_file_path'] = HOMEPATH . $config['qna_file_head'];
+//1:1문의 경로 관련
+$config['qna_img_path'] = DOCROOT . "/uploads/qna";
+$config['qna_img_path_web'] = "/uploads/qna";
 
 
 $config['member_nickname_bannedwords'] = array(
@@ -190,12 +190,12 @@ $config['recently_view_product_max_count'] = 15;    //최근본상품 최대갯�
 //FAQ
 $config['faq_category'][1] = "주문/결제";
 $config['faq_category'][2] = "배송문의";
-$config['faq_category'][3] = "반품문의";
-$config['faq_category'][8] = "교환문의";
+$config['faq_category'][3] = "교환/반품";
 $config['faq_category'][4] = "환불문의";
 $config['faq_category'][5] = "회원서비스";
 $config['faq_category'][6] = "적립금/쿠폰";
 $config['faq_category'][7] = "구매확정";
+$config['faq_category'][99] = "기타";
 
 //1:1 문의
 //게시판 (1:1문의)

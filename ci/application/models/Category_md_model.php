@@ -77,6 +77,8 @@ class Category_md_model extends W_Model {
             $query .= $order_query;
             $query .= $limit_query;
 
+            //log_message('A',$query);
+
             return $this->db->query($query)->result_array();
         }
     }//end of get_category_md_list()

@@ -473,4 +473,15 @@ class Product_model extends M_Model {
 
     }
 
+
+    public function get_recommand_product($count = 6){
+
+        $sql = "SELECT * FROM product_tb WHERE 1 ORDER BY p_click_count_week DESC LIMIT {$count} ; ";
+        $oResult = $this->db->query($sql);
+        $aResult = $oResult->result_array();
+
+        return $aResult;
+
+    }
+
 }//end of class Product_model

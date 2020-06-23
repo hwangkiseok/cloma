@@ -25,7 +25,12 @@
             </li>
             <li>
                 <span class="fl">주문처리상태</span>
-                <span class="fr"><?=$this->config->item($aSnsformOrderInfo['status_cd'],'form_status_cd')?></span>
+                <?/* snsform 주문상태 값과 옷쟁이들 주문상태 값의 문제로 snsform 상태값이 66이상 취소 인경우 1을 추가*/?>
+                <?if($aSnsformOrderInfo['status_cd'] >= 66){?>
+                    <span class="fr"><?=$this->config->item('1'.$aSnsformOrderInfo['status_cd'],'form_status_cd')?></span>
+                <?}else{?>
+                    <span class="fr"><?=$this->config->item($aSnsformOrderInfo['status_cd'],'form_status_cd')?></span>
+                <?}?>
             </li>
         </ul>
 
@@ -109,15 +114,17 @@
 
                 <?}else{ ?>
 
+                    <?if($_SESSION['session_m_num'] == 55){ $cancel_class = 'popCancel'; } else { $cancel_class = 'popCancel'; }?>
+
                     <? if($aSnsformOrderInfo['status_cd'] == '61' ){?>
                         <p style="line-height: 34px;vertical-align: middle">
                             <span class="fl"> 입금확인 중 </span>
-                            <span class="fr"> <button class="btn btn-border-red zs-cp popCancel" data-type="66">주문취소</button> </span>
+                            <span class="fr"> <button class="btn btn-border-red zs-cp <?=$cancel_class?>" data-type="66">주문취소</button> </span>
                         </p>
                     <?}else if($aSnsformOrderInfo['status_cd'] == '62' || $aSnsformOrderInfo['status_cd'] == '63'){?>
                         <p style="line-height: 34px;vertical-align: middle">
                             <span class="fl"> 배송준비중 </span>
-                            <span class="fr"> <button class="btn btn-border-red zs-cp popCancel" data-type="66">주문취소</button> </span>
+                            <span class="fr"> <button class="btn btn-border-red zs-cp <?=$cancel_class?>" data-type="66">주문취소</button> </span>
                         </p>
                     <?}else if($aSnsformOrderInfo['status_cd'] == '64'){ ?>
 
@@ -135,8 +142,8 @@
                         <p style="line-height: 34px;vertical-align: middle">
                             <span class="fl"> 배송완료 </span>
                             <span class="fr">
-                                <button class="btn btn-border-blue zs-cp popCancel" data-type="67">교환신청</button>
-                                <button class="btn btn-border-blue zs-cp popCancel" data-type="68">반품신청</button>
+                                <button class="btn btn-border-blue zs-cp <?=$cancel_class?>" data-type="67">교환신청</button>
+                                <button class="btn btn-border-blue zs-cp <?=$cancel_class?>" data-type="68">반품신청</button>
                             </span>
                         </p>
                     <?}?>
@@ -364,6 +371,16 @@
 
     $(function(){
 
+
+        $('.popCancel2').on('click',function(e){
+
+            var type    = $(this).data('type');
+            var tn      = '<?=$tn?>';
+
+            go_link('/order/cancel?tn='+tn+'&t='+type)
+
+        });
+
         $('.popCancel').on('click',function(e){
             e.preventDefault();
 
@@ -392,7 +409,10 @@
             var url = "";
 
             if(company == 'CJ대한통운'){
-                go_link('/delivery/outside_detail?invoice_no='+invoice_no+'&company='+company);
+
+                var url = 'http://nplus.doortodoor.co.kr/web/detail.jsp?slipno='+invoice_no;
+                go_link(url,'','Y');
+                //go_link('/delivery/outside_detail?invoice_no='+invoice_no+'&company='+company);
             }else{
                 //clipboard Copy
                 var clipboard = new Clipboard('#copyClipboard');

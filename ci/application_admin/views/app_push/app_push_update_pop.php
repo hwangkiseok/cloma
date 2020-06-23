@@ -55,9 +55,13 @@
                 <div class="box-content">
                     <form name="pop_update_form" id="pop_update_form" method="post" class="form-horizontal" role="form" action="<?php echo $this->page_link->update_proc; ?>">
                         <input type="hidden" name="ap_num" value="<?php echo $app_push_row['ap_num']; ?>" />
+                        <input type="hidden" name="ap_push_type" value="product">
                         <input type="hidden" name="ap_reserve_datetime" value="" />
+                        <input type="hidden" name="ap_os_type" value="1" />
+                        <input type="hidden" name="ap_badge" value="Y" />
+                        <input type="hidden" name="ap_stock_flag" value="Y" />
 
-
+                        <!--
                         <div class="form-group form-group-sm">
                             <label class="col-sm-2 control-label">푸시타입 <span class="txt-danger">*</span></label>
                             <div class="col-sm-10">
@@ -86,6 +90,7 @@
                                 </div>
                             </div>
                         </div>
+                        -->
                         <!--
                         <div class="form-group form-group-sm">
                             <label class="col-sm-2 control-label">알림타입 <span class="txt-danger">*</span></label>
@@ -131,6 +136,7 @@
                         <!-- 푸시중간페이지 관련 end -->
 
 
+                        <!--
                         <div class="form-group form-group-sm">
                             <label class="col-sm-2 control-label">뱃지 <span class="txt-danger">*</span></label>
                             <div class="col-sm-10">
@@ -139,6 +145,7 @@
                                 </div>
                             </div>
                         </div>
+                        -->
                         <div class="form-group form-group-sm">
                             <label class="col-sm-2 control-label">발송상태 <span class="txt-danger">*</span></label>
                             <div class="col-sm-10">
@@ -155,6 +162,7 @@
                             </div>
                         </div>
 
+                        <!--
                         <div class="form-group form-group-sm">
                             <label class="col-sm-2 control-label">재고여부 <span class="txt-danger">*</span></label>
                             <div class="col-sm-10">
@@ -163,7 +171,7 @@
                                 </div>
                             </div>
                         </div>
-
+                        -->
                         <div class="form-group form-group-sm">
                             <label class="col-sm-2 control-label">노출여부 <span class="txt-danger">*</span></label>
                             <div class="col-sm-10">
@@ -201,18 +209,21 @@
                                 <div id="field_ap_subject">
                                     <input type="text" name="ap_subject" class="form-control" value="<?php echo rawurldecode($app_push_row['ap_subject']); ?>" />
                                 </div>
+                                <!--
                                 <p class="help-block"><xmp>* 제목에 부분 컬러 설정하기 (예: <font color="#FF0000">빨간색</font>, <b>굵은글씨</b>)</xmp></p>
-                                <p class="help-block" style="color:red;">* HTML 코드는 안드로이드앱 2.1.0 ~ 부터 적용됨.</p>
+                                <p class="help-block" style="color:red;">* HTML 코드는 안드로이드앱 2.1.0 ~ 부터 적용됨.</p>]
+                                -->
                             </div>
                         </div>
                         <div class="form-group form-group-sm">
                             <label class="col-sm-2 control-label">내용 <span class="txt-danger">*</span></label>
                             <div class="col-sm-10">
                                 <div id="field_ap_message">
-                                    <textarea name="ap_message" class="form-control" style="height:80px;"><?php echo $app_push_row['ap_message']; ?></textarea>
+                                    <textarea name="ap_message" class="form-control" style="height:80px;"><?php echo rawurldecode($app_push_row['ap_message']); ?></textarea>
                                 </div>
                             </div>
                         </div>
+                        <!--
                         <div class="form-group form-group-sm">
                             <label class="col-sm-2 control-label">요약내용</label>
                             <div class="col-sm-10">
@@ -274,13 +285,15 @@
                                 <p class="help-block">*  이미지 사이즈 512px x 256px / 확장자는 jpg, png만</p>
                             </div>
                         </div>
+                        -->
                         <div class="form-group form-group-sm">
                             <label class="col-sm-2 control-label">이동URL</label>
                             <div class="col-sm-10">
                                 <div id="field_ap_target_url">
                                     <input type="text" name="ap_target_url" class="form-control" value="<?php echo $app_push_row['ap_target_url']; ?>" />
                                 </div>
-                                <p class="help-block">* 입력예: <?php echo $this->config->item("site_http"); ?>/product/detail/?p_num=상품번호</p>
+                                <!--<p class="help-block">* 입력예: <?php echo $this->config->item("site_http"); ?>/product/detail/?p_num=상품번호</p>-->
+                                <p class="help-block">* 상품관리 > 단축URL 불러오기 > 앱푸시 > WEB </p>
                             </div>
                         </div>
                     </form>

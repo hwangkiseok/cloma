@@ -610,7 +610,7 @@ function go_link(url , newWin='N' , newBrowser='N' , sub = '' , moveType = 'H'){
                 else url = url + '?en_ak='+en_ak;
 
                 if(moveType == 'R'){
-                    location.replace(url);
+                    location_replace(url);
                 }else{
                     location.href = url;
                 }
@@ -699,11 +699,6 @@ function go_home(){
         go_link('/');
     }
 }
-
-
-
-
-
 //페이지 로드 후 loader 숨김
 $(window).load(function(e){
     hide_loader();

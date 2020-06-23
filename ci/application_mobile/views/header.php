@@ -52,6 +52,7 @@
         <?php link_src_html("/css/pc.css", "css"); ?>
     <?php } ?>
 
+<!--    <script src="/js/jquery-1.11.3.min.js" type="text/javascript"></script>-->
     <script src="/js/jquery-2.2.0.min.js" type="text/javascript"></script>
     <script src="/js/jquery.cookie.js" type="text/javascript"></script>
     <script src="/js/jquery.form.min.js" type="text/javascript"></script>

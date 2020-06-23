@@ -13,12 +13,19 @@ class Auth extends W_Controller {
     public function __construct() {
         parent::__construct();
 
+        show_404();
+        exit;
+
+
         //model
         $this->load->model('member_model');
 
         //library
         $this->load->library('encryption');
         $this->load->library('user_agent');
+
+
+
 
 
         log_message('A','CALL Auth Class :: error');

@@ -893,6 +893,7 @@ class Product extends A_Controller {
         $req['p_num'] = $this->input->post_get('p_num', true);
         $req['pop'] = $this->input->post_get('pop', true);
 
+
         //row
         $product_row = $this->product_model->get_product_row($req['p_num']);
 
@@ -950,6 +951,8 @@ class Product extends A_Controller {
     public function product_update() {
         //request
         $req['p_num'] = $this->input->post_get('p_num', true);
+
+
 
         //row
         $product_row = $this->product_model->get_product_row($req['p_num']);
@@ -1583,6 +1586,10 @@ class Product extends A_Controller {
                 $query_data['p_stock_state'] = get_yn_value($p_stock_state);
                 $query_data['p_option_buy_cnt_view'] = get_yn_value($p_option_buy_cnt_view);
                 $query_data['p_outside_display_able'] = $p_outside_display_able;
+
+                $query_data['p_mod_id'] = $_SESSION['session_au_num'];
+
+
 
                 if(empty($p_option_use) == false ) $query_data['p_option_use'] = $p_option_use;
                 if(empty($p_option_type) == false ) $query_data['p_option_type'] = $p_option_type;

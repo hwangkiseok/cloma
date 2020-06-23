@@ -3150,6 +3150,37 @@ function dir_file_count($dir) {
     }
 }//end of dir_file_count()
 
+
+function send_app_push_log($m_num, $push_data){
+
+    if(empty($m_num) == true) return false;
+    if(empty($push_data['title']) == true || empty($push_data['page']) == true ) return false;
+
+    $CI =& get_instance();
+
+    $sql     = "SELECT m_regid FROM member_tb WHERE m_num = '{$m_num}';";
+    $oResult = $CI->db->query($sql);
+    $aResult = $oResult->row_array();
+
+    //푸시발송
+    $resp = send_app_push($aResult['m_regid'],$push_data );
+
+    if($resp['success'] == true){
+        $sql = "INSERT INTO noti_tb
+                    SET m_num           = '{$m_num}'
+                    ,   noti_subject    = '{$push_data['title']}'
+                    ,   noti_content    = '{$push_data['body']}'
+                    ,   loc_type        = '{$push_data['page']}'
+                    ,   reg_date        = DATE_FORMAT(NOW(),'%Y%m%d%H%i%s')
+             ";
+
+        $CI->db->query($sql);
+    };
+
+    return $resp;
+
+}
+
 /**
  * 푸시 발송
  * @param $regid
@@ -3162,7 +3193,7 @@ function send_app_push($regid, $push_data=array()) {
     }
 
     //필수값 체크
-    if( empty($push_data['title']) || empty($push_data['msg']) ) {
+    if( empty($push_data['title'])  ) {
         return false;
     }
 
@@ -3174,22 +3205,6 @@ function send_app_push($regid, $push_data=array()) {
         'Authorization:key=' . $CI->config->item('google_server_key')
     );
 
-    //기본값 설정
-    if( !isset($push_data['num']) || empty($push_data['num']) ) {
-        $push_data['num'] = current_mstime();
-    }
-    if( !isset($push_data['smr']) || empty($push_data['smr']) ) {
-        $push_data['smr'] = "";
-    }
-    if( !isset($push_data['icon']) || empty($push_data['icon']) ) {
-        $push_data['icon'] = "";
-    }
-    if( !isset($push_data['img']) || empty($push_data['img']) ) {
-        $push_data['img'] = "";
-    }
-    if( !isset($push_data['notiType']) || empty($push_data['notiType']) ) {
-        $push_data['notiType'] = "1";
-    }
     if( !isset($push_data['badge']) || empty($push_data['badge']) ) {
         $push_data['badge'] = "Y";
     }
@@ -3202,25 +3217,15 @@ function send_app_push($regid, $push_data=array()) {
     //- dry_run : true=테스트, false=실제발송
 
     // 푸시 내용, data 부분을 자유롭게 사용해 클라이언트에서 분기할 수 있음.
-
-    $fields                         = array();
-    $fields['data']                 = array();
-    $fields['data']['title']        = $push_data['ap_subject'];    //제목
-    $fields['data']['body']         = $push_data['ap_message'];    //내용
-    $fields['data']['badge']        = 'Y';                      //뱃지올리기여부(Y/N)
-
-    if($push_data['ap_new_push'] == 'Y'){
-        $fields['data']['seq']      = $push_data['ap_pnum'];
-        $fields['data']['page']     = 'push';
-    }else{
-        $fields['data']['seq']      = $push_data['ap_num'];
-        $fields['data']['page']     = 'product';
-    }
-
-    $fields['registration_ids'] = array($regid);
-
-//    var_dump($arr);
-//    exit;
+    $arr = array();
+    $arr['data'] = array();
+    $arr['data']['title']   = $push_data['title'];  //제목
+    $arr['data']['body']    = $push_data['body'];    //내용
+    $arr['data']['page']    = $push_data['page'];   //내용
+    if(empty($push_data['seq']) == false) $arr['data']['seq']    = $push_data['seq'];   //내용
+    $arr['data']['badge']   = 'Y';        //뱃지올리기여부(Y/N)
+    $arr['priority']        = "high";     //메시지의 우선순위(normal | high)
+    $arr['registration_ids'] = is_array($regid) ? $regid : array($regid);
 
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, 'https://fcm.googleapis.com/fcm/send');
@@ -3228,9 +3233,11 @@ function send_app_push($regid, $push_data=array()) {
     curl_setopt($ch, CURLOPT_POST, true);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-    curl_setopt($ch, CURLOPT_POSTFIELDS,json_encode($fields));
+    curl_setopt($ch, CURLOPT_POSTFIELDS,json_encode($arr));
     $response = curl_exec($ch);
     curl_close($ch);
+
+    //log_message('ZS','Push A - '.$response);
 
     // 푸시 전송 결과 반환.
     $result = json_decode($response, true);
@@ -3244,7 +3251,7 @@ function send_app_push($regid, $push_data=array()) {
  * @return boolean
  */
 function zsDebug(){//서울내
-    $aChkIp = array('112.146.73.238', "106.243.140.135" );
+    $aChkIp = array( "106.243.140.135" );
     if(in_array($_SERVER['REMOTE_ADDR'],$aChkIp)){ return true; }else{ return false; }
 }
 

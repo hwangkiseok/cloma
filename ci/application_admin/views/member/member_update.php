@@ -101,12 +101,18 @@
                         </div>
 
                         <div class="form-group form-group-sm">
-                            <label class="col-sm-2 control-label">주문 휴대폰번호</label>
+                            <label class="col-sm-2 control-label">주문정보</label>
                             <div class="col-sm-10">
-                                <p class="help-inline-sm" style="word-break:break-all;"><b style="color:#0000ff;"><?php if($member_row['m_order_phone']){echo $member_row['m_order_phone'];}else{echo '등록안됨';}?></b></p>
+                                <p class="help-inline-sm" style="word-break:break-all;">
+                                    <b style="color:#0000ff;">
+                                        <?php if($member_row['m_order_phone']){
+                                            echo '주문자명 : '.$member_row['m_order_name'].' / 주문자연락처 : '. ph_slice($member_row['m_order_phone']);
+                                        }else{
+                                            echo '등록안됨';
+                                        }?></b>
+                                </p>
                             </div>
                         </div>
-
 
                         <div class="form-group form-group-sm">
                             <label class="col-sm-2 control-label">성별/생년</label>
@@ -130,9 +136,48 @@
                         <div class="form-group form-group-sm">
                             <label class="col-sm-2 control-label">FCM ID</label>
                             <div class="col-sm-10">
-                                <p class="help-inline-sm" style="word-break:break-all;"><?php echo $member_row['m_regid']; ?></p>
+                                <p class="help-inline-sm" style="word-break:break-all;">
+                                    <?php echo $member_row['m_regid']; ?>
+                                    <?if(empty($member_row['m_regid']) == false){?>
+                                        <br><button class="member_send_push btn btn-primary btn-sm" data-fcm_id="<?=$member_row['m_regid']?>" data-m_num="<?=$member_row['m_num']?>" >푸시발송</button>
+                                    <?}?>
+
+                                </p>
+
                             </div>
                         </div>
+
+
+                        <script>
+                            $(function(){
+
+                                $('.member_send_push').on('click',function(e){
+                                    e.preventDefault();
+
+                                    var id = $(this).data('fcm_id');
+                                    var m_num = $(this).data('m_num');
+
+                                    if(empty(id) == true){
+                                        alert('FCM_ID가 없는 경우 푸시발송이 불가능합니다.');
+                                        return false;
+                                    }
+
+                                    var container = $('<div>');
+                                    $(container).load('/common/send_push_pop?m_num='+m_num);
+
+                                    modalPop.createPop('푸시발송', container);
+                                    modalPop.createButton('발송', 'btn btn-primary btn-sm', function(){
+                                        $('#push_insert_form').submit();
+                                    });
+                                    modalPop.createCloseButton('취소', 'btn btn-default btn-sm');
+
+                                    modalPop.show({backdrop:'static'});
+
+                                });
+
+                            });
+
+                        </script>
 
                         <div class="form-group form-group-sm">
                             <label class="col-sm-2 control-label">휴대폰정보</label>
@@ -206,7 +251,9 @@
 
                     <div class="clear"></div>
 
+
                     <!-- 당첨상품내역 -->
+                    <!--
                     <div class="col-xs-12">
                         <div class="tab_title">
                             <div class="pull-left" style="padding:7px;">당쳠 상품 내역</div>
@@ -242,11 +289,12 @@
                             </table>
                         </div>
                     </div>
+                    -->
                     <!-- // 당첨상품내역 -->
 
                     <div class="clear"></div>
 
-                    <!-- 당첨/응모내역 -->
+                    <!-- 당첨/응모내역
                     <div class="col-xs-12">
                         <div class="tab_title">
                             <div class="pull-left" style="padding:7px;">당첨/응모 내역</div>
@@ -264,17 +312,17 @@
                                 </tr>
                                 <tbody>
                                 <?php
-                                $query = "
-                                    select * 
-                                    from event_winner_tb
-                                        join event_tb on e_num = ew_event_num
-                                        left join event_gift_code_tb A on A.event_code = e_code AND ew_event_gift = A.gift_code
-                                    where
-                                        ew_member_num = '" . $member_row['m_num'] . "'
-                                        order by ew_num asc
-                                ";
-
-                                $winner_list = $this->db->query($query)->result_array();
+//                                $query = "
+//                                    select *
+//                                    from event_winner_tb
+//                                        join event_tb on e_num = ew_event_num
+//                                        left join event_gift_code_tb A on A.event_code = e_code AND ew_event_gift = A.gift_code
+//                                    where
+//                                        ew_member_num = '" . $member_row['m_num'] . "'
+//                                        order by ew_num asc
+//                                ";
+//
+//                                $winner_list = $this->db->query($query)->result_array();
 
                                 foreach($winner_list as $key => $row) {
                                     ?>
@@ -303,11 +351,11 @@
                             </table>
                         </div>
                     </div>
-                    <!-- // 당첨/응모내역 -->
+                     // 당첨/응모내역 -->
 
                     <div class="clear"></div>
 
-                    <!-- 이벤트 참여 -->
+                    <!-- 이벤트 참여
                     <div class="col-xs-12" id="event_active_list_wrap">
                         <div class="tab_title">
                             <div class="pull-left" style="padding:7px;">이벤트참여 목록</div>
@@ -319,7 +367,7 @@
                         </div>
                         <div id="event_active_list" style="color:#000;margin-bottom:30px;"></div>
                     </div>
-                    <!-- // 이벤트 참여 -->
+                     // 이벤트 참여 -->
 
 
 

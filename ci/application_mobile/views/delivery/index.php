@@ -6,11 +6,13 @@
     /*sub_prod_list override*/
     .delivery_row {margin-bottom: 15px; border: 1px solid #ccc;padding: 12px 0}
     .delivery_row > div { margin: 7px 15px; }
+    .sub_prod_list div:last-of-type { margin: 7px 15px; }
     .delivery_row .order-tit_v2 {font-size: 14px!important;margin-bottom: 12px!important;margin-top: 0;}
     .delivery_row .img {width: 35%!important;}
     .delivery_row .img img{box-shadow: none;border: 1px solid #ddd;}
     .delivery_row .cont {margin-left: 15px;width: calc(65% - 40px) !important}
     .delivery_row .cont > ul {line-height: 20px;}
+
 
 </style>
 
@@ -82,6 +84,7 @@
                                                     <a class="btn btn-border-purple btn-thin fl"><?=$this->config->item($aOrderCancelLists[$r['trade_no']]['after_status_cd'],'form_status_cd')?></a>
                                                 <?}else{?>
 
+                                                    <!--
                                                     <?if($aOrderCancelLists[$r['trade_no']]['after_status_cd'] == '66'){?>
                                                         <a class="btn btn-border-blue btn-thin fl" >취소처리</a>
                                                     <?}else if($aOrderCancelLists[$r['trade_no']]['after_status_cd'] == '67'){?>
@@ -89,8 +92,8 @@
                                                     <?}else if($aOrderCancelLists[$r['trade_no']]['after_status_cd'] == '68'){?>
                                                         <a class="btn btn-border-blue btn-thin fl" >반품처리</a>
                                                     <?}?>
-
-                                                    <!--<a class="btn btn-border-blue btn-thin fl" ><?=$this->config->item($aOrderCancelLists[$r['trade_no']]['after_status_cd'],'form_status_cd')?> </a>-->
+                                                    -->
+                                                    <a class="btn btn-border-blue btn-thin fl" ><?=$this->config->item($aOrderCancelLists[$r['trade_no']]['after_status_cd'],'form_status_cd')?> </a>
                                                 <?}?>
 
 

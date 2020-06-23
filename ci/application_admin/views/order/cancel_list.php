@@ -57,13 +57,34 @@
                                 <option value="all">전체</option>
                                 <option value="C.m_nickname">닉네임</option>
                                 <option value="A.account_holder">예금주</option>
+                                <option value="B.trade_no">주문번호</option>
+                                <option value="B.receiver_tel">수령자 연락처</option>
+                                <option value="B.receiver_name">수령자명</option>
                             </select>
-                            <script>//selected_check($('#kfd'), '<?php echo $req['kdf']; ?>')</script>
                         </span>
                         <input type="text" class="form-control" id="kwd" name="kwd" value="<?php echo $req['kwd']; ?>" style="width:auto;border-left:0;" />
                     </div>
                 </div>
             </div>
+
+
+            <div class="form-group form-group-sm">
+                <label class="col-sm-2 control-label" for="kwd">검색필터</label>
+                <div class="col-sm-2">
+                    <select name="form_status_cd" class="form-control" >
+                        <option value="">- 주문상태 전체보기 - </option>
+                        <?=get_select_option("", $this->config->item('form_status_cd') );?>
+                    </select>
+                </div>
+                <div class="col-sm-2">
+                    <select name="after_form_status_cd" class="form-control" >
+                        <option value="">- 취소상태 전체보기 -</option>
+                        <?=get_select_option("", $this->config->item('after_form_status_cd') );?>
+                    </select>
+                </div>
+
+            </div>
+
 
             <hr />
 
@@ -201,6 +222,10 @@
 
     //document.ready
     $(function () {
+
+        $('select[name="form_status_cd"],select[name="after_form_status_cd"]').on('change',function(){
+            $('form[name="search_form"]').submit();
+        });
 
         //datepicker
         $('.input-group.date').datepicker({format: "yyyy-mm-dd", language: "kr", autoclose: true});

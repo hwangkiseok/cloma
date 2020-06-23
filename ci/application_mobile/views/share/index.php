@@ -5,7 +5,7 @@
 
 <style>
     #container .box:last-of-type:after{ display: block; content: ""; height: 8px;_box-shadow: 0 3px 2px 0 rgba(0,0,0,0.1) inset;background: #f1f1f1 }
-</style>
+    .share-empty-icon {display: inline-block; background-size: 190px!important;width: 42px;height: 42px; margin: 0 auto;background: url(<?=IMG_HTTP?>/images/mb_icon_set_img.png) no-repeat -96px -140.5px;}</style>
 
 <!--
 <div class="box">
@@ -69,11 +69,17 @@
 <?}else{?>
 
     <div class="box">
+        <div class="box-in" style="padding-top: 16px;padding-bottom: 16px;">
+            <p style="text-align: center;line-height: 20px;font-size: 18px;color: #aaa">
+                <i class="share-empty-icon"></i><br>
+                공유한 상품이 없습니다.
+            </p>
+        </div>
+    </div>
 
+    <div class="box no-before">
         <div class="box-in">
-
-            <p style="text-align: center;line-height: 40px;height: 40px;">공유한 상품이 없습니다.</p>
-
+            <?=$recommandProductExt?>
         </div>
     </div>
 

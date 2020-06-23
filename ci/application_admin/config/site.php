@@ -70,9 +70,9 @@ $config['upload_path_web'] = "/uploads";
 $config['review_img_path'] = DOCROOT . "/uploads/review";
 $config['review_img_path_web'] = "/uploads/review";
 
-//파일 경로
-$config['qna_file_head'] = "/files/qna";
-$config['qna_file_path'] = HOMEPATH . $config['qna_file_head'];
+//1:1문의 경로 관련
+$config['qna_img_path'] = DOCROOT . "/uploads/qna";
+$config['qna_img_path_web'] = "/uploads/qna";
 
 /*특가전 배너 이미지 경로*/
 $config['special_offer_file_path'] = DOCROOT . $config['upload_path_web'] . "/special_offer";
@@ -308,12 +308,12 @@ $config['board_help_usestate_text_color']['N'] = "#ff0000";
 //FAQ
 $config['faq_category'][1] = "주문/결제";
 $config['faq_category'][2] = "배송문의";
-$config['faq_category'][3] = "반품";
+$config['faq_category'][3] = "교환/반품";
 $config['faq_category'][4] = "환불문의";
 $config['faq_category'][5] = "회원서비스";
 $config['faq_category'][6] = "적립금/쿠폰";
 $config['faq_category'][7] = "구매확정";
-$config['faq_category'][8] = "교환";
+$config['faq_category'][99] = "기타";
 
 //게시판 (1:1문의)
 $config['board_qna_category'][1] = "제품 문의";
@@ -760,14 +760,25 @@ $config['form_status_cd'] = array(
 ,   64  => '배송중'
 ,   65  => '배송완료'
     //after_status_cd
-,   66  => '취소신청완료' //취소관리
+,   66  => '취소관리'
+,   67  => '교환관리'
+,   68  => '반품관리'
+//,   166  => '취소완료'
+//,   167  => '교환완료'
+//,   168  => '반품완료'
+);
+
+//snsform 결제수단코드
+$config['after_form_status_cd'] = array(
+    //status_cd
+    66  => '취소신청완료' //취소관리
 ,   67  => '교환신청완료' //교환관리
 ,   68  => '반품신청완료' //반품관리
 ,   166  => '취소완료'
 ,   167  => '교환완료'
 ,   168  => '반품완료'
-
 );
+
 
 $config['delivery_company'] = array(
       '01' => '우체국택배'

@@ -50,6 +50,11 @@ class Share extends M_Controller
             $row['p_display_info_array'] = json_decode($row['p_display_info'], true);
         }//end of foreach()
 
+
+        if(count($share_prod_list) < 1){
+            $recommandProductExt = parent::get_recommand_product(6);
+        }
+
         $options = array('title' => '공유상품' , 'top_type' => 'back');
 
         $this->_header($options);
@@ -57,7 +62,8 @@ class Share extends M_Controller
         $this->load->view('/share/index', array(
             'req'           => $req,
             'list_count'    => $list_count,
-            'share_prod_list' => $share_prod_list
+            'share_prod_list' => $share_prod_list,
+            'recommandProductExt' => $recommandProductExt
         ) );
 
         $this->_footer();

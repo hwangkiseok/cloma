@@ -18,6 +18,7 @@
 .btn.btn-border-blue {background: #fff; color: #007aff;border:1px solid #007aff; }
 .btn.btn-border-red {background: #fff; color: #e6364f;border:1px solid #e6364f; }
 .btn.btn-border-gray {background: #fff; color: #ccc;border:1px solid #ccc; }
+.btn.btn-border-black {background: #fff;border: 1px solid #333;color: #333; }
 .btn.btn-thin {padding: 4px 8px }
 .btn.wide {padding: 8px 35px!important;}
 .btn.btn-full{ width: 100% !important;padding: 15px 0;}
@@ -306,10 +307,11 @@ select.form-control {padding: 10px 9px;}
 .cart_soldout_wrap .cart_soldout a{border: 1px solid #fff;border-radius: 4px;padding: 5px 10px;display: inline-block;font-size: 15px;margin-top: 10px;}
 
 /* 주문배송조회 */
-.delivery .date_set {margin: 2px 2px 20px 2px;}
-.delivery .date_set li { width:33.333333333333%; float: left;border: 1px solid #ccc;text-align: center;padding: 8px;letter-spacing: -.5px;border-left: none; }
-.delivery .date_set li:first-of-type{border-left: 1px solid #ccc;}
-.delivery .date_set li.active {color:#e6364f;background: rgba(230,54,79,0.1); border: 1px solid #e6364f;}
+.date_set {margin: 2px 2px 20px 2px;}
+.date_set li { width:33.333333333333%; float: left;border: 1px solid #ccc;text-align: center;padding: 8px;letter-spacing: -.5px;border-left: none;background-color: #fff; }
+.date_set li:first-of-type{border-left: 1px solid #ccc;}
+.date_set li.active {color:#e6364f;background: rgba(230,54,79,0.1); border: 1px solid #e6364f;}
+
 .delivery .delivery_list nav li { width: 50%; float: left; background: #f1f1f1;border-top: 1px solid #f1f1f1;padding: 15px; text-align: center;}
 .delivery .delivery_list nav li.active {background: #fff;}
 .delivery .delivery_list .delivery_empty {padding: 80px 0 150px 0;text-align: center;}
@@ -415,7 +417,7 @@ select.form-control {padding: 10px 9px;}
 
 
 /*알림페이지*/
-.box .box-in.push {background: #f1f1f1;padding: 16px!important}
+.box .box-in.push {background: #eff0f4;padding: 16px!important}
 .box .box-in.push .push_area {background: #fff;border-radius: 15px;margin-bottom: 16px; box-shadow: 3px 3px 3px 0 rgba(0,0,0,0.1); }
 .box .box-in.push .push_area:last-child {margin-bottom: 0;}
 .box .box-in.push .push_area .img {}
@@ -425,6 +427,18 @@ select.form-control {padding: 10px 9px;}
 .box .box-in.push .push_area .cont .text {padding-top: 2px;}
 .box .box-in.push .push_area .cont .btm .link{color:#0f74a8;text-decoration: underline;}
 .box .box-in.push .push_area .cont .btm .date{font-size: 11px;color:#aaa;}
+
+/*.push_area override*/
+.push_area.info_list {margin-bottom: 10px!important;}
+.push_area.info_list .text {font-weight: normal; color: #aaa; }
+.push_area.info_list .text.on {font-weight: bold; color: #000;}
+.push_area.info_list .btm {}
+.push_area.info_list .btm .link{color: #aaa!important;text-decoration: none!important;}
+.push_area.info_list .btm .link.on{color: #000!important;}
+
+.push-top {padding:16px!important; padding-bottom:0!important;background: #eff0f4!important;}
+.push-top .date_set{margin-bottom: 0}
+.push-top .date_set li{width: 50% !important;}
 
 /* 헤더 - 검색*/
 .srh_area {position: absolute;top: 6.5px;left: 40px; width: 0;height: 33px;z-index: -1;overflow-x: hidden}
@@ -737,3 +751,58 @@ select.form-control {padding: 10px 9px;}
 #container .join_top img{width:23%; margin:50px 35px 10px;}
 #container .join_top p{font-size:31px; color:#fff; font-weight:500; letter-spacing: -1.5px; margin-left: 35px; line-height: 37px;}
 #container .join_content .btn {background:#39193c;color:#fff;font-size:20px;margin: 20px 0;width: 90%;border-radius: 10px;padding: 15px 0}
+
+
+/*주문취소 팝업 내*/
+.order_cancel_wrap .box-in {padding: 0 16px}
+.order_cancel_wrap .order_block {padding: 12px 0;border-bottom: 1px solid #ddd;}
+.order_cancel_wrap .order_block:last-of-type{border-bottom: 0;}
+.order_cancel_wrap .order_block select
+,.order_cancel_wrap .order_block textarea
+,.order_cancel_wrap .order_block input { width: 100% ; padding: 8px;margin-top: 4px;}
+.order_cancel_wrap .order_block > div {margin-bottom: 4px;}
+.order_cancel_wrap .order_block > div:last-child{margin-bottom: 0;}
+.order_cancel_wrap .order_block label {font-weight: bold}
+.order_cancel_wrap .order_block .refund_tit {display: block;padding-bottom: 4px;border-bottom: 1px solid #333;  margin-bottom: 16px; font-size: 13px; }
+.order_cancel_wrap .order_block .refund_tit i {background: url(<?=IMG_HTTP?>/images/mb_icon_set_img.png) no-repeat -58px -229px;display: inline-block;font-size: 15px;width: 20px;height: 20px;margin: auto;background-size: 80px!important;vertical-align: top;}
+.order_cancel_wrap .order_block.block_warning p{color: #aaa;font-size: 12px;padding-bottom: 4px;}
+.order_cancel_wrap.refund_wrap .esti_amt{font-weight: bold;}
+
+.order_cancel_wrap .del_type_addr p:first-of-type{line-height: 26px;display: inline-block;width: 100%;}
+.order_cancel_wrap .del_type_addr p:first-of-type button.srh_addr {border: 1px solid #ddd; padding: 5px 16px;background: #fff;}
+.order_cancel_wrap .del_type_addr .clear {margin-bottom:0}
+
+.btm-bnt-area {padding: 20px 10px; background:#f1f1f1;border-top: 1px solid #ddd; }
+.btm-bnt-area button { width: 48%;padding: 10px;text-align:center;border: 1px solid #67146f; }
+.btm-bnt-area button.cancel_req_btn {background-color: #67146f;color: #fff;}
+.btm-bnt-area button.cancel_order_btn {color: #67146f;background:#f1f1f1;}
+
+/*주소검색 팝업*/
+.srh_addr_pop .cont { position: fixed;background-color: #fff; top: 10%;width: 85%;display: inline-block;}
+.srh_addr_pop .overlay {position: fixed;background-color: rgba(0,0,0,0.3);top: 0;left: 0;width: 100%;height: 100%;}
+.srh_addr_pop .cont header { background-color: #CCD3DC; padding: 10px 0; text-align: center;font-weight: bold;font-size: 16px;}
+.srh_addr_pop .cont article {padding: 16px 24px;}
+.srh_addr_pop .cont article .pop-block{margin-bottom: 16px;}
+.srh_addr_pop .cont article.result_arti .pop-block label{display: block;margin-bottom: 4px;}
+.srh_addr_pop .cont article .pop-block input {width: 100%;padding: 10px 40px 10px 8px;border:1px solid #ddd;}
+.srh_addr_pop .cont article .pop-block i{ position: absolute;display: inline-block;padding: 0 8px;font-size: 15px;width: 35px;height: 35px;margin: auto; background-size: 125px!important;margin-top: 5px;background: url(https://www.cloma.co.kr/images/mb_icon_set_img.png) no-repeat -30px -29.5px; top: 19px; right:5px; }
+.srh_addr_pop .cont article .btn_area button.cancel_btn{border:1px solid #67146f;color: #67146f;background-color: #fff; }
+.srh_addr_pop .cont article.result_arti .btn_area {margin-bottom: 0;}
+.srh_addr_pop .cont article.result_arti .btn_area button{width: 50%;float: left;padding: 10px 0;}
+.srh_addr_pop .cont article.result_arti .btn_area button.submit_btn{background-color:#67146f;color: #fff;border: 1px solid #67146f; }
+.srh_addr_pop .cont article.result_arti .btn_area button.submit_btn.deactive{background-color:#D0D0D0;border-color: #D0D0D0;}
+.srh_addr_pop .cont article.srh_arti {display: none;}
+.srh_addr_pop .cont article.srh_arti .btn_area {margin-bottom: 0;text-align: center;}
+.srh_addr_pop .cont article.srh_arti .btn_area button {width: 50%;padding: 10px 0;}
+.srh_addr_pop .cont article.srh_arti .pop-block i{ top: -3px; }
+.srh_addr_pop .cont article.srh_arti .srh_noti {height: 220px;}
+.srh_addr_pop .cont article.srh_arti .srh_noti label{font-weight: bold}
+.srh_addr_pop .cont article.srh_arti .srh_noti p{color: #aaa;}
+.srh_addr_pop .cont article.srh_arti .srh_result {height: 220px;overflow-y: auto;display: none;}
+.srh_addr_pop .cont article.srh_arti .srh_result ul.addr_list li{line-height: 22px;font-size: 12px; padding: 8px 0 11px 0;margin-bottom: 3px;border-bottom: 1px solid #ddd;}
+.srh_addr_pop .cont article.srh_arti .srh_result ul.addr_list li p label {color: #fff; background-color:#CCD3DC;padding: 2px 4px;margin: 0 5px 5px 0;display: inline-block;width: 45px;text-align: center;}
+.srh_addr_pop .cont article.srh_arti .srh_result ul.addr_list li p:last-child label{margin-bottom: 0;}
+.srh_addr_pop .cont article.srh_arti .srh_result ul.addr_list li p span {font-weight: bold;letter-spacing: -.5px}
+.srh_addr_pop .cont article.srh_arti .srh_result .srch_addr_pagination {text-align: center;margin-top: 10px}
+.srh_addr_pop .cont article.srh_arti .srh_result .srch_addr_pagination a{display: inline-block;padding: 1px 8px;margin-right: 8px; border-bottom: 1px solid #888;letter-spacing: -1px;}
+.srh_addr_pop .cont article.srh_arti .srh_result .srch_addr_pagination a.active{color: #e6364f;font-weight: bold;border-color: #e6364f }

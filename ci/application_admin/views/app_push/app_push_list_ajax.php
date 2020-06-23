@@ -72,8 +72,8 @@
             <tr role="row" class="<?=$bg_class;?><?=$border_class;?>">
                 <td style="width:50px;"><?php echo number_format($list_number); ?><br />(<?=$row->ap_num;?>)</td>
                 <td style="word-break:break-all;text-align:left;<?php echo $background_color; ?>">
-                    <p <?php echo $title_color; ?>><?php echo $row->ap_subject; ?></p>
-                    <p <?php echo $message_color; ?>><?php echo $row->ap_message; ?></p>
+                    <p <?php echo $title_color; ?>><?php echo rawurldecode($row->ap_subject);; ?></p>
+                    <p <?php echo $message_color; ?>><?php echo rawurldecode($row->ap_message); ?></p>
                     <?php if( !empty($row->ap_summary) ) { ?>
                     <p class="push_summary"><?php echo $row->ap_summary; ?></p>
                     <?php } ?>

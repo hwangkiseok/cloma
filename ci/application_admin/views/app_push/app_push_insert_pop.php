@@ -47,7 +47,11 @@
                 <div class="box-content">
                     <form name="pop_insert_form" id="pop_insert_form" method="post" class="form-horizontal" role="form" enctype="multipart/form-data" action="<?php echo $this->page_link->insert_proc; ?>">
                         <input type="hidden" name="ap_reserve_datetime" value="" />
-
+                        <input type="hidden" name="ap_push_type" value="product">
+                        <input type="hidden" name="ap_os_type" value="1" />
+                        <input type="hidden" name="ap_badge" value="Y" />
+                        <input type="hidden" name="ap_stock_flag" value="Y" />
+                        <!--
                         <div class="form-group form-group-sm">
                             <label class="col-sm-2 control-label">푸시타입 <span class="txt-danger">*</span></label>
                             <div class="col-sm-10">
@@ -73,6 +77,7 @@
                                 </div>
                             </div>
                         </div>
+                        -->
                         <!--
                         <div class="form-group form-group-sm">
                             <label class="col-sm-2 control-label">알림타입 <span class="txt-danger">*</span></label>
@@ -118,6 +123,7 @@
                         <!-- 푸시중간페이지 관련 end -->
 
 
+                        <!--
                         <div class="form-group form-group-sm">
                             <label class="col-sm-2 control-label">뱃지 <span class="txt-danger">*</span></label>
                             <div class="col-sm-10">
@@ -126,6 +132,7 @@
                                 </div>
                             </div>
                         </div>
+                        -->
 
                         <div class="form-group form-group-sm">
                             <label class="col-sm-2 control-label">노출여부 <span class="txt-danger">*</span></label>
@@ -164,8 +171,10 @@
                                 <div id="field_ap_subject">
                                     <input type="text" name="ap_subject" class="form-control" value="" />
                                 </div>
+                                <!--1
                                 <p class="help-block"><xmp>* 제목에 부분 컬러 설정하기 (예: <font color="#FF0000">빨간색</font>, <b>굵은글씨</b>)</xmp></p>
                                 <p class="help-block" style="color:red;">* HTML 코드는 안드로이드앱 2.1.0 ~ 부터 적용됨.</p>
+                                -->
                             </div>
                         </div>
                         <div class="form-group form-group-sm">
@@ -176,6 +185,7 @@
                                 </div>
                             </div>
                         </div>
+                        <!--
                         <div class="form-group form-group-sm">
                             <label class="col-sm-2 control-label">스타일</label>
                             <div class="col-sm-10">
@@ -225,13 +235,14 @@
                                 <p class="help-block">* 이미지 첨부형식일때 푸시영역이 확장시 나오는 내용</p>
                             </div>
                         </div>
+                        -->
                         <div class="form-group form-group-sm">
                             <label class="col-sm-2 control-label">이동URL</label>
                             <div class="col-sm-10">
                                 <div id="field_ap_target_url">
                                     <input type="text" name="ap_target_url" class="form-control" value="" />
                                 </div>
-                                <p class="help-block">* 입력예: /product/detail/상품번호/?ref_site=app_push</p>
+                                <p class="help-block">* 상품관리 > 단축URL 불러오기 > 앱푸시 > WEB </p>
                             </div>
                         </div>
                     </form>

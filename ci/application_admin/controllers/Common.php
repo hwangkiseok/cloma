@@ -305,5 +305,46 @@ class Common extends A_Controller {
         force_download(".{$aInput['file_path']}", NULL ,$aInput['file_name']);
     }
 
+    /**
+     * 푸시발송 팝업
+     */
+    public function common_send_push_pop() {
+
+        ajax_request_check();
+
+        $aInput = array( 'm_num' => $this->input->get('m_num', true) );
+
+        $this->load->view("/common/send_push_pop", array(
+            'aInput' => $aInput
+        ));
+    }//end of common_send_push_pop()
+
+    /**
+     * 푸시발송 proc
+     */
+    public function common_send_push_proc() {
+
+        ajax_request_check();
+
+        $aInput             = array(
+            'm_num'         => $this->input->post('m_num', true)
+        ,   'push_title'    => $this->input->post('push_title', true)
+        ,   'push_content'  => $this->input->post('push_content', true)
+        );
+
+        $push_data          = array();
+        $push_data['title'] = $aInput['push_title'];
+        $push_data['body']  = $aInput['push_content'];
+        $push_data['page']  = "none";
+
+        $resp = send_app_push_log($aInput['m_num'], $push_data);
+
+        if( $resp['success'] == true ) echo json_encode_no_slashes(array('success' => true , 'msg' => '푸시발송완료'));
+        else echo json_encode_no_slashes(array('success' => true , 'msg' => '푸시발송실패'));
+
+    }//end of common_send_push_proc()
+
+
+
 
 }//end of class Common

@@ -251,13 +251,10 @@
                                 <ul class="nav nav-second-level collapse">
                                     <li><a href="https://analytics.google.com/analytics/web/?hl=ko#/" target="_blank">Google
                                             Analytics</a></li>
-                                    <li><a href="#">Google Play</a></li>
+                                    <li><a href="https://play.google.com/store/apps/details?id=kr.co.cloma.app">Google Play</a></li>
                                     <li><a href="https://play.google.com/apps/publish/?hl=ko" target="_blank">Google Dev
                                             Console</a></li>
                                     <li><a href="#" target="_blank">홈페이지</a></li>
-                                    <li><a href="#none"
-                                           onclick="new_win_open('<?php echo $this->config->item("order_list_url"); ?>', 'order_win', 800, 800);">주문조회</a>
-                                    </li>
                                     <li><a href="https://appstoreconnect.apple.com" target="_blank">APP Store Connect</a>
                                     </li>
                                 </ul>

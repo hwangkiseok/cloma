@@ -181,6 +181,7 @@ class Api extends A_Controller {
                         ,   'p_margin_rate'         => ( ( $aSnsformProductInfo['item_price'] - $aSnsformProductInfo['supply_price'] ) / $aSnsformProductInfo['item_price'] ) * 100
                         ,   'p_display_state'       => $aSnsformProductInfo['status_cd'] == '01' ? 'Y' : 'N'
                         ,   'p_sale_state'          => $aSnsformProductInfo['other_show_yn']
+                        ,   'p_mod_id'              => 999999
 
                         );
 
@@ -239,7 +240,6 @@ class Api extends A_Controller {
                         ,   'p_regdatetime'         => current_datetime()
                         ,   'p_supply_price'        => $aSnsformProductInfo['supply_price']
                         ,   'p_margin_rate'         => ( ( $aSnsformProductInfo['item_price'] - $aSnsformProductInfo['supply_price'] ) / $aSnsformProductInfo['item_price'] ) * 100
-
                         );
 
                         if(empty($aSnsformProductInfo['org_price']) == true){
@@ -349,6 +349,8 @@ class Api extends A_Controller {
                 if(empty($aSnsformOrderInfo['referer']) == true) $aSnsformOrderInfo['referer'] = $aSnsformOrderInfo['referer']=='null'?'':$aSnsformOrderInfo['referer'];
 
                 $trade_no = $aSnsformOrderInfo['trade_no'];
+
+                if(empty($aSnsformOrderInfo['receiver_tel']) == false) $aSnsformOrderInfo['receiver_tel'] = number_only($aSnsformOrderInfo['receiver_tel']);
 
                 if( $this->snsform_model->bOverlapOrder($trade_no) == true ) { //중복있음
 
@@ -463,6 +465,14 @@ class Api extends A_Controller {
                     }
 
                     //--------------------------------------------------------------------------- 판매수량 갱신
+
+                    //--------------------------------------------------------------------------- 주문정보에 있는 이름/연락처 갱신
+                    $aInput = array(
+                        'm_order_phone'  => $aSnsformOrderInfo['buyer_hhp']
+                    ,   'm_order_name'   => $aSnsformOrderInfo['buyer_name']
+                    );
+                    $this->snsform_model->publicUpdate('member_tb',$aInput, array('m_num' , $aSnsformOrderInfo['partner_buyer_id'])) ;
+                    //---------------------------------------------------------------------------주문정보에 있는 이름/연락처 갱신
 
 
                     //--------------------------------------------------------------------------- 회원 구매수 ++
