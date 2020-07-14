@@ -398,6 +398,12 @@ function app_push_able(v){
         window.AndroidBrg.push_able(v);
     }
 }
+function app_shopping_push_able(v){
+    if( !empty(window.AndroidBrg) ) {
+        window.AndroidBrg.shopping_push_able(v);
+    }
+}
+
 function app_version_chk(){
     var v = '';
     if( !empty(window.AndroidBrg) ) {
@@ -424,4 +430,20 @@ function app_refresh_act(b){
         window.AndroidBrg.refresh_act(b);
     }
 }
+
+function app_get_member_info(){
+    var v = '';
+    if( !empty(window.AndroidBrg) ) {
+        v = window.AndroidBrg.get_member_info();
+    }
+    return v;
+}
+function app_get_loc_info(){
+    var v = '';
+    if( !empty(window.AndroidBrg) ) {
+        v = window.AndroidBrg.get_loc_info();
+    }
+    return v;
+}
+
 

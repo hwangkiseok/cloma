@@ -27,6 +27,56 @@ class Common extends REST_Controller
     }
 
     /**
+     * 푸시클릭 카운팅
+     */
+    public function push_put()
+    {
+        $ap_num = $this->put('app_push_id', true);
+
+        if( empty($ap_num) == true ){
+            $this->set_response(
+                result_echo_rest_json(get_status_code("error"), lang('site_error_empty_data').'[app_push_id]' , true, "", "", ""
+                ), REST_Controller::HTTP_OK
+            ); // NOT_FOUND (404) being the HTTP response code
+        }else{
+
+            $sql        = "SELECT * FROM app_push_tb WHERE ap_num = '{$ap_num}'; ";
+            $aPushInfo  = $this->db->query($sql)->row_array();
+
+            if(empty($aPushInfo) == true){
+
+                $this->set_response(
+                    result_echo_rest_json(get_status_code("error"), lang('site_error_empty_data').'[push info]' , true, "", "", ""
+                    ), REST_Controller::HTTP_OK
+                ); // NOT_FOUND (404) being the HTTP response code
+
+            }else{
+
+                $sql = "UPDATE app_push_tb SET ap_view_cnt = ap_view_cnt + 1 WHERE ap_num = '{$ap_num}'; ";
+
+                $res = $this->db->query($sql);
+
+                if($res == true){ //성공
+                    $this->set_response(
+                        result_echo_rest_json(get_status_code("success"), lang('site_update_success') , true, "", "", ""
+                        ), REST_Controller::HTTP_OK
+                    );
+                }else{
+
+                    $this->set_response(
+                        result_echo_rest_json(get_status_code("error"), lang('site_update_fail') , true, "", "", ""
+                        ), REST_Controller::HTTP_OK
+                    );
+
+                }
+
+            }
+
+        }
+
+    }
+
+    /**
      * 리퍼러 카운팅
      */
     public function referer_put()

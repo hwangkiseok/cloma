@@ -293,7 +293,7 @@
      * 댓글 목록
      */
     function get_comment_list() {
-        $('#comment_list').load('/comment/list_ajax/?tb=product&tb_num=<?php echo $product_row->p_num; ?>&view_type=simple');
+        $('#comment_list').load('/comment/list_ajax/?tb=product&tb_num=<?php echo $product_row['p_num']; ?>&view_type=simple&list_per_page=5');
     }//end of get_comment_list()
 
     

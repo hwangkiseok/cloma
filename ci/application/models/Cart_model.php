@@ -52,6 +52,11 @@ class Cart_model extends W_Model {
         if( isset($query_data['where']['p_stock_state']) && !empty($query_data['where']['p_stock_state']) ) {
             $where_query .= "and pt.p_stock_state = '" . $this->db->escape_str($query_data['where']['p_stock_state']) . "' ";
         }
+        //상품묶음
+        if( isset($query_data['where']['p_order_code']) && !empty($query_data['where']['p_order_code']) ) {
+            $where_query .= "and ct.p_order_code = '" . $this->db->escape_str($query_data['where']['p_order_code']) . "' ";
+        }
+
 
         //order by 절
         if( isset($query_data['orderby']) && !empty($query_data['orderby']) ) {

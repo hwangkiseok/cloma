@@ -22,8 +22,8 @@ class Order_model extends A_Model {
         $from_query .= " LEFT JOIN member_tb C ON C.m_num = B.partner_buyer_id ";
 
         //where 절
-        $where_query   = "where 1 = 1 ";
-//        $where_query  .= "AND B.status_cd > 61";
+        $where_query  = " where 1 = 1 ";
+        //$where_query .= " AND check_date IS NOT NULL  ";
 
         //날짜검색1
         if( isset($query_array['where']['date1']) && !empty($query_array['where']['date1']) ) {
@@ -58,6 +58,9 @@ class Order_model extends A_Model {
                 $where_query .= " OR    B.receiver_tel like '%" . $this->db->escape_str($query_array['where']['kwd']) . "%' ";
                 $where_query .= " OR    B.trade_no like '%" . $this->db->escape_str($query_array['where']['kwd']) . "%' ";
                 $where_query .= " OR    B.receiver_name like '%" . $this->db->escape_str($query_array['where']['kwd']) . "%' ";
+                $where_query .= " OR    B.buyer_hhp like '%" . $this->db->escape_str($query_array['where']['kwd']) . "%' ";
+                $where_query .= " OR    B.buyer_name like '%" . $this->db->escape_str($query_array['where']['kwd']) . "%' ";
+                $where_query .= " OR    B.m_trade_no like '%" . $this->db->escape_str($query_array['where']['kwd']) . "%' ";
                 $where_query .= " ) ";
 
             }  else {
@@ -74,9 +77,6 @@ class Order_model extends A_Model {
         if(empty($query_array['where']['after_form_status_cd']) == false){
             $where_query .= " AND A.after_status_cd = '{$query_array['where']['after_form_status_cd']}' ";
         }
-
-
-
 
         //order by 절
         if( isset($query_array['orderby']) && !empty($query_array['orderby']) ) {
@@ -105,6 +105,9 @@ class Order_model extends A_Model {
             $query = "select 
               A.*
               ,B.item_name
+              ,B.m_trade_no
+              ,B.buyer_name
+              ,B.buyer_hhp
               ,B.partner_buyer_id
               ,B.buyer_id
               ,B.payway_cd
@@ -136,6 +139,8 @@ class Order_model extends A_Model {
                 select 
                     A.*
                     ,B.item_name
+                    ,B.buyer_name
+                    ,B.buyer_hhp
                     ,B.partner_buyer_id
                     ,B.buyer_id
                     ,B.payway_cd

@@ -160,6 +160,8 @@ class App_popup extends A_Controller {
 
         $set_rules_apo_p_num = $this->default_set_rules;
         $set_rules_apo_special_offer_seq = $this->default_set_rules;
+        $set_rules_apo_noti_content = $this->default_set_rules;
+        $set_rules_apo_noti_subject = $this->default_set_rules;
 
         //상품상세로 이동 일때 => 상품번호 필수
         if( $this->input->post("apo_content_type", true) == "1" ) {
@@ -168,6 +170,11 @@ class App_popup extends A_Controller {
         //기획전인경우 => 기획전 seq 필수
         else if( $this->input->post("apo_content_type", true) == "2" ) {
             $set_rules_apo_special_offer_seq .= "|required";
+        }
+        //공지사항인경우 => 공지내용 필수
+        else if( $this->input->post("apo_content_type", true) == "3" ) {
+            $set_rules_apo_noti_content .= "|required";
+//            $set_rules_apo_noti_subject .= "|required";
         }
 
         //폼검증 룰 설정
@@ -184,6 +191,10 @@ class App_popup extends A_Controller {
             "apo_termlimit_yn" => array("field" => "apo_termlimit_yn", "label" => "노출기간사용여부", "rules" => $this->default_set_rules),
             "apo_startdate" => array("field" => "apo_startdate", "label" => "시작일", "rules" => $this->default_set_rules),
             "apo_enddate" => array("field" => "apo_enddate", "label" => "종료일", "rules" => $this->default_set_rules),
+
+            "apo_noti_subject" => array("field" => "apo_noti_subject", "label" => "공지제목", "rules" => $set_rules_apo_noti_subject),
+            "apo_noti_content" => array("field" => "apo_noti_content", "label" => "공지내용", "rules" => $set_rules_apo_noti_content),
+
             "apo_display_yn" => array("field" => "apo_display_yn", "label" => "팝업노출여부", "rules" => "required|in_list[".get_config_item_keys_string("app_popup_display_yn")."]|".$this->default_set_rules)
         );
 
@@ -191,7 +202,7 @@ class App_popup extends A_Controller {
 
         $form_error_array = array();
 
-        if(empty($_FILES['apo_image']) == true) $form_error_array['apo_image'] = '팝업에 노출할 이미지를 등록해주세요';
+        if(empty($_FILES['apo_image']) == true && $this->input->post('apo_content_type', true) != 3) $form_error_array['apo_image'] = '팝업에 노출할 이미지를 등록해주세요';
 
         //폼 검증 성공시
         if( $this->form_validation->run() === true ) {
@@ -201,6 +212,10 @@ class App_popup extends A_Controller {
             $apo_btn_type = $this->input->post('apo_btn_type', true);
             $apo_expire_day = $this->input->post('apo_expire_day', true);
             $apo_subject = $this->input->post('apo_subject', true);
+
+            $apo_noti_subject = $this->input->post('apo_noti_subject', true);
+            $apo_noti_content = $this->input->post('apo_noti_content', true);
+
             $apo_size_type = $this->input->post('apo_size_type', true);
             $apo_p_num = $this->input->post('apo_product_num', true);
             $apo_url = $this->input->post('apo_url', true);
@@ -268,6 +283,9 @@ class App_popup extends A_Controller {
                 $query_data['apo_termlimit_datetime1'] = $apo_startdate;
                 $query_data['apo_termlimit_datetime2'] = $apo_enddate;
                 $query_data['apo_display_yn'] = $apo_display_yn;
+
+                $query_data['apo_noti_subject'] = $apo_noti_subject;
+                $query_data['apo_noti_content'] = $apo_noti_content;
 
                 $query_data['apo_view_page'] = $apo_view_page;
                 $query_data['apo_view_target'] = $apo_view_target;
@@ -342,7 +360,8 @@ class App_popup extends A_Controller {
 
         $set_rules_apo_p_num = $this->default_set_rules;
         $set_rules_apo_special_offer_seq = $this->default_set_rules;
-
+        $set_rules_apo_noti_subject = $this->default_set_rules;
+        $set_rules_apo_noti_content = 'trim|xss_clean|prep_for_form';//$this->default_set_rules;
         //상품상세로 이동 일때 => 상품번호 필수
         if( $this->input->post("apo_content_type", true) == "1" ) {
             $set_rules_apo_p_num .= "|required";
@@ -351,7 +370,11 @@ class App_popup extends A_Controller {
         else if( $this->input->post("apo_content_type", true) == "2" ) {
             $set_rules_apo_special_offer_seq .= "|required";
         }
-
+        //공지사항인경우 => 공지내용 필수
+        else if( $this->input->post("apo_content_type", true) == "3" ) {
+            $set_rules_apo_noti_content .= "|required";
+//            $set_rules_apo_noti_subject .= "|required";
+        }
         //폼검증 룰 설정
         $set_rules_array = array(
             "apo_os_type" => array("field" => "apo_os_type", "label" => "OS타입", "rules" => "required|in_list[".get_config_item_keys_string("app_popup_os_type")."]|".$this->default_set_rules),
@@ -366,7 +389,10 @@ class App_popup extends A_Controller {
             "apo_termlimit_yn" => array("field" => "apo_termlimit_yn", "label" => "노출기간사용여부", "rules" => $this->default_set_rules),
             "apo_startdate" => array("field" => "apo_startdate", "label" => "시작일", "rules" => $this->default_set_rules),
             "apo_enddate" => array("field" => "apo_enddate", "label" => "종료일", "rules" => $this->default_set_rules),
-            "apo_display_yn" => array("field" => "apo_display_yn", "label" => "팝업노출여부", "rules" => "required|in_list[".get_config_item_keys_string("app_popup_display_yn")."]|".$this->default_set_rules)
+            "apo_display_yn" => array("field" => "apo_display_yn", "label" => "팝업노출여부", "rules" => "required|in_list[".get_config_item_keys_string("app_popup_display_yn")."]|".$this->default_set_rules),
+
+            "apo_noti_subject" => array("field" => "apo_noti_subject", "label" => "공지제목", "rules" => $set_rules_apo_noti_subject),
+            "apo_noti_content" => array("field" => "apo_noti_content", "label" => "공지내용", "rules" => $set_rules_apo_noti_content)
 
         );
 
@@ -374,7 +400,8 @@ class App_popup extends A_Controller {
 
         $form_error_array = array();
 
-        if(empty($row->apo_image) == true && empty($_FILES['apo_image']) == true) $form_error_array['apo_image'] = '팝업에 노출할 이미지를 등록해주세요';
+        if(empty($row->apo_image) == true && empty($_FILES['apo_image']) == true && $this->input->post('apo_content_type', true) != 3) $form_error_array['apo_image'] = '팝업에 노출할 이미지를 등록해주세요';
+        //if(empty($row->apo_image) == true && empty($_FILES['apo_image']) == true) $form_error_array['apo_image'] = '팝업에 노출할 이미지를 등록해주세요';
 
         //폼 검증 성공시
         if( $this->form_validation->run() === true ) {
@@ -398,6 +425,9 @@ class App_popup extends A_Controller {
             $apo_view_page_arr = $this->input->post('apo_view_page', true);
             $apo_view_target = $this->input->post('apo_view_target', true);
             $apo_special_offer_seq = $this->input->post('apo_special_offer_seq', true);
+
+            $apo_noti_subject = $this->input->post('apo_noti_subject', true);
+            $apo_noti_content = $this->input->post('apo_noti_content', true);
 
             if( empty($apo_view_page_arr) == true ) {
                 $form_error_array['apo_view_page'] = '노출페이지를 설정해주세요';
@@ -459,6 +489,8 @@ class App_popup extends A_Controller {
                 $query_data['apo_view_page'] = $apo_view_page;
                 $query_data['apo_view_target'] = $apo_view_target;
 
+                $query_data['apo_noti_subject'] = $apo_noti_subject;
+                $query_data['apo_noti_content'] = $apo_noti_content;
 
 
                 if( $this->app_popup_model->update_app_popup($apo_num, $query_data) ) {

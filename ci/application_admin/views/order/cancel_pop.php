@@ -27,7 +27,7 @@
                         <div class="form-group form-group-sm">
                             <label class="col-sm-2 control-label">취소상태</label>
                             <div class="col-sm-10">
-                                <p class="form-control-static"><?=$this->config->item($aOrderInfo['after_status_cd'],'form_status_cd')?></p>
+                                <p class="form-control-static"><?=$this->config->item($aOrderInfo['after_status_cd'],'after_form_status_cd')?></p>
                             </div>
                         </div>
 
@@ -93,7 +93,7 @@
                         <div class="form-group form-group-sm">
                             <label class="col-sm-2 control-label">상세사유</label>
                             <div class="col-sm-10">
-                                <p class="form-control-static"><?=nl2br($aOrderInfo['cancel_reason'])?></p>
+                                <p style="padding: 6px 10px;margin-bottom: 0; "><?=nl2br($aOrderInfo['cancel_reason'])?></p>
                             </div>
                         </div>
 

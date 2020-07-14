@@ -60,6 +60,9 @@
                                 <option value="B.trade_no">주문번호</option>
                                 <option value="B.receiver_tel">수령자 연락처</option>
                                 <option value="B.receiver_name">수령자명</option>
+                                <option value="B.buyer_hhp">주문자 연락처</option>
+                                <option value="B.buyer_name">주문자명</option>
+                                <option value="B.m_trade_no">장바구니번호</option>
                             </select>
                         </span>
                         <input type="text" class="form-control" id="kwd" name="kwd" value="<?php echo $req['kwd']; ?>" style="width:auto;border-left:0;" />
@@ -203,6 +206,25 @@
             }
         });
     }//end of team_select
+
+
+
+
+    $(document).on('click','.popExchangInfo',function(e){
+        e.preventDefault();
+
+        var seq = $(this).data('seq');
+        var container = $('<div>');
+        $(container).load('/order/exchange_pop?seq=' + seq);
+
+        modalPop.createPop('주문 교환 상세', container);
+        // modalPop.createButton('수정', 'btn btn-primary btn-sm', function(){
+        //     $('#pop_update_form').submit();
+        // });
+        modalPop.createCloseButton('취소', 'btn btn-default btn-sm');
+        modalPop.show();
+
+    });
 
     $(document).on('click','.popDetail',function(e){
         e.preventDefault();

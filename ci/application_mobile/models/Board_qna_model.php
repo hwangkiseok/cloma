@@ -129,7 +129,7 @@ class Board_qna_model extends M_Model {
             return false;
         }
 
-        $query_data['bq_content'] = addslashes($query_data['bq_content']);
+        //$query_data['bq_content'] = addslashes($query_data['bq_content']);
 
         return $this->db->where('bq_num', $bq_num)->update("board_qna_tb", $query_data);
     }//end of update_board_qna()

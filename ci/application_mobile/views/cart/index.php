@@ -143,7 +143,7 @@ $tot_price = 0;
 
                 <?}?>
 
-                <div style="position: relative" class="sub_prod_list <?if($is_sale == true){?>on<?}?>" data-p_name="<?=$r['p_name']?>" data-cart_id="<?=$r['cart_id']?>" data-p_order_code="<?=$r['p_order_code']?>" <? foreach ($option_info as $kk => $vv) {?>data-<?=$kk?>="<?=$vv?>"<?}?> >
+                <div style="position: relative" class="sub_prod_list <?if($is_sale == true){?>on<?}?>" data-bndl_del_yn="<?=$r['bndl_del_yn']?>" data-repetition_cnt="<?=$r['repetition_cnt']?>" data-delivery_amt="<?=$r['delivery_amt']?>" data-p_name="<?=$r['p_name']?>" data-cart_id="<?=$r['cart_id']?>" data-p_order_code="<?=$r['p_order_code']?>" <? foreach ($option_info as $kk => $vv) {?>data-<?=$kk?>="<?=$vv?>"<?}?> >
 
                     <div class="chk fl">
                         <?if($is_sale == true){?>
@@ -201,7 +201,7 @@ $tot_price = 0;
     <div class="box-in" style="padding: 8px 16px;">
         <div class="tot_price price_detail_expended">
             <span class="fl price_tit">주문금액 <em>(배송비 포함)</em></span>
-            <span class="fr price"><em class="no_font"><?=$tot_price < 1 ? 0 : number_format($tot_price+2500)?></em>원 <i class="arrow-bottom"></i></span>
+            <span class="fr price"><em class="no_font"></em>원 <i class="arrow-bottom"></i></span>
         </div>
         <div class="clear"></div>
         <div class="price_detail">
@@ -209,17 +209,17 @@ $tot_price = 0;
             <ul>
                 <li class="detail_tot_price_wrap">
                     <span class="fl detail_tot_price_tit">총 결제금액</span>
-                    <span class="fr detail_tot_price"><em class="no_font"><?=$tot_price < 1 ? 0 : number_format($tot_price+2500)?></em>원</span>
+                    <span class="fr detail_tot_price"><em class="no_font"></em>원</span>
                     <div class="clear"></div>
                 </li>
                 <li class="detail_product_price_wrap">
                     <span class="fl">상품금액</span>
-                    <span class="fr"><em class="no_font"><?=number_format($tot_price)?></em>원</span>
+                    <span class="fr"><em class="no_font"></em>원</span>
                     <div class="clear"></div>
                 </li>
                 <li class="detail_delivery_price_wrap">
                     <span class="fl">배송비</span>
-                    <span class="fr"><em class="no_font"><?=$tot_price < 1 ? 0 : '2,500'?></em>원</span>
+                    <span class="fr"><em class="no_font"></em>원</span>
                     <div class="clear"></div>
                 </li>
             </ul>
@@ -298,6 +298,89 @@ $tot_price = 0;
     var form_cart_url = '<?=$this->config->item('prefix_cart_url');?>';
     var form_order_url = '<?=$this->config->item('prefix_order_url');?>';
 
+    <?if(1){?>
+
+    function cart_calc(){
+
+        var delivery_amt = 0;
+        var product_amt = 0;
+
+        if( $('input[name="num_check"]:checked').not('[disabled]').length < 1 ){
+
+            $('.tot_price .price em').html(0);
+            $('.price_detail .detail_tot_price_wrap em').html(0);
+            $('.price_detail .detail_product_price_wrap em').html(0);
+            $('.price_detail .detail_delivery_price_wrap em').html(0);
+
+        }else{
+
+            var loc_group_cnt = 0;
+            var is_bndl_del = false;
+
+            $('input[name="num_check"]:checked').not('[disabled]').each(function(k,r){
+
+                var next_num        = k + 1;
+                var cart_id         = $(this).val();
+                var next_p_code     = $('input[name="num_check"]:checked').not('[disabled]').eq(next_num).parent().parent().parent().data('p_order_code');
+                var curr_p_code     = $(this).parent().parent().parent().data('p_order_code');
+                var repetition_cnt  = $(this).parent().parent().parent().data('repetition_cnt'); //반복배송비 횟수
+
+                var bndl_del_yn     = $(this).parent().parent().parent().data('bndl_del_yn'); //반복배송비 횟수
+
+                var target_obj      = $('.sub_prod_list[data-cart_id="'+cart_id+'"]');
+                var option_cnt      = $(target_obj).find('input[name="cart_count"]').val();
+
+                product_amt += parseInt($(target_obj).data('option_price')) * parseInt(option_cnt);
+
+                if(next_p_code != curr_p_code){
+
+                    loc_group_cnt += parseInt(option_cnt);
+
+                    if( $(this).parent().parent().parent().data('repetition_cnt') > 0 ) {
+
+                        var repetition_cnt_sum = Math.ceil( parseInt(loc_group_cnt) / parseInt(repetition_cnt));
+                        delivery_amt += repetition_cnt_sum * $(this).parent().parent().parent().data('delivery_amt');
+
+                    }else{
+
+                        <?if(1){?>
+                        if(bndl_del_yn == 'Y'){
+                            if(is_bndl_del == false) delivery_amt += parseInt($(this).parent().parent().parent().data('delivery_amt'));
+                            is_bndl_del = true;
+                        }else{
+                            delivery_amt += parseInt($(this).parent().parent().parent().data('delivery_amt'));
+                        }
+                        <?}else{?>
+                            delivery_amt += parseInt($(this).parent().parent().parent().data('delivery_amt'));
+                        <?}?>
+
+                    }
+
+                    // console.log(' != : '+loc_group_cnt + ' || '+$(this).parent().parent().parent().data('repetition_cnt') );
+                    loc_group_cnt = 0;
+
+                }else{
+
+                    loc_group_cnt += parseInt(option_cnt);
+                    // console.log('else : '+loc_group_cnt+ ' || '+$(this).parent().parent().parent().data('repetition_cnt') );
+                }
+
+
+
+
+            });
+
+            $('.tot_price .price em').html(number_format(product_amt+delivery_amt));
+            $('.price_detail .detail_tot_price_wrap em').html(number_format(product_amt+delivery_amt));
+            $('.price_detail .detail_product_price_wrap em').html(number_format(product_amt));
+            $('.price_detail .detail_delivery_price_wrap em').html(number_format(delivery_amt));
+
+        }
+
+    }
+
+    <?}else{?>
+
     function cart_calc(){
 
         var delivery_amt = 2500;
@@ -328,7 +411,7 @@ $tot_price = 0;
         }
 
     }
-
+    <?}?>
     // shop_id : 수빈샵의 snsform계정
     // a_session_id : 장바구니 키 (유니크) max(64byte)
     // a_code : (수빈샵 제휴코드 - 'D005' 고정)
@@ -350,6 +433,9 @@ $tot_price = 0;
 
     $(function(){
 
+        <?if($isWarningMsg == true){?>
+        showToast('재고 수량 부족으로 담긴 수량이 변경된 상품이 있습니다.');
+        <?}?>
 
         $('.cart_soldout_wrap .cart_soldout a').on('click',function(){
 
@@ -424,6 +510,8 @@ $tot_price = 0;
 
             var basket_info = JSON.stringify(basket_array);
             $('form[name="cart_form"] input[name="a_basket_info"]').val(basket_info);
+
+
 
             <?if(is_app() == true){ ?>
 
@@ -538,6 +626,9 @@ $tot_price = 0;
         $('input[type="checkbox"]').iCheck({
             checkboxClass: 'icheckbox_square-blue'
         });
+
+
+        cart_calc();
 
         $('input[type="checkbox"]').not('.all_check').on('ifChanged',function(){
 

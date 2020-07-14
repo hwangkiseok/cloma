@@ -5,7 +5,7 @@
 
 //사이트 정보
 $config['site_name_ceo'] = "구자욱";
-$config['site_name_cpo'] = "조은순";//개인정보책임관리자
+$config['site_name_cpo'] = "이경림";//개인정보책임관리자
 
 $config['company_name_kr'] = "(주)옷잘입는 언니";
 $config['company_name_en'] = "GoodLook Sister";
@@ -121,6 +121,8 @@ $config['member_profile_path'] = HOMEPATH . $config['member_profile_dir'];
 //1:1문의 경로 관련
 $config['qna_img_path'] = DOCROOT . "/uploads/qna";
 $config['qna_img_path_web'] = "/uploads/qna";
+
+$config['qna_image_size'][1] = array("720", "1280", 'N');
 
 
 $config['member_nickname_bannedwords'] = array(
@@ -339,14 +341,6 @@ $config['cmt_gubun']= array(
 ,   'F' => '기타문의'
 );
 
-$config['order_cancel_gubun']= array(
-    'A' => '단순 변심'
-,   'B' => '다른 상품과 다시 결제'
-,   'C' => '잘못 결제'
-,   'D' => '배송 지연'
-,   'E' => '배송지 수정'
-);
-
 $config['order_exchange_gubun']= array(
     'A' => '상품 하자'
 ,   'B' => '다른 상품 배송'
@@ -356,7 +350,7 @@ $config['order_exchange_gubun']= array(
 
 $config['order_refund_gubun']= array(
     'A' => '단순 변심'
-,   'B' => '배송 지연'
+//,   'B' => '배송 지연'
 ,   'C' => '상품 하자'
 ,   'D' => '다른 상품 배송'
 ,   'E' => '상품 정보 상이'
@@ -368,13 +362,13 @@ $config['order_cancel_gubun']= array(
     'A' => '단순변심'
 ,   'B' => '다른 상품과 다시 결제'
 ,   'C' => '잘못 결제'
-,   'D' => '배송지 지연'
+//,   'D' => '배송 지연'
 ,   'E' => '배송지 수정'
 );
 
 //취소 환불정보가 보여야하는 결제수단
 $config['refund_view_cd'] = array(
-    2 //실시간계좌이체 // TODO :: 입금일체크 가능 후 변경예정
+    2 //실시간계좌이체 // 입금일체크 가능 후 변경예정 :: 20200707 :: 입금완료주문만 처리되도록 완료
 ,   3 //무통장입금
 ,   7 //가상계좌
 );

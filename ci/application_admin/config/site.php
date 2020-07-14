@@ -467,6 +467,7 @@ $config['app_popup_size_type'][2] = "작은팝업";  //기본값
 
 $config['app_popup_content_type'][1] = "상품";  //기본값
 $config['app_popup_content_type'][2] = "기획전";
+//$config['app_popup_content_type'][3] = "공지사항";
 
 $config['app_popup_view_page']['main'] = "메인페이지";  //기본값
 $config['app_popup_view_page']['product'] = "상품상세페이지";
@@ -716,13 +717,32 @@ $config['product_cate_array']= array(
     , '54' => '땡처리'
 );
 
+
+$config['order_exchange_gubun']= array(
+    'A' => '상품 하자'
+,   'B' => '다른 상품 배송'
+,   'C' => '상품 정보 상이'
+,   'D' => '색상/사이즈 등 옵션 변경희망'
+,   'Z' => '관리자취소'
+);
+
+$config['order_refund_gubun']= array(
+    'A' => '단순 변심'
+//,   'B' => '배송 지연'
+,   'C' => '상품 하자'
+,   'D' => '다른 상품 배송'
+,   'E' => '상품 정보 상이'
+,   'F' => '다른곳의 가격이 더 저렴함'
+,   'G' => '색상/사이즈가 기대와 다름'
+,   'Z' => '관리자취소'
+);
+
 $config['order_cancel_gubun']= array(
-    'A' => '배송지연'
-,   'B' => '배송오류'
-,   'C' => '배송지 수정'
-,   'D' => '고객변심'
-,   'E' => '상품하자'
-,   'F' => '결제오류'
+    'A' => '단순변심'
+,   'B' => '다른 상품과 다시 결제'
+,   'C' => '잘못 결제'
+//,   'D' => '배송 지연'
+,   'E' => '배송지 수정'
 ,   'Z' => '관리자취소'
 );
 
@@ -779,6 +799,11 @@ $config['after_form_status_cd'] = array(
 ,   168  => '반품완료'
 );
 
+$config['exchange_del_price'] = array(
+  'A' => '입금확인'
+, 'B' => '안내확인'
+, 'C' => '옷쟁이들부담'
+);
 
 $config['delivery_company'] = array(
       '01' => '우체국택배'

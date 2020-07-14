@@ -172,6 +172,7 @@
                                 <ul class="nav nav-second-level collapse">
                                     <li><a href="/product/list">상품목록</a></li>
                                     <li><a href="/product_md/list">상품MD관리</a></li>
+                                    <li><a href="/product_stock/list">재고상품 관리</a></li>
                                     <li><a href="/main_thema/lists">메인테마관리</a></li>
                                     <li><a href="/category_md/list">카테고리MD관리</a></li>
                                     <li><a href="/special_offer/lists">기획전관리</a></li>
@@ -209,12 +210,15 @@
                             <li>
                                 <a href="#"><i class="fa fa-android fa-fw"></i> APP<span class="fa arrow"></span></a>
                                 <ul class="nav nav-second-level collapse">
+
+                                    <li><a href="/app_popup/list">광고팝업관리</a></li>
                                     <li><a href="/app_version/list">버전관리</a></li>
                                     <li><a href="/app_push/list">푸시관리</a></li>
 <!--                                    <li><a href="/app_push/stat">푸시통계</a></li>-->
                                     <li><a href="/app_splash/list">스플래시관리</a></li>
 <!--                                    <li><a href="/app_statusbar/list">상태바색상관리</a></li>-->
-                                    <li><a href="/app_popup/list">메인팝업관리</a></li>
+                                    <li><a href="/notice_popup/list">공지팝업관리</a></li>
+
                                 </ul>
                             </li>
 

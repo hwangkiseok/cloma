@@ -41,9 +41,11 @@
 
     /*환불정보관련*/
     $isRefundView = false;
-    if(in_array($aOrderInfo['payway_cd'] ,$this->config->item('refund_view_cd')) == true) $isRefundView = true; //무통장입금 / 가상계좌
-    if( substr(number_only($aOrderInfo['register_date']) , 0 ,6) < date('Ym') && $aOrderInfo['payway_cd'] == 5 ) $isRefundView = true; //익월 휴대폰 결제
-    
+    if(in_array($aOrderInfo['payway_cd'] ,$this->config->item('refund_view_cd')) == true && empty($aOrderInfo['check_date']) == false) $isRefundView = true; //무통장입금 / 가상계좌
+    if( (    substr(number_only($aOrderInfo['register_date']) , 0 ,6) < date('Ym')
+          || $aOrderInfo['basket_yn'] == 'Y'
+        )
+        && $aOrderInfo['payway_cd'] == 5 ) $isRefundView = true; //익월 휴대폰 결제
     ?>
     <input type="hidden" name="del_amt" value="<?=$del_amt?>" />
     <input type="hidden" name="tot_buy_amt" value="<?=$tot_buy_amt?>" />
@@ -128,7 +130,7 @@
 
             <div class="order_block">
                 <div style="margin-bottom: 16px">
-                    <span class="fl"><label><?=$tit_str?> 사유항목</label></span>
+                    <span class="fl"><label><b class="sig-col">*</b> <?=$tit_str?> 사유항목</label></span>
                     <div class="clear"></div>
                     <select name="cancel_gubun" title="cancel_gubun">
                         <?=get_select_option("항목을 선택해주세요.", $reason , $cancel_type=='68'?'A':'');?>
@@ -136,10 +138,21 @@
                 </div>
 
                 <div>
-                    <span class="fl"><label>상세사유<?if($cancel_type == 67){?>/교환 옵션 입력<?}?></label></span>
+                    <span class="fl"><label>상세사유</label></span>
                     <div class="clear"></div>
                     <textarea name="cancel_reason" title="cancel_reason" placeholder="상세사유를 기재해주세요." rows="5" style="width: 100%;" ></textarea>
                 </div>
+
+                <?if($cancel_type == 67){?>
+
+                    <div>
+                        <span class="fl"><label><b class="sig-col">*</b> 교환 옵션 입력</label></span>
+                        <div class="clear"></div>
+                        <textarea name="exchange_reason" title="exchange_reason" placeholder="상품명 / 교환할 옵션을 기재해 주세요.&#13;&#10;동일 상품 내 옵션, 사이즈 교환 등만 가능하며 전혀 다른 상품으로의 교환은 불가능합니다." rows="5" style="width: 100%;" ></textarea>
+
+                    </div>
+                <?}?>
+
 
             </div>
 
@@ -149,15 +162,18 @@
 
     <? if($cancel_type != '66'){ ?>
 
+    <input type="hidden" name="del_type" title="del_type" value="request">
+
     <div class="box order_cancel_wrap">
 
         <div class="box-in">
-            <div class="order_block" >
-                <label><input type="radio" name="del_type" title="del_type" value="direct"> 반품 택배 직접 발송</label>
-            </div>
 
-            <div class="order_block">
-                <label><input type="radio" name="del_type" title="del_type" value="request" checked> 반품 회수 택배 요청</label>
+            <div class="order_block" >
+                <span class="fl"><label><b class="sig-col">*</b> <?=$tit_str?> 회수 택배 요청</label></span>
+                <div class="clear"></div>
+            </div>
+            <div class="order_block" >
+                - <?=$tit_str?>을 위해 택배 기사님이 방문할 주소지를 입력해 주세요.
             </div>
 
             <div class="order_block del_type_addr">
@@ -186,13 +202,13 @@
                 <label class="refund_tit"><i></i> 환불정보입력</label>
 
                 <div style="margin-bottom: 16px">
-                    <span class="fl"><label>예금주</label></span>
+                    <span class="fl"><label><b class="sig-col">*</b> 예금주</label></span>
                     <div class="clear"></div>
-                    <input type="text" name="account_holder" placeholder="예금주명을 기재해주세요" title="account_holder" value="">
+                    <input type="text" name="account_holder" placeholder="예금주명을 기재해주세요" title="account_holder" value="" autocomplete="off" >
                 </div>
 
                 <div style="margin-bottom: 16px">
-                    <span class="fl"><label>은행명</label></span>
+                    <span class="fl"><label><b class="sig-col">*</b> 은행명</label></span>
                     <div class="clear"></div>
                     <select name="account_bank" title="account_bank" style="width: 100%;padding: 8px">
                         <?=get_select_option("은행을 선택해주세요.", $this->config->item("cancel_bank"));?>
@@ -200,9 +216,9 @@
                 </div>
 
                 <div>
-                    <span class="fl"><label>계좌번호</label></span>
+                    <span class="fl"><label><b class="sig-col">*</b> 계좌번호</label></span>
                     <div class="clear"></div>
-                    <input type="number" name="account_no" placeholder="계좌번호를 기재해주세요" title="account_holder" value="">
+                    <input type="number" name="account_no" placeholder="계좌번호를 기재해주세요" title="account_holder" value=""  autocomplete="off">
                 </div>
 
             </div>
@@ -211,6 +227,8 @@
     </div>
 
     <?}?>
+
+    <?if(empty($aOrderInfo['check_date']) == false){?>
 
     <div class="box order_cancel_wrap refund_wrap">
 
@@ -247,30 +265,33 @@
             <div class="order_block block_warning">
                 <?if($cancel_type == '66'){?>
                     <p>* 상품이 이미 출고되었을 경우 취소가 불가할 수 있습니다.</p>
-                    <p>* 환불 계좌정보와 결제자가 일치하지 않을 경우, 환불이 지연되거나 불가할 수 있습니다.</p>
                 <?}else if($cancel_type == '67'){?>
-                    <p>* 반품 택배 직접 발송을 선택하셨을 경우, 반드시 CJ택배를 통해 선불로 발송해 주세요. 타택배로 발송하시게 되면 추가 택배비 차감이 발생할 수 있습니다.</p>
-                    <p>* 교환을 요청하신 옵션의 재고가 없을 경우 상품 교환이 불가할 수 있습니다.</p>
+                    <p>* 회수 택배 접수가 완료되면 SMS로 안내해 드립니다.</p>
+                    <p>* 맞교환은 불가하며, 교환할 상품이 도착한 후 교환 절차가 진행됩니다.</p>
+                    <p>* 분실의 우려가 있으니 택배비를 동봉하지 말아주세요.</p>
                 <?}else if($cancel_type == '68'){?>
-                    <p>* 사유에 따라 환불 금액에서 배송비가 차감될 수 있습니다.</p>
-                    <p>* 반품 택배 직접 발송을 선택하셨을 경우, 반드시 CJ택배를 통해 선불로 발송해 주세요. 타택배로 발송하시게 되면 추가 택배비 차감이 발생할 수 있습니다.</p>
-                    <p>* 환불 계좌정보와 결제자가 일치하지 않을 경우, 환불이 지연되거나 불가할 수 있습니다.</p>
+                    <p>* 회수 택배 접수가 완료되면 SMS로 안내해 드립니다.</p>
+                    <p>* 환불 받으실 분과 계좌주가 일치하지 않을 경우, 환불이 지연되거나 불가할 수 있습니다.</p>
+                    <p>* 분실의 우려가 있으니 택배비를 동봉하지 말아주세요.</p>
                 <?}?>
             </div>
 
         </div>
     </div>
 
+    <?}?>
     <div class="btm-bnt-area">
         <button type="submit" class="fl cancel_req_btn">신청</button>
         <button type="button" class="fr cancel_order_btn">취소</button>
         <div class="clear"></div>
+        <a onclick="go_link('/qna')" style="display: block;margin-top: 20px;"> <img src="/images/order_cancel_go_qna.png" alt="qna" width="100%" > </a>
     </div>
 
 </form>
 
 <script type="text/javascript">
 
+    var ing = false;
     $(function(){
 
         $('.cancel_order_btn').on('click',function(e){
@@ -280,18 +301,27 @@
 
         $('#cancel_frm').on('submit',function(e){
 
+            if(ing == true){
+                alert("취소진행 중 입니다.\n잠시만 기다려주세요.");
+                return false;
+            }
+
+            ing = true;
+
             if( $('select[name="cancel_gubun"]').length > 0 ){
                 if(empty($('select[name="cancel_gubun"]').val()) == true){
                     alert('취소 사유를 선택해 주세요.');
                     $('select[name="cancel_gubun"]').focus();
+                    ing = false;
                     return false;
                 }
             }
 
-            if( $('textarea[name="cancel_reason"]').length > 0 ){
-                if(empty($('textarea[name="cancel_reason"]').val()) == true){
-                    alert('상세 사유를 입력해 주세요.');
-                    $('select[name="cancel_reason"]').focus();
+            if( $('textarea[name="exchange_reason"]').length > 0 ){
+                if(empty($('textarea[name="exchange_reason"]').val()) == true){
+                    alert('교환정보를 입력해 주세요.');
+                    $('select[name="exchange_reason"]').focus();
+                    ing = false;
                     return false;
                 }
             }
@@ -299,20 +329,14 @@
             if($('input[name="account_holder"]').length > 0){
 
                 if (    empty($('input[name="account_holder"]').val()) == true
-                    ||  empty($('input[name="account_bank"]').val()) == true
+                    ||  empty($('select[name="account_bank"]').val()) == true
                     ||  empty($('input[name="account_no"]').val()) == true
                 ){
                     alert('환불 정보를 정확하게 입력해 주세요.');
+                    ing = false;
                     return false;
                 }
 
-            }
-
-            if( $('input[name="del_type"]').length > 0 ){
-                if(empty($('input[name="del_type"]:checked').val()) == true){
-                    alert('반송 택배 발송 방법을 선택해 주세요.');
-                    return false;
-                }
             }
 
         });
@@ -343,6 +367,8 @@
                 }
                 if( result.status == '<?php echo get_status_code('success');?>' ){
                     location_replace('/delivery')
+                }else{
+                    ing = false;
                 }
             },
             error: function(){

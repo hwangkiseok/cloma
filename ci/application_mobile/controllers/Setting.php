@@ -33,8 +33,8 @@ class Setting extends M_Controller
     public function toggle_push(){
 
         $aInput = array(
-                'm_num' => $_SESSION['session_m_num']
-            ,   'flag'  => $this->input->post('f')
+            'm_num' => $_SESSION['session_m_num']
+        ,   'flag'  => $this->input->post('f')
         );
 
         $this->load->model('push_model');
@@ -46,5 +46,23 @@ class Setting extends M_Controller
         }
 
     }
+
+    public function toggle_shopping_push(){
+
+        $aInput = array(
+            'm_num' => $_SESSION['session_m_num']
+        ,   'flag'  => $this->input->post('f')
+        );
+
+        $this->load->model('push_model');
+
+        if( $this->push_model->setUseShoppingPush($aInput) == true ){
+            result_echo_json(get_status_code('success'), "", true, "alert");
+        }else{
+            result_echo_json(get_status_code('error'), "", true, "alert");
+        }
+
+    }
+
 
 }//end of class Setting

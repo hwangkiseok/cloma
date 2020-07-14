@@ -345,6 +345,49 @@ class Common extends A_Controller {
     }//end of common_send_push_proc()
 
 
+    /**
+     * 재고체크
+     */
+    public function common_chk_stock() {
 
+        $sql = "SELECT pt.p_num,pt.p_name,spt.option_info
+                FROM product_tb pt
+                INNER JOIN snsform_product_tb spt ON spt.item_no = pt.p_order_code 
+                WHERE pt.p_display_state = 'Y' 
+                AND pt.p_sale_state = 'Y' 
+                AND pt.p_stock_state = 'Y';  
+        ";
+        $aProductList = $this->db->query($sql)->result_array();
+
+
+        $alert = array();
+        foreach ($aProductList as $r) {
+            $option_info = json_decode($r['option_info'],true);
+
+
+
+            foreach ($option_info as $rr) {
+                $msg = '';
+                if($rr['option_count'] <= 10){
+                    $msg .= "{$r['p_name']}";
+                    $msg .= " | {$rr['option_depth1']}";
+                    $msg .= $rr['option_depth2'] ? " | {$rr['option_depth2']}" : '';
+                    $msg .= $rr['option_depth3'] ? " | {$rr['option_depth3']}" : '';
+                    $msg .= " | 재고 : {$rr['option_count']}";
+
+                    $alert[] = $msg;
+
+                }
+            }
+
+        }
+
+
+        zsView($alert);
+
+
+
+
+    }
 
 }//end of class Common

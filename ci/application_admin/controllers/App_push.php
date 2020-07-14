@@ -929,14 +929,11 @@ class App_push extends A_Controller {
             $fields['body']         = rawurldecode($push_row['ap_message']);    //내용
             $fields['seq']          = $push_row['ap_num'];      //내용
             $fields['badge']        = 'Y';                      //뱃지올리기여부(Y/N)
+            $fields['seq']          = $push_row['ap_pnum'];     //상품번호
+            $fields['app_push_id']  = $push_row['ap_num'];      //ap_num
 
-            if($push_row['ap_new_push'] == 'Y'){
-                $fields['seq']      = $push_row['ap_pnum'];
-                $fields['page']     = 'push';
-            }else{
-                $fields['seq']      = $push_row['ap_pnum'];
-                $fields['page']     = 'product';
-            }
+            if($push_row['ap_new_push'] == 'Y') $fields['page']     = 'push';
+            else $fields['page']     = 'product';
 
             //Android
             $result = send_app_push($r['m_regid'], $fields);

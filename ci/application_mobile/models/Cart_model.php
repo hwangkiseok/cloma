@@ -54,6 +54,13 @@ class Cart_model extends M_Model {
             $where_query .= "and pt.p_stock_state = '" . $this->db->escape_str($query_data['where']['p_stock_state']) . "' ";
         }
 
+        //상품묶음
+        if( isset($query_data['where']['p_order_code']) && !empty($query_data['where']['p_order_code']) ) {
+            $where_query .= "and ct.p_order_code = '" . $this->db->escape_str($query_data['where']['p_order_code']) . "' ";
+        }
+
+
+
         //order by 절
         if( isset($query_data['orderby']) && !empty($query_data['orderby']) ) {
             $order_query = "order by " . $query_data['orderby'] . " ";
@@ -78,11 +85,14 @@ class Cart_model extends M_Model {
         }
         //데이터 추출
         else {
-            $query = "select ct.* , pt.* , spt.option_info as product_option_info ";
+            $query = "select ct.* , pt.* , spt.option_info as product_option_info , spt.repetition_cnt , spt.delivery_amt , spt.buy_max_cnt , spt.buy_min_cnt , spt.bndl_del_yn ";
             $query .= $from_query;
             $query .= $where_query;
             $query .= $order_query;
             $query .= $limit_query;
+            if(zsDebug()) {
+//                zsView($query,true);
+            }
 
             return $this->db->query($query)->result_array();
         }
@@ -115,10 +125,17 @@ class Cart_model extends M_Model {
 
         $whereQueryString = "";
 
+        if(empty($arrayParams['p_order_code']) == false) $whereQueryString .= " AND p_order_code = '{$arrayParams['p_order_code']}' ";
         if(empty($arrayParams['cart_id']) == false) $whereQueryString .= " AND cart_id = '{$arrayParams['cart_id']}' ";
         if(empty($whereQueryString) == true) return false;
 
-        $sql = "SELECT * FROM cart_tb WHERE 1 {$whereQueryString} ";
+        $sql = "SELECT 
+                    ct.*
+                ,   spt.buy_max_cnt
+                ,   spt.buy_min_cnt 
+                FROM cart_tb ct
+                INNER JOIN snsform_product_tb spt ON spt.item_no = ct.p_order_code  
+                WHERE 1 {$whereQueryString} ";
 
         $oResult = $this->db->query($sql);
         $aResult = $oResult->row_array();

@@ -454,6 +454,7 @@ class Product extends REST_Controller
 
             $isWish = false;
             $isShare = false;
+            $isBuy = false;
 
             if ($this->core->isLogin == 'Y') {//찜하기 & 공유 상품여부
                 $this->load->model('wish_model');
@@ -461,6 +462,10 @@ class Product extends REST_Controller
 
                 $this->load->model('share_model');
                 $isShare = $this->share_model->get_share_row($this->core->aMemberInfo['m_num'],$aProductInfo['p_num']) > 0 ? true : false ;
+
+                $this->load->model('order_model');
+                $isBuy = $this->order_model->getOrderInfo(array('m_num' => $this->core->aMemberInfo['m_num'] ,'p_order_code' => $aProductInfo['p_order_code'])) > 0 ? true : false ;
+
             }
 
             {//배송정보
@@ -515,9 +520,12 @@ class Product extends REST_Controller
                     ,   "isShare"               => $isShare
                     ,   "nComment"              => $nComment['cnt']
                     ,   "aOptionList"           => empty($aSnsformProductInfo['option_info']) == true ? array():json_decode($aSnsformProductInfo['option_info'],true)
+                    ,   "buy_max_cnt"           => (int)$aSnsformProductInfo['buy_max_cnt']
+                    ,   "buy_min_cnt"           => (int)$aSnsformProductInfo['buy_min_cnt']
                     ,   "sSnsformOptionType"    => $aSnsformProductInfo['option_type']
                     ,   "aRelation"             => $aRelation
                     ,   "aWith"                 => $aWith
+                    ,   "isBuy"                 => $isBuy
                     )
                 ), REST_Controller::HTTP_OK
             ); // OK (200) being the HTTP response code;

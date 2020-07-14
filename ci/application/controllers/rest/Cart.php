@@ -81,7 +81,12 @@ class Cart extends REST_Controller
 
                 /*---------------------------- 옵션별 재고체크 */
                 $bRet2 = false; //재고수량 체크 value
-                $bRet3 = false; //장바구니상품 유무 value
+                $bRet3 = false; //장바구니+재고수량 체크 value
+                $bRet4 = false; //최대구매수량
+                $bRet5 = false; //최소구매수량
+
+                $aSnsformProductInfo = $this->product_model->get_snsform_product_row($req['p_order_code']);
+
                 foreach ($option_arr as $k => $r) {
 
                     $arrayParams = array(
@@ -122,19 +127,50 @@ class Cart extends REST_Controller
 
                 }
 
-                if($bRet2 == true) {
+                {// 최대 구매수량 valid
+
+                    $aCartList      = $this->cart_model->get_cart_list(array('where' => array('p_order_code' => $req['p_order_code'])));
+                    $cart_tot_cnt   = 0;
+
+                    foreach ($aCartList as $r) {
+                        $cart_option_info = json_decode($r['option_info'],true);
+                        $cart_tot_cnt    += (int)$cart_option_info['option_count']; //기등록 장바구니 구매수량
+                    }
+
+                    $product_tot_cnt = 0;
+                    foreach ($option_arr as $k => $r) {
+                        $product_tot_cnt += (int)$r['option_count'];
+                    }
+
+                    $tot_cnt = (int)$cart_tot_cnt + (int)$product_tot_cnt;
+
+                    if( $aSnsformProductInfo['buy_max_cnt'] < $tot_cnt && $aSnsformProductInfo['buy_max_cnt'] > 0 ) $bRet4 = true; //최대구매수량
+                    if( $aSnsformProductInfo['buy_min_cnt'] > $tot_cnt && $aSnsformProductInfo['buy_min_cnt'] > 0 ) $bRet5 = true; //최소구매수량
+
+                }
+
+                    /*
+                if($bRet2 == true || $bRet3 == true) { //재고수량 체크 value || //장바구니+재고수량 체크 value
 
                     $this->set_response(
                         result_echo_rest_json(get_status_code("error"), "주문하시려는 상품은 재고가 이미 소진된 상품으로 다시 확인 후 구매해 주시기 바랍니다.", "", true, "", "", ""
                         ), REST_Controller::HTTP_OK
                     ); // NOT_FOUND (404) being the HTTP response code
 
-/*
-                } else if($bRet3 == true){ // 처리방식 확인 / confirm 후 upsert 처리예정
+                } else
+                */if($bRet4 == true){ // 최대구매수량 보다 많은 경우
 
+                    $this->set_response(
+                        result_echo_rest_json(get_status_code("error"), "장바구니에 담을 수 있는 최대 수량을 초과해 담을 수 없습니다.", "", true, "", "", ""
+                        ), REST_Controller::HTTP_OK
+                    ); // NOT_FOUND (404) being the HTTP response code
 
+                } else if($bRet5 == true){ // 최소구매수량 보다 적은 경우
 
-*/
+                    $this->set_response(
+                        result_echo_rest_json(get_status_code("error"), "최소 구매 가능 수량 이상 장바구니에 담아주세요.", "", true, "", "", ""
+                        ), REST_Controller::HTTP_OK
+                    ); // NOT_FOUND (404) being the HTTP response code
 
                 }else{
 

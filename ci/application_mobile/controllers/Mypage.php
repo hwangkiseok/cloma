@@ -154,7 +154,7 @@ class Mypage extends M_Controller
                     echo json_encode_no_slashes(array('msg' => '' , 'success' => false , 'data' => $living_cnt ));
                     exit;
                 }
-            }/* ----------------  현재 구매 진행중인 상품 확인 */
+            }/*----------------  현재 구매 진행중인 상품 확인 */
 
             $aDrawData = array(
                 'mwl_member_num'            => $aMemberInfo['m_num']

@@ -49,9 +49,12 @@ if( strtolower(php_sapi_name()) == "cli" || strpos(parse_url($_SERVER['HTTP_HOST
 //    define("APP_TYPE", "pc");
 }
 
+
 $not_allow = array(
         '193.112.9.107'
     ,   '118.126.101.81'
+    ,   '103.87.26.190'
+    ,   '195.54.160.135'
 );
 
 if(in_array($_SERVER['REMOTE_ADDR'] , $not_allow) == true){

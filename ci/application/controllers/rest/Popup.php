@@ -48,30 +48,54 @@ class Popup extends REST_Controller
 
         }else{
 
-            $aTodayPopup = $this->popup_model->getTodayPopup($exec , $apo_uid);
+            {//마케팅 팝업
 
-            if(empty($aTodayPopup) == false){
+                $aTodayPopup = $this->popup_model->getTodayPopup($exec , $apo_uid);
 
-                $update_seq  = array();
-                foreach ($aTodayPopup as $r)  $update_seq[] = $r['apo_num'];
-                $this->popup_model->setDisplayCount($update_seq);
+//                if(empty($aTodayPopup) == false){
+//
+//                    $update_seq  = array();
+//                    foreach ($aTodayPopup as $r)  $update_seq[] = $r['apo_num'];
+//                    $this->popup_model->setDisplayCount($update_seq);
+//
+//                }
 
             }
 
-            $this->load->model('product_model');
+            {//종료팝업
 
-            $aClosePopup_1 = get_recently_product(2,true);
-            $aClosePopup_2 = $this->product_model->get_close_product( array('not_in' => $aClosePopup_1 ));
-            $aClosePopup = array();
-            $aClosePopup = array_merge($aClosePopup_1,$aClosePopup_2);
-            $aClosePopup = $this->core->clearProductField($aClosePopup, array('campaign' => 'close_popup'));
+                $this->load->model('product_model');
 
-            //마지막 등록된 팝업의 정보로 팝업사이즈와 버튼액션 결정
-            //sort가 최신순으로 처리가되어 있어 0번배열로 처리
-            $apo_size_type = $aTodayPopup[0]['apo_size_type'];
-            $apo_btn_type = $aTodayPopup[0]['apo_btn_type'];
+                $aClosePopup_1 = get_recently_product(2,true);
+                $aClosePopup_2 = $this->product_model->get_close_product( array('not_in' => $aClosePopup_1 ));
 
-            $aTodayPopup = self::clearPopupData($aTodayPopup, array('campaign' => 'popup'));
+                $aClosePopup = array();
+                $aClosePopup = array_merge($aClosePopup_1,$aClosePopup_2);
+                $aClosePopup = $this->core->clearProductField($aClosePopup, array('campaign' => 'close_popup'));
+
+                //마지막 등록된 팝업의 정보로 팝업사이즈와 버튼액션 결정
+                //sort가 최신순으로 처리가되어 있어 0번배열로 처리
+                $apo_size_type = $aTodayPopup[0]['apo_size_type'];
+                $apo_btn_type = $aTodayPopup[0]['apo_btn_type'];
+
+                $aTodayPopup = self::clearPopupData($aTodayPopup, array('campaign' => 'popup'));
+
+            }
+
+            {//공지팝업
+
+                $aNoticePopup = $this->popup_model->getNoticePopup();
+
+//                if(empty($aNoticePopup) == false){
+//
+//                    $update_seq  = array();
+//                    foreach ($aNoticePopup as $r)  $update_seq[] = $r['apo_num'];
+//                    $this->popup_model->setDisplayCount($update_seq);
+//
+//                }
+
+            }
+
 
             if(empty($aTodayPopup) == true) $aTodayPopup = array();
 
@@ -79,6 +103,7 @@ class Popup extends REST_Controller
                 result_echo_rest_json(get_status_code("success"), "", true , '' , '' , array(
                         'aPopupList'       => $aTodayPopup
                     ,   'aClosePopup'      => $aClosePopup
+                    ,   'aNoticePopup'     => $aNoticePopup
                     ,   'popup_size_type'  => $apo_size_type
                     ,   'popup_btn_type'   => $apo_btn_type
                 )), REST_Controller::HTTP_OK

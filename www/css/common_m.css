@@ -764,7 +764,7 @@ select.form-control {padding: 10px 9px;}
 .order_cancel_wrap .order_block > div:last-child{margin-bottom: 0;}
 .order_cancel_wrap .order_block label {font-weight: bold}
 .order_cancel_wrap .order_block .refund_tit {display: block;padding-bottom: 4px;border-bottom: 1px solid #333;  margin-bottom: 16px; font-size: 13px; }
-.order_cancel_wrap .order_block .refund_tit i {background: url(<?=IMG_HTTP?>/images/mb_icon_set_img.png) no-repeat -58px -229px;display: inline-block;font-size: 15px;width: 20px;height: 20px;margin: auto;background-size: 80px!important;vertical-align: top;}
+.order_cancel_wrap .order_block .refund_tit i {background: url(https://m.cloma.co.kr/images/mb_icon_set_img.png) no-repeat -58px -229px;display: inline-block;font-size: 15px;width: 20px;height: 20px;margin: auto;background-size: 80px!important;vertical-align: top;}
 .order_cancel_wrap .order_block.block_warning p{color: #aaa;font-size: 12px;padding-bottom: 4px;}
 .order_cancel_wrap.refund_wrap .esti_amt{font-weight: bold;}
 

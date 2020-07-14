@@ -24,6 +24,33 @@ class Popup_model extends W_Model
         return $this->db->where($where_array)->get('app_popup_tb')->row_array();
     }//end get_app_popup_row;
 
+
+
+    public function getNoticePopup()
+    {
+
+        $whereQueryString = '';
+
+        $able_type[] = 1; //오픈조건 : 안드로인경우
+//        $able_type[] = 3; //오픈조건 : 둘다
+//        if(is_app_1()) $able_type[] = 2; //오픈조건 : 아이폰인경우
+//        else if(is_app()) $able_type[] = 1; //오픈조건 : 안드로인경우
+
+        $query = "
+            select * 
+            from app_popup_tb 
+            where (apo_termlimit_yn = 'N' or (apo_termlimit_yn = 'Y' and apo_termlimit_datetime1 <= '" . $this->to_datetime. "' and apo_termlimit_datetime2 >= '" . $this->to_datetime . "')) 
+                and apo_display_yn = 'Y' 
+                and apo_content_type = 3 # 3:공지팝업제외 
+                and apo_os_type in ?
+                {$whereQueryString}
+            order by apo_num desc 
+            LIMIT 1 ;
+        ";
+
+        return $this->db->query($query,array($able_type))->result_array();
+
+    }
     /**
      * 오늘의 팝업 검색
      * @return object
@@ -48,7 +75,8 @@ class Popup_model extends W_Model
             from app_popup_tb 
             where (apo_termlimit_yn = 'N' or (apo_termlimit_yn = 'Y' and apo_termlimit_datetime1 <= '" . $this->to_datetime. "' and apo_termlimit_datetime2 >= '" . $this->to_datetime . "')) 
                 and apo_display_yn = 'Y' 
-                and find_in_set('{$exe_class}',apo_view_page) 
+                and find_in_set('{$exe_class}',apo_view_page)
+                and apo_content_type IN (1,2) # 1:상품팝업 / 2:기획전팝업 / 공지팝업제외 
                 and apo_os_type in ?
                 {$whereQueryString}
             order by apo_num desc 

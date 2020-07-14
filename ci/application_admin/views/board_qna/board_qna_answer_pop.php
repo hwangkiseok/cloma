@@ -55,7 +55,6 @@
 
                         <hr />
 
-                        <!--
                         <div class="form-group form-group-sm form-inline">
                             <div class="input-group">
                                 <span class="input-group-addon">푸시발송</span>
@@ -64,7 +63,7 @@
                                 </div>
                             </div>
                         </div>
-                        -->
+                        
                         <div class="form-group form-group-sm form-inline">
                             <div class="input-group">
                                 <span class="input-group-addon">문구선택</span>

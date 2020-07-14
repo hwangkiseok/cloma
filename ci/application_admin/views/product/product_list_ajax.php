@@ -10,7 +10,7 @@
     <table class="table table-hover table-bordered dataTable">
         <thead>
         <tr role="row" class="active">
-            <!--<th><input type="checkbox" id="all_list_check" /></th>-->
+            <th><input type="checkbox" id="all_list_check" /></th>
             <th>No.</th>
             <!--<th class="<?php /*echo $sort_array['p_order'][1];*/?>" onclick="form_submit('sort_field=p_order&sort_type=<?php /*echo $sort_array['p_order'][0]; */?>');">순서</th>-->
             <th class="<?php echo $sort_array['p_category'][1];?>" onclick="order_submit('p_category', '<?php echo $sort_array['p_category'][0]; ?>');">카테고리</th>
@@ -60,7 +60,7 @@
         ?>
 
             <tr role="row">
-                <!--<td><input type="checkbox" name="p_num[]" value="--><?php //echo $row->p_num; ?><!--" /></td>-->
+                <td><input type="checkbox" name="p_num[]" value="<?php echo $row['p_num']; ?>|<?php echo $row['p_order_code']; ?>" /></td>
                 <td><?php echo number_format($list_number); ?><br />(<?php echo $row['p_num']; ?>)</td>
                 <!--<td>
                     <div class="form-group form-group-sm">
@@ -178,7 +178,7 @@
                     <span title="지난주 주문수">(<?php echo number_format($row['p_order_count_last_week']); ?>)<span>
                 </td>
                 -->
-                <td><a href="#none" onclick="new_win_open('/comment/list_v2/?tb=product&tb_num=<?php echo $row['p_num']; ?>&view_type=simple&pop=1', 'comment_list_win', 1200, 800); "><?php echo number_format($row['p_comment_count']); ?></a></td>
+                <td><a href="#none" onclick="new_win_open('/comment/list/?tb=product&tb_num=<?php echo $row['p_num']; ?>&view_type=simple&pop=1', 'comment_list_win', 1200, 800); "><?php echo number_format($row['p_comment_count']); ?></a></td>
                 <td>
                     <a href="#none" onclick="new_win_open('/review/list/?tb=review&tb_num=<?php echo $row['p_num']; ?>&view_type=simple&pop=1', 'review_list_win', 1200, 800); "><?php echo number_format($row['p_review_count']); ?></a>
                 </td>

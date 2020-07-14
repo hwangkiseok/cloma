@@ -59,7 +59,16 @@ class Api extends W_Controller
 
                     $kakao_user_info = get_kakao_user_info($aInput['id']);
 
-                    $query_data['nickname'] = $kakao_user_info['kakao_account']['profile']['nickname'];
+                    /**
+                     * @date 200626
+                     * @modify 황기석
+                     * @desc 특수문자 변경 정규식변경
+                     */
+                    $tmp_nickname = preg_replace("/\xF0[\x90-\xBF][\x80-\xBF]{2}|[\xF1-\xF3][\x80-\xBF]{3}|\xF4[\x80-\x8F][\x80-\xBF]{2}/", "", $kakao_user_info['kakao_account']['profile']['nickname']);
+                    $tmp_nickname = preg_replace("/[ #\&\+\-%@=\/\\\:;,\.'\"\^`~\_|\!\?\*$#<>()\[\]\{\}]/i", "", $tmp_nickname);
+                    $tmp_nickname = empty($tmp_nickname) == false ? $tmp_nickname : $aInput['id'];
+
+                    $query_data['nickname'] = $tmp_nickname;//$kakao_user_info['kakao_account']['profile']['nickname'];
                     if( $kakao_user_info['kakao_account']['has_email'] == true ) $query_data['email'] = $kakao_user_info['kakao_account']['email'];
                     if( $kakao_user_info['kakao_account']['has_age_range'] == true ) $query_data['age_range'] = $kakao_user_info['kakao_account']['age_range'];
                     if( $kakao_user_info['kakao_account']['has_birthyear'] == true ) $query_data['birthyear'] = $kakao_user_info['kakao_account']['birthyear'];
@@ -67,7 +76,7 @@ class Api extends W_Controller
                     if( $kakao_user_info['kakao_account']['has_gender'] == true ) $query_data['gender'] = $kakao_user_info['kakao_account']['gender'];
                     if( $kakao_user_info['kakao_account']['has_phone_number'] == true ) {
 
-                        $phone_arr = explode(' ', $kakao_user_info['kakao_account']['phone_number']);
+                        $phone_arr = onlynumber(explode(' ', $kakao_user_info['kakao_account']['phone_number']));
 
                         if ($phone_arr[0] == '+82') {
                             $phone_number = '0' . $phone_arr[1];

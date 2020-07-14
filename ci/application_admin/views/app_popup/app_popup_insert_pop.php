@@ -188,6 +188,24 @@
                             </div>
                         </div>
 
+
+                        <!--
+                        <div class="form-group form-group-sm wrapContentType_3">
+                            <label class="col-sm-2 control-label">공지제목</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" name="apo_noti_subject" maxlength="15" style="width:100%;" placeholder="공지제목을 입력해주세요." />
+                            </div>
+                        </div>
+                        -->
+                        <div class="form-group form-group-sm wrapContentType_3">
+                            <label class="col-sm-2 control-label">공지내용</label>
+                            <div class="col-sm-10">
+                                <textarea type="text" class="form-control" id="apo_noti_content" name="apo_noti_content" maxlength="150" style="width:100%;"></textarea>
+                            </div>
+                        </div>
+
+
+
                         <div class="form-group form-group-sm">
                             <label class="col-sm-2 control-label">버튼 타입 <span class="txt-danger">*</span></label>
                             <div class="col-sm-10">
@@ -253,6 +271,42 @@
 </div>
 
 
+<script src="/plugins/smarteditor2/js/HuskyEZCreator.js?v=<?php echo filemtime($this->input->server("DOCUMENT_ROOT") . "/plugins/smarteditor2/js/HuskyEZCreator.js"); ?>" charset="utf-8"></script>
+<script>
+    //====================================== smarteditor2
+    var oEditors = [];
+    var aAdditionalFontSet = [["Noto Sans", "Noto Sans"]];      // 추가 글꼴 목록
+    var editorElement = 'apo_noti_content';
+    var form = '#pop_insert_form';
+
+    $(function(){
+        nhn.husky.EZCreator.createInIFrame({
+            oAppRef: oEditors,
+            elPlaceHolder: editorElement,
+            sSkinURI: "/plugins/smarteditor2/SmartEditor2Skin.html",
+            htParams : {
+                bUseToolbar : true,				// 툴바 사용 여부 (true:사용/ false:사용하지 않음)
+                bUseVerticalResizer : true,		// 입력창 크기 조절바 사용 여부 (true:사용/ false:사용하지 않음)
+                bUseModeChanger : true,			// 모드 탭(Editor | HTML | TEXT) 사용 여부 (true:사용/ false:사용하지 않음)
+                bSkipXssFilter : true,		// client-side xss filter 무시 여부 (true:사용하지 않음 / 그외:사용)
+                aAdditionalFontList : aAdditionalFontSet,		// 추가 글꼴 목록
+                fOnBeforeUnload : function(){
+                    //alert("완료!");
+                }
+            }, //boolean
+            fOnAppLoad : function(){
+//                oEditors.getByIdeditorElement].exec("PASTE_HTML", ['<p style="font-family:Noto Sans;font-size:1em;"></p>']);
+//                oEditors.getById[editorElement].setDefaultFont("Noto Sans", "1em");
+                loadingBar.hide();
+            },
+            fCreator: "createSEditor2"
+        });
+    });
+    //====================================== /smarteditor2
+</script>
+
+
+
 <script src="/plugins/datepicker/bootstrap-datepicker.js" charset="utf-8"></script>
 <script src="/plugins/datepicker/locales/bootstrap-datepicker.kr.js" charset="utf-8"></script>
 
@@ -297,6 +351,8 @@
         $(form).on('submit', function(){
             info_message_all_clear();
 
+            oEditors.getById[editorElement].exec("UPDATE_CONTENTS_FIELD", []);	// 에디터의 내용이 textarea에 적용됩니다.
+
             var date1 = $(form + ' [name="apo_termlimit_datetime1"]').val();
             var hour1 = $(form + ' [name="apo_termlimit_datetime1_hour"]').val();
             var min1 = $(form + ' [name="apo_termlimit_datetime1_min"]').val();
@@ -327,12 +383,16 @@
                 alert('상품을 선택해주세요.');
                 return false;
             }
-            else if( $("input[name='apo_content_type']:checked").val() == '2' && $("input[name='apo_url']").val() == '') {
-                alert('웹뷰URL을 입력하세요.');
+            else if( $("input[name='apo_content_type']:checked").val() == '2' && $("input[name='apo_special_offer_seq']").val() == '') {
+                alert('기획전을 선택해주세요.');
+                return false;
+            }
+            else if( $("input[name='apo_content_type']:checked").val() == '3' && $("input[name='apo_noti_content']").val() == '') {
+                alert('공지사항 내용을 입력해주세요.');
                 return false;
             }
 
-            if($('input[name="apo_image"]').val() == ''){
+            if($("input[name='apo_content_type']:checked").val() != '3' && $('input[name="apo_image"]').val() == ''){
                 alert('이미지를 등록해주세요');
                 return false;
             }

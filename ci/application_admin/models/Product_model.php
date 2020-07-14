@@ -375,11 +375,11 @@ class Product_model extends A_Model {
         $row = $this->get_product_row($p_num);
 
         //대표 이미지 삭제
-        file_delete(3, $row->p_rep_image, DOCROOT);
+        file_delete(3, $row['p_rep_image'], DOCROOT);
 
         //상세 이미지 삭제
-        if( !empty($row->p_detail_image) ) {
-            $array = json_decode($row->p_detail_image, true);
+        if( !empty($row['p_detail_image']) ) {
+            $array = json_decode($row['p_detail_image'], true);
 
             if( !empty($array) ) {
                 foreach($array as $item) {
@@ -387,6 +387,21 @@ class Product_model extends A_Model {
                 }
             }
         }
+
+
+        $date = date('YmdHis');
+
+        $sql = " INSERT INTO product_tb_del
+        (act_id,act_date,p_num,p_category,p_cate1,p_cate2,p_cate3,p_name,p_summary,p_detail,p_detail_add,p_rep_image,p_rep_image_add,p_today_image,p_banner_image,p_detail_image,p_order_link,p_order_code,p_short_url,p_app_link_url,p_app_link_url_2,p_supply_price,p_original_price,p_sale_price,p_app_price_yn,p_app_price,p_price_second_yn,p_price_second,p_price_third_yn,p_price_third,p_margin_price,p_discount_rate,p_margin_rate,p_taxation,p_origin,p_manufacturer,p_supplier,p_deliveryprice_type,p_deliveryprice,p_wish_count,p_wish_count_user,p_wish_raise_yn,p_wish_raise_count,p_share_count,p_share_count_user,p_share_raise_yn,p_share_raise_count,p_termlimit_yn,p_termlimit_datetime1,p_termlimit_datetime2,p_display_info,p_view_count,p_view_3day_count,p_view_yesterday_count,p_view_today_count,p_click_count,p_click_yesterday_count,p_click_today_count,p_click_count_week,p_click_count_last_week,p_comment_count,p_review_count,p_order_count,p_order_count_3h,p_order_count_twoday,p_order_count_week,p_order_count_month,p_order_count_twomonth,p_order_count_last_week,p_regdatetime,p_order,p_display_state,p_sale_state,p_stock_state,p_top_desc,p_btm_desc,p_search_cnt,p_usd_price,p_hash,p_option_buy_cnt_view,p_hotdeal_condition_1,p_hotdeal_condition_2,p_main_banner_view,p_restock_cnt,p_tot_order_count,p_outside_display_able,p_suvin_flag,p_easy_admin_code,p_option_use,p_option_depth,p_option_type,p_mod_id)
+        SELECT
+          '{$_SESSION['session_au_num']}'
+        , '{$date}'
+        , p_num,p_category,p_cate1,p_cate2,p_cate3,p_name,p_summary,p_detail,p_detail_add,p_rep_image,p_rep_image_add,p_today_image,p_banner_image,p_detail_image,p_order_link,p_order_code,p_short_url,p_app_link_url,p_app_link_url_2,p_supply_price,p_original_price,p_sale_price,p_app_price_yn,p_app_price,p_price_second_yn,p_price_second,p_price_third_yn,p_price_third,p_margin_price,p_discount_rate,p_margin_rate,p_taxation,p_origin,p_manufacturer,p_supplier,p_deliveryprice_type,p_deliveryprice,p_wish_count,p_wish_count_user,p_wish_raise_yn,p_wish_raise_count,p_share_count,p_share_count_user,p_share_raise_yn,p_share_raise_count,p_termlimit_yn,p_termlimit_datetime1,p_termlimit_datetime2,p_display_info,p_view_count,p_view_3day_count,p_view_yesterday_count,p_view_today_count,p_click_count,p_click_yesterday_count,p_click_today_count,p_click_count_week,p_click_count_last_week,p_comment_count,p_review_count,p_order_count,p_order_count_3h,p_order_count_twoday,p_order_count_week,p_order_count_month,p_order_count_twomonth,p_order_count_last_week,p_regdatetime,p_order,p_display_state,p_sale_state,p_stock_state,p_top_desc,p_btm_desc,p_search_cnt,p_usd_price,p_hash,p_option_buy_cnt_view,p_hotdeal_condition_1,p_hotdeal_condition_2,p_main_banner_view,p_restock_cnt,p_tot_order_count,p_outside_display_able,p_suvin_flag,p_easy_admin_code,p_option_use,p_option_depth,p_option_type,p_mod_id
+        FROM product_tb
+        WHERE p_num = {$p_num}
+        ";
+        $this->db->query($sql);
+
 
         return $this->db->where('p_num', $p_num)->delete('product_tb');
     }//end of delete_product()

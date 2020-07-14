@@ -53,7 +53,16 @@
         </li>
     </ul>
 </form>
+<?
 
+$a= '';
+$b= '';
+
+
+if(empty($a) == false || empty($b) == false){
+    echo 'a';
+}
+?>
 
 <script type="text/javascript">
 
@@ -65,7 +74,7 @@
     function readURL() {
 
         var ret_msg = '이미지 첨부는 최대 3개까지 가능합니다.';
-        var limit_msg = false;
+        var limit_b = false;
         var list_html = '';
         var del_html = '';
 
@@ -78,12 +87,39 @@
 
         Array.prototype.push.apply(fileBuffer, input[0].files );
 
-        $.each(fileBuffer, function(index, file){
-            if( index > 2) {
-                fileBuffer.splice( parseInt(index)-1 ,1);
-                limit_msg = true;
+        var l   = fileBuffer.length;
+        var seq = 0;
+
+        // var overlap_b = false;
+        // var overlap_msg = '같은 이미지가 있습니다.';
+        // var l2  = input[0].files.length;
+        // for(var i = 0 ; i < l  ; i++){ var fb = fileBuffer[i];
+        //
+        //     for(var j = 0 ; j < l2 ; j++){ var in_d = input[0].files[j];
+        //
+        //         if(fb.name == in_d.name){
+        //             fileBuffer.splice( parseInt(seq) ,1);
+        //             overlap_b = true;
+        //         }else{
+        //             seq++;
+        //         }
+        //
+        //     }
+        // }
+        //
+        // seq = 0;
+
+        for(var i = 0 ; i < l ; i++){
+            if( i > 2 ){
+                fileBuffer.splice( parseInt(seq) ,1);
+                limit_b = true;
+            }else{
+                seq++;
             }
-        });
+
+            console.log(i);
+
+        }
 
         $.each(fileBuffer, function(index, file){
             list_html += '<span data-t="'+index+'"> <img src="'+URL.createObjectURL(file)+'" style="width:100%;" /></span>';
@@ -93,7 +129,8 @@
         $('.add_img_list').html(list_html);
         $('.del_img_warp').html(del_html);
 
-        if(limit_msg == true) alert(ret_msg);
+        if(limit_b == true) alert(ret_msg);
+        // if(overlap_b == true) alert(overlap_msg+'[2]');
 
         if( $('.add_img').hasClass('first-pop') == true ) $('.add_img').removeClass('first-pop');
         $('.img_group').show();

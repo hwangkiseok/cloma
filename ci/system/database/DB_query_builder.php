@@ -2168,6 +2168,8 @@ abstract class CI_DB_query_builder extends CI_DB_driver {
 	 */
 	protected function _delete($table)
 	{
+	    log_message('A','DELETE FROM '.$table.$this->_compile_wh('qb_where').($this->qb_limit ? ' LIMIT '.$this->qb_limit : ''));
+
 		return 'DELETE FROM '.$table.$this->_compile_wh('qb_where')
 			.($this->qb_limit ? ' LIMIT '.$this->qb_limit : '');
 	}

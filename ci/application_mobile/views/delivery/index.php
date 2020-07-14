@@ -29,7 +29,6 @@
             <div class="clear"></div>
         </div>
 
-
         <div class="delivery_list">
 
             <div class="clear"></div>

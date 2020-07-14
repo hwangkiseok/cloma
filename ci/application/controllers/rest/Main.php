@@ -332,14 +332,20 @@ class Main extends REST_Controller
 
         }else if($top15_type == 3){ //최근 2주간 잘판린 상품
 
-            $addProductList = get_recently_product('',true);
-            if(empty($addProductList) == false){
-                foreach ($addProductList as $r) {
-                    $notin[] = $r['p_num'];
-                }
-            }
 
-            $e_limit    = $fix_cnt - count($addProductList);
+            /**
+             * @date 200630
+             * @modify 황기석
+             * @desc 이경림과장요청으로 최근본상품 제거
+             */
+//            $addProductList = get_recently_product('',true);
+//            if(empty($addProductList) == false){
+//                foreach ($addProductList as $r) {
+//                    $notin[] = $r['p_num'];
+//                }
+//            }
+
+            $e_limit    = $fix_cnt;// - count($addProductList);
 
             $aTop10Lists  = array();
 
@@ -348,7 +354,7 @@ class Main extends REST_Controller
                 $aInput = array();
                 $aInput['where']['sale_state']  =  'Y';
                 $aInput['where']['stock_state'] =  'Y';
-                $aInput['where']['not_pnum']    =  $notin;
+                //$aInput['where']['not_pnum']    =  $notin;
                 $aInput['orderby']              = ' p_termlimit_datetime1 DESC ';
                 $aTop10Lists_temp = $this->product_model->get_product_list($aInput , 0 , 50) ;
 
@@ -360,7 +366,7 @@ class Main extends REST_Controller
 
             }
 
-            $aTopTheme  = array_merge($addProductList,$aTop10Lists);
+            $aTopTheme  = $aTop10Lists;//array_merge($addProductList,$aTop10Lists);
 
             foreach ($aTopTheme as $r)  $notin[] = $r['p_num'];
 

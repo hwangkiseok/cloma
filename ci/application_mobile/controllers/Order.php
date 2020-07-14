@@ -102,6 +102,12 @@ class Order extends M_Controller
         $aSnsformOrderInfo  = getSnsformDeliveryInfo($aInput['trade_no']);
         $last_info          = self::chk_last_order($aInput['trade_no']);
 
+        $bAbleCode = self::able_req($aOrderInfo['status_cd'],$aInput['cancel_type']);
+        if($bAbleCode == false) {
+            alert('변경불가능 상태코드입니다.');
+            exit;
+        }
+
         $options = array('title' => '주문 '.$aInput['tit_str'] , 'top_type' => 'back');
         $this->_header($options);
 
@@ -136,14 +142,19 @@ class Order extends M_Controller
 
         $vacc_rules = '';
         $refund_rules = '';
-        
+        $exchange_rules = '';
+
         if( $this->input->post('payway_cd') == 3 && $this->input->post('status_cd') > 61 ){
             $vacc_rules = "|required";
         };
 
         if( $this->input->post('t') == '67' || $this->input->post('t') == '68' ){
             $refund_rules = '|required';
-        } 
+        }
+
+        if( $this->input->post('t') == '67' ){
+            $exchange_rules = '|required';
+        }
         
         $this->load->library('form_validation');
 
@@ -151,7 +162,8 @@ class Order extends M_Controller
         $set_rules_array = array(
             "trade_no" => array("field" => "trade_no", "label" => "주문번호", "rules" => "required|".$this->default_set_rules)
         ,   "cancel_gubun" => array("field" => "cancel_gubun", "label" => "취소사유", "rules" => "required|".$this->default_set_rules)
-        ,   "cancel_reason" => array("field" => "cancel_reason", "label" => "상세사유", "rules" => "required|".$this->default_set_rules)
+        ,   "cancel_reason" => array("field" => "cancel_reason", "label" => "상세사유", "rules" => $this->default_set_rules)
+        ,   "exchange_reason" => array("field" => "exchange_reason", "label" => "교환옵션", "rules" => $this->default_set_rules.$exchange_rules)
         ,   "account_holder" => array("field" => "account_holder", "label" => "환불 예금주", "rules" => $this->default_set_rules.$vacc_rules)
         ,   "account_bank" => array("field" => "account_bank", "label" => "환불 은행", "rules" => $this->default_set_rules.$vacc_rules)
         ,   "account_no" => array("field" => "account_no", "label" => "환불 계좌", "rules" => "numeric|".$this->default_set_rules.$vacc_rules)
@@ -176,6 +188,7 @@ class Order extends M_Controller
             $trade_no           = $this->input->post('trade_no', true);
             $cancel_gubun       = $this->input->post('cancel_gubun', true);
             $cancel_reason      = $this->input->post('cancel_reason', true);
+            $exchange_reason    = $this->input->post('exchange_reason', true);
             $account_holder     = $this->input->post('account_holder', true);
             $account_bank       = $this->input->post('account_bank', true);
             $account_no         = $this->input->post('account_no', true);
@@ -237,7 +250,7 @@ class Order extends M_Controller
                 $query_data['account_holder']  = $account_holder;
                 $query_data['account_bank']    = $account_bank;
                 $query_data['account_no']      = $account_no;
-
+                $query_data['exchange_reason']      = $exchange_reason;
                 $query_data['del_type']         = $del_type;
 
                 if(($after_status_cd == 66 || $after_status_cd == 68) && $isRefundView == true && $aOrderInfo['status_cd'] > 61){
@@ -596,8 +609,8 @@ class Order extends M_Controller
             else $p_name = $aOrderInfo[0]['p_name'];
 
             $push_data  = array();
-            if($buy_type == 'cart') $push_data['title'] = "[{$p_name}] 외 {$nOrderInfo}건의 결제가 완료되었습니다.";
-            else $push_data['title'] = "[{$p_name}]의 결제가 완료되었습니다.";;
+            if($buy_type == 'cart') $push_data['title'] = "[{$p_name}] 외 {$nOrderInfo}건의 주문이 완료되었습니다.";
+            else $push_data['title'] = "[{$p_name}]의 주문이 완료되었습니다.";;
             $push_data['body']  = "최대한 빠르게 배송해 드릴게요!";
             $push_data['page']  = "delivery";
 

@@ -114,7 +114,7 @@
 
                 <?}else{ ?>
 
-                    <?if($_SESSION['session_m_num'] == 55){ $cancel_class = 'popCancel'; } else { $cancel_class = 'popCancel'; }?>
+                    <? $cancel_class = 'popCancel2';//if($_SESSION['session_m_num'] == 74 || $_SESSION['session_m_num'] == 55){ $cancel_class = 'popCancel2'; } else { $cancel_class = 'popCancel'; }?>
 
                     <? if($aSnsformOrderInfo['status_cd'] == '61' ){?>
                         <p style="line-height: 34px;vertical-align: middle">
@@ -131,7 +131,13 @@
                         <p style="line-height: 34px;vertical-align: middle">
                             <?if($aSnsformOrderInfo['del_comp_cd'] == '04'){?>
                                 <span class="fl"> 배송중 </span>
-                                <span class="fr"> <button class="btn btn-border-purple zs-cp oudtside" data-invoice_no="<?=$aSnsformOrderInfo['invoice_no']?>" data-company="<?=$this->config->item($aSnsformOrderInfo['del_comp_cd'],'del_comp_cd')?>">배송조회</button> </span>
+                                <span class="fr">
+                                    <button class="btn btn-border-purple zs-cp oudtside" data-invoice_no="<?=$aSnsformOrderInfo['invoice_no']?>" data-company="<?=$this->config->item($aSnsformOrderInfo['del_comp_cd'],'del_comp_cd')?>">배송조회</button>
+                                    <!--
+                                    <button class="btn btn-border-blue zs-cp <?=$cancel_class?>" data-type="67">교환신청</button>
+                                    <button class="btn btn-border-blue zs-cp <?=$cancel_class?>" data-type="68">반품신청</button>
+                                    -->
+                                </span>
                             <?}else{?>
                                 <span class="fl"> <?=$this->config->item($aSnsformOrderInfo['del_comp_cd'],'del_comp_cd')?> </span>
                                 <span class="fr"> <button class="btn btn-border-purple zs-cp oudtside no_font" id="copyClipboard" data-clipboard-text="<?=$aSnsformOrderInfo['invoice_no']?>" data-invoice_no="<?=$aSnsformOrderInfo['invoice_no']?>" data-company="<?=$this->config->item($aSnsformOrderInfo['del_comp_cd'],'del_comp_cd')?>"><?=$aSnsformOrderInfo['invoice_no']?></button> </span>

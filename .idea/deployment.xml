@@ -8,7 +8,6 @@
             <mapping deploy="/" local="$PROJECT_DIR$" web="/" />
           </mappings>
           <excludedPaths>
-            <excludedPath path="/log" />
             <excludedPath path="/www/uploads/app_push" />
             <excludedPath path="/www/uploads/app_splash" />
             <excludedPath path="/www/uploads/category_md" />

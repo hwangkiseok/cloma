@@ -1634,12 +1634,16 @@ function send_app_push_log($m_num, $push_data, $isCompl_send = false){
 
     $CI =& get_instance();
 
-    $sql     = "SELECT m_regid FROM member_tb WHERE m_num = '{$m_num}';";
+    $sql     = "SELECT m_regid FROM member_tb WHERE m_num = '{$m_num}' AND m_shopping_push_yn = 'Y'; ";
     $oResult = $CI->db->query($sql);
     $aResult = $oResult->row_array();
 
-    //푸시발송
-    $resp = send_app_push($aResult['m_regid'],$push_data );
+    if(empty($aResult) == false){
+        //푸시발송
+        $resp = send_app_push($aResult['m_regid'],$push_data );
+    }else{
+        $resp['success'] = true;
+    }
 
     if($resp['success'] == true || $isCompl_send == true){
         $sql = "INSERT INTO noti_tb
@@ -1699,7 +1703,9 @@ function send_app_push($regid, $push_data=array()) {
     $arr['data']['title']   = $push_data['title'];  //제목
     $arr['data']['body']    = $push_data['body'];    //내용
     $arr['data']['page']    = $push_data['page'];   //내용
-    if(empty($push_data['seq']) == false) $arr['data']['seq']    = $push_data['seq'];   //내용
+    if(empty($push_data['seq']) == false) $arr['data']['seq']    = $push_data['seq'];   //상품번호
+    if(empty($push_data['app_push_id']) == false) $arr['data']['app_push_id']    = $push_data['app_push_id'];   //ap_num 통계를 위한
+
     $arr['data']['badge']   = 'Y';        //뱃지올리기여부(Y/N)
     $arr['priority']        = "high";     //메시지의 우선순위(normal | high)
     $arr['registration_ids'] = is_array($regid) ? $regid : array($regid);
@@ -2187,11 +2193,7 @@ function getCurrency(){
  * @return boolean
  */
 function zsDebug(){//서울내
-    $aChkIp = array('121.131.27.155','183.96.170.17','221.146.194.182','118.33.75.76','211.217.209.180');
-    if(in_array($_SERVER['REMOTE_ADDR'],$aChkIp)){ return true; }else{ return false; }
-}
-function zsDebug_a(){ //창원&서울공유
-    $aChkIp = array('121.131.27.155','220.84.224.106');
+    $aChkIp = array('106.243.140.135');
     if(in_array($_SERVER['REMOTE_ADDR'],$aChkIp)){ return true; }else{ return false; }
 }
 function zsView($params,$chkExit = false){
@@ -2201,6 +2203,8 @@ function zsView($params,$chkExit = false){
     if($chkExit == true){ exit; }
 }
 function ph_slice($ph_no){
+
+    if(empty($ph_no) == true) return '';
 
     $ph_no = str_replace('-','',$ph_no);
 

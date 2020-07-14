@@ -121,6 +121,7 @@ class order_model extends M_Model {
         $sql = "SELECT 
                    B.*
                   ,A.item_name
+                  ,A.item_no
                   ,A.partner_buyer_id
                   ,A.buyer_id
                   ,A.payway_cd
@@ -166,6 +167,7 @@ class order_model extends M_Model {
         $sql = "SELECT 
                     B.*
                     ,A.item_name
+                    ,A.item_no
                     ,A.partner_buyer_id
                     ,A.buyer_id
                     ,A.payway_cd
@@ -178,9 +180,10 @@ class order_model extends M_Model {
                     ,C.p_today_image
                     ,C.p_name
                     , A.trade_no
-                    
+                    , A.check_date
                     , A.buyer_name                                                                                                                                                                     
                     , A.buyer_hhp
+                    , A.basket_yn
                     
                      
                     , A.receiver_name                                                                                                                                                                     

@@ -87,7 +87,7 @@ class Board_qna_model extends A_Model {
                 isset($query_array['where']['kwd']) && !empty($query_array['where']['kwd'])
             ) {
                 if ($query_array['where']['kfd'] == 'all') {
-                    $where_query .= "and (bq_content like '%" . $query_array['where']['kwd'] . "%' or m_loginid like '%" . $query_array['where']['kwd'] . "%' or bq_member_num like '%" . $query_array['where']['kwd'] . "%') ";
+                    $where_query .= "and (bq_content like '%" . $query_array['where']['kwd'] . "%' or m_nickname like '%" . $query_array['where']['kwd'] . "%' or bq_member_num like '%" . $query_array['where']['kwd'] . "%') ";
                 } else {
                     $where_query .= "and " . $query_array['where']['kfd'] . " like '%" . $this->db->escape_str($query_array['where']['kwd']) . "%' ";
                 }
@@ -135,7 +135,6 @@ class Board_qna_model extends A_Model {
             $query .= $where_query;
             $query .= $order_query;
             $query .= $limit_query;
-
             return $this->db->query($query)->result_array();
         }
     }//end of get_board_qna_list()

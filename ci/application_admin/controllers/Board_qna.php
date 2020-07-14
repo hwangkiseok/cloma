@@ -217,6 +217,7 @@ class Board_qna extends A_Controller {
             if( $this->form_validation->run() === true ) {
                 $bq_num = $this->input->post('bq_num', true);
                 $bq_answer_content = $this->input->post('bq_answer_content');
+                $send_push = $this->input->post('send_push');
                 //$push_yn = $this->input->post('push_yn');
 
                 if( empty($form_error_array) ) {
@@ -234,7 +235,7 @@ class Board_qna extends A_Controller {
                         //if($push_yn == 'Y' || $board_qna_row['bq_answerdatetime'] == '') {
 
                         // 첫 답변일때 푸시 발송
-                        if($board_qna_row['bq_answerdatetime'] == '') {
+                        if($board_qna_row['bq_answerdatetime'] == '' || $send_push == 'Y') {
 
                             //앱 푸시 발송
                             if (!empty($board_qna_row['m_regid'])) {

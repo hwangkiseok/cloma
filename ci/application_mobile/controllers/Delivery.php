@@ -12,6 +12,9 @@ class Delivery extends M_Controller
         parent::__construct();
         member_login_check();
 
+
+
+
     }//end of __construct()
     private function _list_req(){
 
@@ -133,6 +136,11 @@ class Delivery extends M_Controller
         );
 
         $delivery_list = getSnsformDeliveryLists($aInput);
+
+
+        if(zsDebug()){
+//            zsView($delivery_list);
+        }
 
         $tno_arr = array();
         $ret = array();

@@ -86,10 +86,9 @@ class Comment_model extends A_Model {
         ) {
             if( $query_array['where']['kfd'] == 'all' ) {
 
-                $where_query .= "or product_tb.p_name like '%" . $this->db->escape_str($query_array['where']['kwd']) . "%' ";
+                $where_query .= "and ( product_tb.p_name like '%" . $this->db->escape_str($query_array['where']['kwd']) . "%' ";
                 $where_query .= "or comment_tb.cmt_content like '%" . $this->db->escape_str($query_array['where']['kwd']) . "%' ";
                 $where_query .= "or comment_tb.cmt_name like '%" . $this->db->escape_str($query_array['where']['kwd']) . "%' ";
-                $where_query .= "or comment_tb.cmt_reply_member_num like '%" . $this->db->escape_str($query_array['where']['kwd']) . "%' ";
                 $where_query .= "or comment_tb.cmt_member_num like '%" . $this->db->escape_str($query_array['where']['kwd']) . "%' ) ";
 
             }  else {
@@ -105,6 +104,9 @@ class Comment_model extends A_Model {
                 }
             }
         }
+
+
+
 
         //order by 절
         if( isset($query_array['orderby']) && !empty($query_array['orderby']) ) {
@@ -134,7 +136,7 @@ class Comment_model extends A_Model {
             $query .= $from_query;
             $query .= $where_query;
 
-            //echo $query;
+//            if(zsDebug()) zsView($query);exit;
             return $this->db->query($query)->row_array('cnt');
         }
         //데이터 추출

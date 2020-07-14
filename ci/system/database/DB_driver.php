@@ -1511,15 +1511,22 @@ abstract class CI_DB_driver {
 	 */
 	protected function _update($table, $values)
 	{
+
+	    $search_data = array('`p_view_count`','`p_view_today_count`','`p_view_3day_count`');
+	    $write = false;
+
 		foreach ($values as $key => $val)
 		{
 			$valstr[] = $key.' = '.$val;
+			if(in_array($key , $search_data) == false) $write = true;
 		}
 
-		log_message('A','UPDATE '.$table.' SET'.implode(', ', $valstr)
-            .$this->_compile_wh('qb_where')
-            .$this->_compile_order_by()
-            .($this->qb_limit ? ' LIMIT '.$this->qb_limit : ''));
+		if($write == true){
+            log_message('A','UPDATE '.$table.' SET'.implode(', ', $valstr)
+                .$this->_compile_wh('qb_where')
+                .$this->_compile_order_by()
+                .($this->qb_limit ? ' LIMIT '.$this->qb_limit : ''));
+        }
 
         return 'UPDATE '.$table.' SET '.implode(', ', $valstr)
 			.$this->_compile_wh('qb_where')

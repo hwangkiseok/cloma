@@ -64,6 +64,22 @@ class Cron extends A_Controller {
         }
     }
 
+    //메인페이지 상품노출 proc
+    public function main_product_v3($debug){
+        if($this->curr_time_i % 15 == 0) { //15분마다 처리
+            $this->cron_model->proc_main_product_v3($debug);
+        }
+    }
+
+    //메인페이지 상품노출 proc
+    public function main_product_v4($debug){
+        if($this->curr_time_i % 15 == 0) { //15분마다 처리
+            $this->cron_model->proc_main_product_v4($debug);
+        }
+    }
+
+
+
     //최근 30일 판매수량
     public function product_static_month_order($debug){
         $this->cron_model->product_static_month_order($debug);
@@ -166,5 +182,49 @@ class Cron extends A_Controller {
         }//end of foreach()
 
     }//end of product_salestate_update()
+
+    /**
+     * 오래된 데이터 삭제
+     * 장바구니 : 3개월 complete
+     * 알림메시지 noti : 3개월 complete
+     * log 파일 : 기간체크 complete
+     * 홈30 상품 : 3개월 complete
+     **/
+    public function clear_data() {
+
+        //별도 cron
+        //log 파일삭제 : 0 5 * * * sudo find /data/shop1/log/ -name '*.php' -mtime +60
+
+        { //홈30 상품
+            $sql = "SELECT * FROM `main_product_tb` WHERE reg_date < DATE_FORMAT(DATE_ADD(NOW(), INTERVAL - 90 DAY) , '%Y%m%d%H%i%s');";
+            $count = $this->db->query($sql)->num_rows();
+
+            if($count > 0){
+                $sql = "DELETE FROM `main_product_tb` WHERE reg_date < DATE_FORMAT(DATE_ADD(NOW(), INTERVAL - 90 DAY) , '%Y%m%d%H%i%s');";
+                $this->db->query($sql);
+            }
+        }
+
+        { //알림메시지 noti
+            $sql = "SELECT * FROM `noti_tb` WHERE reg_date < DATE_FORMAT(DATE_ADD(NOW(), INTERVAL - 90 DAY) , '%Y%m%d%H%i%s');";
+            $count = $this->db->query($sql)->num_rows();
+
+            if($count > 0){
+                $sql = "DELETE FROM `noti_tb` WHERE reg_date < DATE_FORMAT(DATE_ADD(NOW(), INTERVAL - 90 DAY) , '%Y%m%d%H%i%s');";
+                $this->db->query($sql);
+            }
+        }
+
+        { //장바구니
+            $sql = "SELECT * FROM `cart_tb` WHERE reg_date < DATE_FORMAT(DATE_ADD(NOW(), INTERVAL - 90 DAY) , '%Y%m%d%H%i%s');";
+            $count = $this->db->query($sql)->num_rows();
+
+            if($count > 0){
+                $sql = "DELETE FROM `cart_tb` WHERE reg_date < DATE_FORMAT(DATE_ADD(NOW(), INTERVAL - 90 DAY) , '%Y%m%d%H%i%s');";
+                $this->db->query($sql);
+            }
+        }
+
+    }
 
 }//end of class Cron

@@ -393,11 +393,11 @@ function alert($msg='', $url='') {
     }
     else {
 
-        if(is_app()){
-            echo " if(appIsNewWin()){ appWinClose(); }";
-        }else{
+//        if(is_app()){
+//            echo " if(appIsNewWin()){ appWinClose(); }";
+//        }else{
             echo "history.go(-1);";
-        }
+//        }
 
     }
 
@@ -3158,12 +3158,17 @@ function send_app_push_log($m_num, $push_data){
 
     $CI =& get_instance();
 
-    $sql     = "SELECT m_regid FROM member_tb WHERE m_num = '{$m_num}';";
+    $sql     = "SELECT m_regid FROM member_tb WHERE m_num = '{$m_num}' AND m_shopping_push_yn = 'Y'; ";
     $oResult = $CI->db->query($sql);
     $aResult = $oResult->row_array();
 
-    //푸시발송
-    $resp = send_app_push($aResult['m_regid'],$push_data );
+    if(empty($aResult) == false){
+        //푸시발송
+        $resp = send_app_push($aResult['m_regid'],$push_data );
+    }else{
+        $resp['success'] = true;
+    }
+
 
     if($resp['success'] == true){
         $sql = "INSERT INTO noti_tb
@@ -3251,7 +3256,7 @@ function send_app_push($regid, $push_data=array()) {
  * @return boolean
  */
 function zsDebug(){//서울내
-    $aChkIp = array( "106.243.140.135" );
+    $aChkIp = array('106.243.140.135');
     if(in_array($_SERVER['REMOTE_ADDR'],$aChkIp)){ return true; }else{ return false; }
 }
 
@@ -3266,6 +3271,8 @@ function zsView($params,$chkExit = false){
     if($chkExit == true){ exit; }
 }
 function ph_slice($ph_no){
+
+    if(empty($ph_no) == true) return '';
 
     $ph_no = onlynumber($ph_no);
 

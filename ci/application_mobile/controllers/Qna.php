@@ -67,7 +67,7 @@ class Qna extends M_Controller
 
         $options = array('title' => '1:1문의' , 'top_type' => 'back');
         $this->_header($options);
-        if(zsDebug()){
+        if(1){
             $viewfile= '/qna/index_v2';
         }else{
             $viewfile= '/qna/index';
@@ -86,7 +86,7 @@ class Qna extends M_Controller
 
     public function qna_insert_pop(){
 
-        if(zsDebug()){
+        if(1){
             $this->load->view('/qna/pop_v2', array( ));
         }else{
             $this->load->view('/qna/pop', array( ));
@@ -121,7 +121,7 @@ class Qna extends M_Controller
 
         $view_file = '/qna/ajax_list';
 
-        if(zsDebug()){
+        if(1){
             $view_file = '/qna/ajax_list_v2';
         }
 
@@ -199,6 +199,14 @@ class Qna extends M_Controller
             $query_data = array();
             $query_data['bq_member_num'] = $_SESSION['session_m_num'];
             $query_data['bq_category'] = $bq_category;
+
+            /**
+             * @date 200708
+             * @modify 황기석
+             * @desc 특수문자(이모지) 제거
+             */
+            $bq_content = preg_replace("/\xF0[\x90-\xBF][\x80-\xBF]{2}|[\xF1-\xF3][\x80-\xBF]{3}|\xF4[\x80-\x8F][\x80-\xBF]{2}/", "", $bq_content);
+            $bq_content = preg_replace("/[ #\&\+\-%@=\/\\\:;,\.'\"\^`~\_|\!\?\*$#<>()\[\]\{\}]/i", "", $bq_content);
             $query_data['bq_content'] = $bq_content;
 
             if( $this->board_qna_model->get_overlapl_board_qna($query_data) === true ) {
@@ -225,8 +233,6 @@ class Qna extends M_Controller
                             }
                         }
                     }
-
-                    log_message('A',json_encode_no_slashes($_FILES));
 
                     unset($_FILES['qna_img']);
 
@@ -258,8 +264,6 @@ class Qna extends M_Controller
                     } // foreach $_FILES End
 
                 } // IF $_FILES count End
-
-
 
                 //등록
                 $query_data = array();

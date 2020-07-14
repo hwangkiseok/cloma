@@ -34,7 +34,11 @@ class M_Controller extends CI_Controller {
                 'common'
             );
 
-            if( in_array($this->router->class,$allow_c) == true || zsDebug() == false ) header('Location: https://m.cloma.co.kr/intro.php' );
+            if( in_array($this->router->class,$allow_c) == false ) {
+                if(zsDebug() == false){
+                    header('Location: https://m.cloma.co.kr/intro.php');
+                }
+            }// || zsDebug() == false ) header('Location: https://m.cloma.co.kr/intro.php' );
         }
 
 //        if(1){ //benchmark

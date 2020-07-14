@@ -5,7 +5,7 @@
 
 <div class="container-fluid">
     <div class="row">
-        <h4 class="page-header">APP 메인팝업 관리 > 목록 <span style="color:red"></span></h4>
+        <h4 class="page-header">광고팝업 관리 > 목록 <span style="color:red"></span></h4>
     </div>
 
     <div class="row">

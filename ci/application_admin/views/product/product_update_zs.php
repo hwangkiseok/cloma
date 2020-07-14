@@ -14,7 +14,7 @@
 
 <div class="container-fluid">
     <div class="row">
-        <h4 class="page-header">상품관리 > 수정 DEV</h4>
+        <h4 class="page-header">상품관리 > 수정</h4>
     </div>
     <div class="row">
         <div class="col-xs-12">
@@ -23,7 +23,6 @@
 
                     <form name="main_form" id="main_form" method="post" class="form-horizontal" role="form" action="<?php echo $this->page_link->update_proc; ?>"  enctype="multipart/form-data">
                         <input type="hidden" name="p_num" value="<?php echo $product_row['p_num']; ?>" />
-                        <input type="hidden" name="opt_token" value="<?=$opt_token?>">
 
                         <div class="form-group form-group-sm">
 
@@ -58,7 +57,18 @@
                                 <label class="col-sm-2 control-label">카테고리 <span class="txt-danger">*</span></label>
                                 <div class="col-sm-8">
                                     <div id="field_p_cate1">
-                                        <?php echo get_input_radio('p_cate1', $aCategoryLists , $product_row['p_cate1']); ?>
+
+                                        <?php
+                                        $p_cate1_arr = explode(',',$product_row['p_cate1']);
+                                        foreach($aCategoryLists as $name => $text) {
+                                            $checked = in_array($name , $p_cate1_arr) == true ? 'checked' : '';
+                                            ?>
+                                            <label>
+                                                <input type="checkbox" name="p_cate1[]" value="<?php echo $name; ?>" <?php echo $checked ; ?> /> <?php echo $text; ?>
+                                            </label>
+                                        <?php } ?>
+
+                                        <?php// echo get_input_radio('p_cate1', $aCategoryLists , $product_row['p_cate1']); ?>
                                     </div>
                                 </div>
                             </div>
@@ -344,34 +354,6 @@
                             </div>
 
                             <hr />
-
-                            <div class="form-group form-group-sm">
-                                <label class="col-sm-2 control-label">옵션 여부 <span class="txt-danger">*</span></label>
-                                <div class="col-sm-10">
-                                    <?php echo get_input_radio('p_option_use', $this->config->item('product_option_use_yn'), $product_row['p_option_use'], $this->config->item('product_option_use_yn_text_color')); ?>
-                                </div>
-                            </div>
-                            <div class="form-group form-group-sm option_section <?if($product_row['p_option_use'] != 'Y'){?>hidden<?}?>">
-                                <label class="col-sm-2 control-label">옵션 타입</label>
-                                <div class="col-sm-10">
-                                    <?php echo get_input_radio('p_option_type', $this->config->item('product_option_type'), $product_row['p_option_type']); ?>
-                                </div>
-                            </div>
-                            <div class="form-group form-group-sm option_section <?if($product_row['p_option_use'] != 'Y'){?>hidden<?}?>">
-                                <label class="col-sm-2 control-label">옵션 차수</label>
-                                <div class="col-sm-10">
-                                    <?php echo get_input_radio('p_option_depth', $this->config->item('product_option_depth'), $product_row['p_option_depth']); ?>
-                                </div>
-                            </div>
-                            <div class="form-group form-group-sm option_section <?if($product_row['p_option_use'] != 'Y'){?>hidden<?}?>">
-                                <label class="col-sm-2 control-label">옵션 설정</label>
-                                <div class="col-sm-10">
-                                    <button class="btn btn-sm btn-info" type="button" onclick="openOptionSet();">옵션열기</button>
-                                </div>
-                            </div>
-
-                            <hr />
-
 
                             <div class="form-group form-group-sm">
                                 <label class="col-sm-2 control-label">공급가격(원가) <span class="txt-danger">*</span></label>
@@ -706,9 +688,8 @@
 <script src="/plugins/datepicker/bootstrap-datepicker.js?v=<?php echo filemtime($this->input->server("DOCUMENT_ROOT") . "/plugins/datepicker/bootstrap-datepicker.js"); ?>" charset="utf-8"></script>
 <script src="/plugins/datepicker/locales/bootstrap-datepicker.kr.js?v=<?php echo filemtime($this->input->server("DOCUMENT_ROOT") . "/plugins/datepicker/locales/bootstrap-datepicker.kr.js"); ?>" charset="utf-8"></script>
 <script src="/plugins/smarteditor2/js/HuskyEZCreator.js?v=<?php echo filemtime($this->input->server("DOCUMENT_ROOT") . "/plugins/smarteditor2/js/HuskyEZCreator.js"); ?>" charset="utf-8"></script>
-<?=link_src_html("/js/page/product_admin_option.js", "js");?>
 <?=link_src_html("/js/page/product_admin.js", "js");?>
-
+<?=link_src_html("/js/page/product_admin_option.js", "js");?>
 
 <script type="text/javascript">
 

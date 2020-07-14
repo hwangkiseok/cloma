@@ -195,9 +195,10 @@
 
     <div class="row">
         <div class="row mgb10">
-            <!--<div class="col-md-2 pull-left">
-                <button type="button" class="btn btn-primary btn-sm" onclick="product_order_update();">진열순서변경 (인기상품전용)</button>
-            </div>-->
+            <div class="col-md-2 pull-left">
+<!--                <button type="button" class="btn btn-primary btn-sm" onclick="product_order_update();">진열순서변경 (인기상품전용)</button>-->
+                <button type="button" class="btn btn-primary btn-sm" onclick="product_stock_chk();">재고 관리상픔으로 등록</button>
+            </div>
             <div class="col-md-2 pull-right">
                 <select id="list_per_page" class="form-control input-sm">
                     <?php echo get_select_option("", $this->config->item('list_per_page'), $list_per_page); ?>
@@ -214,6 +215,38 @@
 <script src="/plugins/datepicker/locales/bootstrap-datepicker.kr.js?v=<?php echo filemtime($this->input->server("DOCUMENT_ROOT") . "/plugins/datepicker/locales/bootstrap-datepicker.kr.js"); ?>" charset="utf-8"></script>
 
 <script>
+
+
+    function product_stock_chk(){
+
+        if( $('input[name="p_num[]"]:checked').length < 1 ){
+            alert('재고상품으로 등록할 상품을 선택해주세요.');
+            return false;
+        }
+
+        var arr = [];
+
+        $('input[name="p_num[]"]:checked').each(function(k,r){
+            arr.push($(r).val());
+        });
+
+        $.ajax({
+            url: '/product/stock_chk/',
+            type: 'post',
+            data : {p_num : arr},
+            dataType: 'json',
+            success: function (result) {
+
+                if(result.success) { $('input[name="p_num[]"]').prop('checked',false) }
+                if(result.msg) { alert(result.msg); }
+
+            }
+        });
+
+    }
+
+
+
 
     /**
      * 정렬 submit

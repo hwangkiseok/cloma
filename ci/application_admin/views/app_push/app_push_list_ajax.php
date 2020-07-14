@@ -67,6 +67,8 @@
             if( !($grp_no % 2) ) {
                 $bg_class = ' bg_gray ';
             }
+
+
             ?>
 
             <tr role="row" class="<?=$bg_class;?><?=$border_class;?>">
@@ -90,7 +92,10 @@
                 <td style="width:100px;word-break:break-all;">
 
                     <?php if( preg_match("/\/bit.ly\//i", $row->ap_target_url) == true) { //비틀리쇼트너인 경우 ) : ?>
-                        <button type="button" class="btn btn-xs btn-default" onclick="window.open('<?=$row->ap_target_url; ?>');">상품확인</button>
+
+
+                        <button type="button" class="btn btn-xs btn-default" onclick="product_detail_win('<?php echo $row->ap_pnum; ?>')">상품확인</button>
+                        <!--<button type="button" class="btn btn-xs btn-default" onclick="window.open('<?=$row->ap_target_url; ?>');">상품확인</button>-->
                         <br><a href="#none" onclick="new_win_open('<?php echo $row->ap_target_url; ?>+', '', '800', '600');" target="_blank"><i class="fa fa-bar-chart" aria-hidden="true"></i></a>
                     <?php }else {?>
                         <button type="button" class="btn btn-xs btn-default" onclick="window.open('<?php echo $this->config->item('default_http').$row->ap_target_url; ?>');">상품확인</button>

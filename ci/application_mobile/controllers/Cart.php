@@ -59,6 +59,52 @@ class Cart extends M_Controller
 //        ));
 //
 //        $cart_list              = $this->cart_model->get_cart_list($query_data, $page_result['start'], $page_result['limit']);
+
+        {
+
+            $cart_list = $this->cart_model->get_cart_list($query_data);
+
+            $isWarningMsg = false;
+
+            foreach ($cart_list as $k => $r) {
+
+                $isIssue                = false;
+                $option_info            = json_decode($r['option_info'],true);
+                $option_name            = explode(' | ',$option_info['option_name']);
+                $product_option_info    = json_decode($r['product_option_info'],true);
+
+                foreach ($product_option_info as $rr) {
+
+                    if(     $option_name[0] == $rr['option_depth1']
+                        &&  $option_name[1] == $rr['option_depth2']
+                        &&  $option_name[2] == $rr['option_depth3']
+                    ){
+
+                        if( $option_info['option_count'] > $rr['option_count'] ) { //재고수량 보다 구매수량이 많은경우 강제로 재고수량만큼 변경
+                            $option_info['option_count'] = $rr['option_count'];
+                            $isIssue        = true; //처리를 위한 bloolean
+                            $isWarningMsg   = true; //toast를 위한 boolean
+                        }
+
+                    }
+
+                }
+
+                if($isIssue == true){
+
+                    $renew_option_info  = json_encode($option_info,JSON_UNESCAPED_UNICODE);
+                    $query_array        = array(
+                        'option_info'   => $renew_option_info
+                    ,   'mod_date'      => date('YmdHis')
+                    );
+                    $this->cart_model->publicUpdate('cart_tb',$query_array,array('cart_id',$r['cart_id']));
+
+                }
+
+            }
+
+        }
+
         $cart_list              = $this->cart_model->get_cart_list($query_data);
         $aLastOrder             = $this->order_model->get_last_order();
 
@@ -83,7 +129,9 @@ class Cart extends M_Controller
             'aInput'            => $aInput,
             'target_url'        => $this->config->item('prefix_cart_url'),
             'target_url2'       => $this->config->item('prefix_order_url'),
-            'aLastOrder'        => $aLastOrder
+            'aLastOrder'        => $aLastOrder,
+            'isWarningMsg'      => $isWarningMsg
+
         ) );
 
         $this->_footer();
@@ -179,21 +227,46 @@ class Cart extends M_Controller
 
         foreach ($aCartLists as $k => $r) {
 
-            $aCartInfo    = $this->cart_model->get_cart_row($r);
-            $aProductInfo = $this->product_model->get_product_row(array('p_order_code' => $aCartInfo['p_order_code']));
-
+            $aCartInfo          = $this->cart_model->get_cart_row(array('cart_id' => $r['cart_id']));
+            $aProductInfo       = $this->product_model->get_product_row(array('p_order_code' => $aCartInfo['p_order_code']));
             $option_info_arr    = json_decode($aCartInfo['option_info'],true);
 
             if($option_info_arr['option_count'] != $r['cart_count']){
+
+                { //최대구매수량 / 최소구매수량 제한
+
+                    $aCartList = $this->cart_model->get_cart_list(array('where' => array('p_order_code' => $aCartInfo['p_order_code'])));
+                    $tot_cnt = $r['cart_count'];
+                    foreach ($aCartList as $rr) {
+                        if($r['cart_id'] != $rr['cart_id']){
+                            $aCartListOption     = json_decode($rr['option_info'],true);
+                            $tot_cnt            += (int)$aCartListOption['option_count'];
+                        }
+                    }
+
+                    if( $aCartInfo['buy_max_cnt'] < $tot_cnt && $aCartInfo['buy_max_cnt'] > 0 ){ //최대구매수량
+                        result_echo_json(get_status_code('error'), "최대 구매수량을 초과하였습니다 (최대 : ".number_format($aCartInfo['buy_max_cnt'])."개)", true);
+                        exit;
+                    }else if( $aCartInfo['buy_min_cnt'] > $tot_cnt && $aCartInfo['buy_min_cnt'] > 0 ) {//최소구매수량
+                        result_echo_json(get_status_code('error'), "최소 구매수량보다 많아야합니다 (최소 : ".number_format($aCartInfo['buy_min_cnt'])."개)", true);
+                        exit;
+                    }
+
+                }
+
                 $option_info_arr['option_count'] = (int)$r['cart_count'];
                 $option_info_json = json_encode($option_info_arr,JSON_UNESCAPED_UNICODE);
 
-                if( self::chk_stock($aCartInfo ,$option_info_arr) == true ) {//재고량 오버
-                    result_echo_json(get_status_code('error'), "{$aProductInfo['p_name']} {$option_info_arr['option_name']} 상품의 재고가 부족합니다 !", true);
+                $ret1 = self::chk_stock($aCartInfo ,$option_info_arr); //재고량 체크
+
+                if($ret1 == true){
+
+                    //[상품명] [옵션]의 재고가 부족해 수량을 추가할 수 없습니다.
+                    result_echo_json(get_status_code('error'), "{$aProductInfo['p_name']} [{$option_info_arr['option_name']}] 의 재고가 부족해 수량을 추가할 수 없습니다.", true);
                     exit;
-                }else{
-                    $this->cart_model->publicUpdate('cart_tb',array('option_info' => $option_info_json) , array('cart_id',$r['cart_id']));
-                };
+                }
+
+                $this->cart_model->publicUpdate('cart_tb',array('option_info' => $option_info_json) , array('cart_id',$r['cart_id']));
 
             }
 

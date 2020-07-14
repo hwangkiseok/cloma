@@ -279,7 +279,6 @@ class Docs extends W_Controller {
      *
      * @ApiDescription(section="Comment", description="댓글삭제")
      * @ApiMethod(type="delete")
-     * @ApiRoute(name="/rest/comment/delete/")
      * @ApiParams(name="cmt_num", type="integer", nullable=false, description="seq")
      *
      * @ApiReturn(type="object", sample="
@@ -942,6 +941,26 @@ class Docs extends W_Controller {
      */
     public function referer_put() {}
 
-
+    /**
+     * 푸시클릭 카운팅 > put
+     *
+     * @ApiDescription(section="common", description="푸시클릭 카운팅")
+     * @ApiMethod(type="put")
+     * @ApiRoute(name="/rest/common/push/")
+     * @ApiParams(name="app_push_id", type="integer", nullable=false, description="푸시 식별값")
+     *
+     * @ApiReturn(type="object", sample="
+    {
+    'status': '000',
+    'message': '',
+    'message_type': '',
+    'error_data': '',
+    'data' : '',
+    'goUrl': '',
+    'exit': true
+    }
+     * ")
+     */
+    public function push_put() {}
 
 }

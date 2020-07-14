@@ -14,7 +14,7 @@
             <label>주소</label>
             <input type="hidden" name="zipcd" value="" />
             <input type="hidden" name="pop_jibun" value="" />
-            <input type="text" name="pop_road" placeholder="도로명, 건물명, 번지 입력 검색" value="" readonly style="color: #999;"  />
+            <input type="text" name="pop_road" placeholder="도로명, 건물명, 번지 입력 검색" value="" readonly style="color: #999;" class="go_srh_view"  />
             <input type="text" name="pop_road_detail" placeholder="상세주소를 입력하세요" value="" style="margin-top: 4px;display: none;"  />
             <i class="go_srh_view"></i>
         </div>

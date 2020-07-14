@@ -94,7 +94,7 @@ class Product_model extends W_Model {
         }
 
         if(isset($query_array['where']['ctgr']) && !empty($query_array['where']['ctgr'])){
-            $where_query .= " AND FIND_IN_SET(p_cate1, '{$query_array['where']['ctgr']}') ";
+            $where_query .= " AND FIND_IN_SET('{$query_array['where']['ctgr']}',p_cate1) ";
         }
 
         //order by 절

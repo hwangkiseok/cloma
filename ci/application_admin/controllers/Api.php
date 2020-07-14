@@ -299,6 +299,9 @@ class Api extends A_Controller {
         $aData = json_decode($data,true);
         $this->load->library('form_validation');
 
+        $update_order_info = false;
+
+
         foreach ($aData as $k => $r) {
 
             unset($_POST);
@@ -467,11 +470,16 @@ class Api extends A_Controller {
                     //--------------------------------------------------------------------------- 판매수량 갱신
 
                     //--------------------------------------------------------------------------- 주문정보에 있는 이름/연락처 갱신
-                    $aInput = array(
-                        'm_order_phone'  => $aSnsformOrderInfo['buyer_hhp']
-                    ,   'm_order_name'   => $aSnsformOrderInfo['buyer_name']
-                    );
-                    $this->snsform_model->publicUpdate('member_tb',$aInput, array('m_num' , $aSnsformOrderInfo['partner_buyer_id'])) ;
+
+                    if($update_order_info == false) {
+                        $aInput = array(
+                            'm_order_phone' => $aSnsformOrderInfo['buyer_hhp']
+                        ,   'm_order_name'  => $aSnsformOrderInfo['buyer_name']
+                        );
+                        $this->snsform_model->publicUpdate('member_tb', $aInput, array('m_num', $aSnsformOrderInfo['partner_buyer_id']));
+                        $update_order_info = true;
+                    }
+
                     //---------------------------------------------------------------------------주문정보에 있는 이름/연락처 갱신
 
 
@@ -487,6 +495,7 @@ class Api extends A_Controller {
                     $bResult = $this->snsform_model->publicInsert('snsform_order_tb',$aSnsformOrderInfo) ;
 
                 }
+
                 if( $bResult == false ) {
                     log_message('P',"SNSFORM 주문 UPSERT ERR :: PARAMS :: ".json_encode_no_slashes($aSnsformOrderInfo));
                     result_echo_json(get_status_code('error') , "실패" , true , "" , array());
@@ -570,9 +579,13 @@ class Api extends A_Controller {
 
         }
 
-        $product_option_json = json_encode($product_option_arr,JSON_UNESCAPED_UNICODE);
-        $sql = "UPDATE snsform_product_tb SET option_info = '{$product_option_json}' WHERE seq = '{$aResult['seq']}' ";
-        $bRet = $this->db->query($sql);
+
+            $product_option_json = json_encode($product_option_arr,JSON_UNESCAPED_UNICODE);
+            $sql = "UPDATE snsform_product_tb SET option_info = '{$product_option_json}' WHERE seq = '{$aResult['seq']}' ";
+//            log_message('A','--------- snsform API calc_stock :: '.$sql.' :: before data ---------- '.$aResult['option_info']);
+            $bRet = $this->db->query($sql);
+
+
 
         if($bRet == false){
 

@@ -125,12 +125,28 @@ class Order extends A_Controller {
         $aInput['seq']  = $this->input->get('seq');
         $aOrderInfo     = $this->order_model->get_cancel_order_row($aInput['seq']);
 
-        $this->load->view("/order/cancel_pop", array(
+//        $view_file = '/order/cancel_pop';
+        $view_file = '/order/cancel_pop_v2';
+
+        $this->load->view($view_file, array(
             "aInput"      => $aInput,
             "aOrderInfo"  => $aOrderInfo
         ));
 
     }
+
+    public function order_exchange_pop() {
+
+        $aInput['seq']  = $this->input->get('seq');
+        $aOrderInfo     = $this->order_model->get_cancel_order_row($aInput['seq']);
+
+        $this->load->view("/order/exchange_pop", array(
+            "aInput"      => $aInput,
+            "aOrderInfo"  => $aOrderInfo
+        ));
+
+    }
+
 
     public function order_proc_flag() {
         ajax_request_check();
@@ -164,6 +180,93 @@ class Order extends A_Controller {
 
     }//end of offer_proc_flag()
 
+
+    public function update_cancel_proc_v2(){
+
+
+        ajax_request_check();
+
+        $this->load->library('form_validation');
+
+        $addSetRule = '';
+        if($this->input->post('after_status_cd') == 67 && $this->input->post('proc_flag') == 'Y'){
+            //$addSetRule = '|required';
+        }
+
+        //폼검증 룰 설정
+        $set_rules_array = array(
+            "seq"                       => array("field" => "seq", "label" => "seq", "rules" => "required|numeric|".$this->default_set_rules)
+        ,   "exchange_delivery"         => array("field" => "exchange_delivery", "label" => "택배사", "rules" => "numeric|".$this->default_set_rules.$addSetRule)
+        ,   "exchange_delivery_no"      => array("field" => "exchange_delivery_no", "label" => "송장번호", "rules" => "numeric|".$this->default_set_rules.$addSetRule)
+        ,   "bigo"                      => array("field" => "bigo", "label" => "비고", "rules" => $this->default_set_rules)
+        ,   "proc_flag"                 => array("field" => "proc_flag", "label" => "처리여부", "rules" => "in_list[Y,N]|".$this->default_set_rules)
+
+
+        ,   "account_holder"            => array("field" => "account_holder", "label" => "환불-예금주", "rules" => $this->default_set_rules)
+        ,   "account_bank"              => array("field" => "account_bank", "label" => "환불-은행", "rules" => $this->default_set_rules)
+        ,   "account_no"                => array("field" => "account_no", "label" => "환불-계좌", "rules" => $this->default_set_rules)
+        ,   "exchange_del_price"        => array("field" => "exchange_del_price", "label" => "비고", "rules" => "in_list[".get_config_item_keys_string("exchange_del_price")."]|".$this->default_set_rules)
+
+        );
+
+        $this->form_validation->set_rules($set_rules_array);
+        $form_error_array = array();
+
+        //폼 검증 성공시
+        if( $this->form_validation->run() === true ) {
+
+            $seq                    = $this->input->post('seq', true);
+            $exchange_delivery      = $this->input->post('exchange_delivery', true);
+            $exchange_delivery_no   = $this->input->post('exchange_delivery_no', true);
+            $bigo                   = $this->input->post('bigo', true);
+            $proc_flag              = $this->input->post('proc_flag', true);
+            $after_status_cd        = $this->input->post('after_status_cd',true);
+
+            $account_holder         = $this->input->post('account_holder',true);
+            $account_bank           = $this->input->post('account_bank',true);
+            $account_no             = $this->input->post('account_no',true);
+            $exchange_del_price     = $this->input->post('exchange_del_price',true);
+
+            if( empty($form_error_array) ) {
+
+                $query_data = array();
+                $query_data['exchange_delivery']    = $exchange_delivery;
+                $query_data['exchange_delivery_no'] = $exchange_delivery_no;
+                $query_data['bigo']                 = $bigo;
+                $query_data['proc_flag']            = $proc_flag;
+
+                $query_data['account_holder']       = $account_holder;
+                $query_data['account_bank']         = $account_bank;
+                $query_data['account_no']           = $account_no;
+                $query_data['exchange_del_price']   = $exchange_del_price;
+
+                if($proc_flag == 'Y') $query_data['proc_date'] = current_datetime();
+                else if($proc_flag == 'N') $query_data['proc_date'] = "";
+
+                if($after_status_cd == '66' && $proc_flag == 'Y') $query_data['after_status_cd'] = 166;
+                else if($after_status_cd == '166' && $proc_flag == 'N') $query_data['after_status_cd'] = 66;
+
+                if($after_status_cd == '67' && $proc_flag == 'Y') $query_data['after_status_cd'] = 167;
+                else if($after_status_cd == '167' && $proc_flag == 'N') $query_data['after_status_cd'] = 67;
+
+                if($after_status_cd == '68' && $proc_flag == 'Y') $query_data['after_status_cd'] = 168;
+                else if($after_status_cd == '168' && $proc_flag == 'N') $query_data['after_status_cd'] = 68;
+
+                if( $this->order_model->update_cancel_order($seq,$query_data) ) {
+                    result_echo_json(get_status_code('success'), lang('site_update_success'), true, 'alert');
+                }
+                else {
+                    result_echo_json(get_status_code('error'), lang('site_update_fail'), true, 'alert');
+                }
+            }
+        }//end of if(/폼 검증 성공 마침)
+
+        //뷰 출력용 폼 검증 오류메시지 설정
+        $form_error_array = set_form_error_from_rules($set_rules_array, $form_error_array);
+
+        result_echo_json(get_status_code('error'), "", true, "", $form_error_array);
+
+    }
 
     public function order_update_cancel_proc() {
 

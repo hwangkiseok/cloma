@@ -53,7 +53,7 @@ class Comment extends A_Controller {
             $req['page'] = 1;
         }
         if( empty($req['list_per_page']) ) {
-            $req['list_per_page'] = 1;
+            $req['list_per_page'] = 5;
         }
 
         return $req;
@@ -644,7 +644,7 @@ class Comment extends A_Controller {
             result_echo_json(get_status_code('success'), lang('site_insert_fail'), true, 'alert');
         }
 
-        if(empty($comment_row['cmt_answertime']) == true) {
+        if(empty($comment_row['cmt_answertime']) == true || $req['send_push'] == 'Y') {
 
             if($comment_row['cmt_table'] == 'product'){
                 $sql = "SELECT * FROM product_tb WHERE p_num = '{$comment_row['cmt_table_num']}';";

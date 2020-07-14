@@ -1,0 +1,83 @@
+#!/apps/php/bin/php -q
+<?php
+/**
+ * @TODO topic 테스트 푸시 처리
+ * */
+
+
+exit;
+
+//공통함수
+require_once ("/data/shop1/cron/func_1.php");
+
+//중복실행 방지
+exec("/bin/ps ax | grep " . CRONHOME . "/app_push_topic | wc -l", $out, $err);
+
+if( $err ) {
+    exit;
+}
+if( !$err && $out[0] > 3 ) {
+    exit;
+}
+
+if( !$DB_STATUS ) {
+    exit;
+}
+
+$datetime = date("YmdHis", time());
+
+$push_R = mysqli_fetch_array(mysqli_query($DB, "select * from app_push_tb where ap_num = 2 limit 1"), MYSQLI_ASSOC);
+
+$headers = array(
+    'Authorization: key=' . GOOGLE_SERVER_KEY,
+    'Content-Type: application/json'
+);
+
+$fields                         = array();
+$fields['data']                 = array();
+$fields['data']['title']        = rawurldecode($push_R['ap_subject']);    //제목
+$fields['data']['body']         = rawurldecode($push_R['ap_message']);    //내용
+$fields['data']['badge']        = 'Y';                      //뱃지올리기여부(Y/N)
+
+if($push_R['ap_new_push'] == 'Y'){
+    $fields['data']['seq']      = $push_R['ap_pnum'];
+    $fields['data']['page']     = 'push';
+}else{
+    $fields['data']['seq']      = $push_R['ap_pnum'];
+    $fields['data']['page']     = 'product'; 
+}
+
+//$target = '/topics/notice'; // 푸시거부에도 받도록
+//$target = '/topics/event'; //푸시거부에는 안 받도록
+$target = '/topics/debug'; // test용 이벤트 푸시
+
+if (is_array($target)) {
+    $fields['registration_ids'] = $target;
+} else {
+    $fields['to'] = $target;
+}
+
+$fields['priority'] = "high";
+$fields = json_encode($fields);
+$ch = curl_init();
+curl_setopt($ch, CURLOPT_URL, $req_url);
+curl_setopt($ch, CURLOPT_POST, true);
+curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+curl_setopt($ch, CURLOPT_POSTFIELDS, $fields);
+$result = curl_exec($ch);
+$status_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+
+$result_arr = json_decode($result,true);
+
+if ($result === FALSE) {
+    die('FCM Send Error: ' . curl_error($ch));
+}
+curl_close($ch);
+
+//print_r($result_arr);  // array('message_id' => 1922407288185191979 )
+//print_r($status_code); // 200 ok
+
+if($status_code == 200){
+    mysqli_query($DB, "update app_push_tb set ap_state='3' where ap_num='" . $push_R['ap_num'] . "'");
+}

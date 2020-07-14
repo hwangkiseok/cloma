@@ -35,12 +35,6 @@ class Member extends M_Controller {
     public function __construct() {
         parent::__construct();
 
-
-        $this->load->helper('string');
-        $alnum = random_string('alnum',32);
-
-        //if($this->input->ip_address() != '121.131.27.155'){ show_404();exit; }
-
         /**
          * @date 170905
          * @authour 황기석

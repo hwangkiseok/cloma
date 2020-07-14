@@ -32,8 +32,8 @@
                 <label class="col-sm-2 control-label" for="cate">상태</label>
                 <div class="col-sm-10">
                     <label><input type="radio" name="state" value="" <?php echo (empty($req['state']) ? 'checked' : ''); ?> /> 전체</label>
-                    <label><input type="radio" name="state" value="added" <?php echo $req['friend_flag'] == 'added' ? 'checked' : ''; ?> /> 친구추가</label>
-                    <label><input type="radio" name="state" value="blocked" <?php echo $req['friend_flag'] == 'blocked' ? 'checked' : ''; ?> /> 차단</label>
+                    <label><input type="radio" name="state" value="added" <?php echo $req['state'] == 'added' ? 'checked' : ''; ?> /> 친구추가</label>
+                    <label><input type="radio" name="state" value="blocked" <?php echo $req['state'] == 'blocked' ? 'checked' : ''; ?> /> 차단</label>
                 </div>
             </div>
 

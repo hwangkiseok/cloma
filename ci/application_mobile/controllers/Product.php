@@ -311,8 +311,10 @@ class Product extends M_Controller
             alert(lang("site_product_sale_end").'.', "/");
         }
 
-        $options = array('title' => '상품상세' , 'top_type' => 'back');
-        $this->_header(array('no_header' => true));
+        if(zsDebug() == false){
+//            $options = array('title' => '상품상세' , 'top_type' => 'back');
+//            $this->_header(array('no_header' => true));
+        }
 
         $this->load->view('/product/detail_app', array(
             'aProductInfo' => $aProductInfo

@@ -541,7 +541,6 @@ function setShare(p_num , obj){
             }
         });
     }
-    ``
 }
 
 

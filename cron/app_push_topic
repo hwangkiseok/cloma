@@ -41,6 +41,7 @@ $fields['data']                 = array();
 $fields['data']['title']        = rawurldecode($push_R['ap_subject']);    //제목
 $fields['data']['body']         = rawurldecode($push_R['ap_message']);    //내용
 $fields['data']['badge']        = 'Y';                      //뱃지올리기여부(Y/N)
+$fields['data']['app_push_id']  = $push_R['ap_num'];        //푸시 식별값
 
 if($push_R['ap_new_push'] == 'Y'){
     $fields['data']['seq']      = $push_R['ap_pnum'];
@@ -52,7 +53,6 @@ if($push_R['ap_new_push'] == 'Y'){
 
 //$target = '/topics/notice'; // 푸시거부에도 받도록
 $target = '/topics/event'; //푸시거부에는 안 받도록
-//$target = '/topics/debug'; // test용 이벤트 푸시
 
 if (is_array($target)) {
     $fields['registration_ids'] = $target;
@@ -82,5 +82,6 @@ curl_close($ch);
 //print_r($status_code); // 200 ok
 
 if($status_code == 200){
-    mysqli_query($DB, "update app_push_tb set ap_state='3' where ap_num='" . $push_R['ap_num'] . "'");
+    $aMemberInfo = mysqli_fetch_array(mysqli_query($DB, " SELECT COUNT(*) AS cnt FROM member_tb WHERE m_state = 1 "), MYSQLI_ASSOC);
+    mysqli_query($DB, "update app_push_tb set ap_state='3' , ap_success_cnt = '{$aMemberInfo['cnt']}' , ap_proc_datetime = DATE_FORMAT(NOW(),'%Y%m%d%H%i%s') where ap_num='" . $push_R['ap_num'] . "'");
 }

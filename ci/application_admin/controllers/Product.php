@@ -1144,7 +1144,12 @@ class Product extends A_Controller {
         //폼 검증 성공시
         if( $this->form_validation->run() === true ) {
             $p_num = $this->input->post('p_num', true);
-            $p_cate1 = $this->input->post('p_cate1', true);
+
+            $p_cate1_tmp = $this->input->post('p_cate1', true);
+
+            if(is_array($p_cate1_tmp) == true) $p_cate1 = implode(',',$p_cate1_tmp);
+            else $p_cate1 = $p_cate1_tmp;
+
             $p_termlimit_yn = $this->input->post('p_termlimit_yn', true);
             $p_termlimit_datetime1 = number_only($this->input->post('p_termlimit_datetime1', true));
             $p_termlimit_datetime1_hour = number_only($this->input->post('p_termlimit_datetime1_hour', true));
@@ -2504,6 +2509,129 @@ class Product extends A_Controller {
         return $path . "/"  . create_session_id() . "." . $file_ext;
     }//end of _get_file_name()
 
+
+
+    /**
+     * @modify 황기석
+     * @desc 재고옵션상품 제거
+     */
+    public function product_stock_del(){
+
+        ajax_request_check();
+
+        $aInput = array( 'p_num' => $this->input->post('p_num') );
+
+        $au_num = $_SESSION['session_au_num'];
+
+        if(is_array($aInput['p_num']) == true){
+            $p_num_str = join(',',$aInput['p_num']);
+            $sql = "UPDATE stock_chk_tb 
+                    SET del_yn = 'Y'
+                    ,   del_id = '{$au_num}'
+                    ,   del_date = DATE_FORMAT(NOW(),'%Y%m%d%H%i%s')
+                    WHERE p_num in ({$p_num_str}) ;
+            ";
+            $this->db->query($sql);
+        }else{
+            $sql = "UPDATE stock_chk_tb 
+                    SET del_yn = 'Y'
+                    ,   del_id = '{$au_num}'
+                    ,   del_date = DATE_FORMAT(NOW(),'%Y%m%d%H%i%s')
+                    WHERE p_num in ({$aInput['p_num']}) ;
+            ";
+            $this->db->query($sql);
+        }
+
+        echo json_encode_no_slashes(array('success' => true , 'msg' => '처리완료'));
+
+    }
+    /**
+     * @modify 황기석
+     * @desc 재고옵션상품 추가
+     */
+    public function product_stock_chk(){
+
+        ajax_request_check();
+
+        $aInput = array( 'p_num' => $this->input->post('p_num') );
+
+        $au_num = $_SESSION['session_au_num'];
+
+        if(is_array($aInput['p_num']) == true){
+
+            foreach ($aInput['p_num'] as $v) {
+
+                $data = explode('|',$v);
+
+                $sql = "SELECT * FROM stock_chk_tb WHERE p_num = '{$data[0]}'; ";
+                $cnt = $this->db->query($sql)->num_rows();
+
+                if($cnt < 1){
+                    $sql = "INSERT INTO stock_chk_tb
+                            SET     
+                                p_num        = '{$data[0]}'
+                            ,   p_order_code = '{$data[1]}'
+                            ,   reg_id       = '{$au_num}'
+                            ,   mod_id       = '{$au_num}'
+                            ,   reg_date     = DATE_FORMAT(NOW(),'%Y%m%d%H%i%s')
+                            ,   mod_date     = DATE_FORMAT(NOW(),'%Y%m%d%H%i%s')
+                    ";
+                    $this->db->query($sql);
+                }else{
+
+                    $sql = "UPDATE stock_chk_tb
+                            SET mod_date    = DATE_FORMAT(NOW(),'%Y%m%d%H%i%s')
+                            ,   mod_id      = '{$au_num}'
+                            ,   del_yn      = 'N'
+                            ,   del_id      = NULL
+                            ,   del_date    = NULL
+                            ,   issue_yn    = 'N'
+                            ,   proc_yn     = 'Y'
+                            WHERE p_num = '{$data[0]}' ; 
+                    ";
+                    $this->db->query($sql);
+
+                }
+
+            };
+
+        }else{
+
+            $data = explode('|',$aInput['p_num']);
+
+            $sql = "SELECT * FROM stock_chk_tb WHERE p_num = '{$data[0]}'; ";
+            $cnt = $this->db->query($sql)->num_rows();
+
+            if($cnt < 1){
+                $sql = "INSERT INTO stock_chk_tb
+                        SET     
+                            p_num        = '{$data[0]}'
+                        ,   p_order_code = '{$data[1]}'
+                        ,   reg_id       = '{$au_num}'
+                        ,   mod_id       = '{$au_num}'
+                        ,   reg_date     = DATE_FORMAT(NOW(),'%Y%m%d%H%i%s')
+                        ,   mod_date     = DATE_FORMAT(NOW(),'%Y%m%d%H%i%s')
+                ";
+                $this->db->query($sql);
+            }else{
+
+                $sql = "UPDATE stock_chk_tb
+                        SET mod_date = DATE_FORMAT(NOW(),'%Y%m%d%H%i%s')
+                        ,   mod_id = '{$au_num}'
+                        ,   del_yn = 'N'
+                        ,   del_id = NULL
+                        ,   del_date = NULL
+                        WHERE p_num = '{$data[0]}' ; 
+                ";
+                $this->db->query($sql);
+
+            }
+
+        }
+
+        echo json_encode_no_slashes(array('success' => true , 'msg' => '처리완료'));
+
+    }
 
     /**
      * @date 200528

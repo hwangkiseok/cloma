@@ -53,11 +53,33 @@
                             </div>
                             -->
 
+                            <!--
                             <div class="form-group form-group-sm">
                                 <label class="col-sm-2 control-label">카테고리 <span class="txt-danger">*</span></label>
                                 <div class="col-sm-8">
                                     <div id="field_p_cate1">
                                         <?php echo get_input_radio('p_cate1', $aCategoryLists , $product_row['p_cate1']); ?>
+                                    </div>
+                                </div>
+                            </div>
+                            -->
+
+                            <div class="form-group form-group-sm">
+                                <label class="col-sm-2 control-label">카테고리 <span class="txt-danger">*</span></label>
+                                <div class="col-sm-8">
+                                    <div id="field_p_cate1">
+
+                                        <?php
+                                        $p_cate1_arr = explode(',',$product_row['p_cate1']);
+                                        foreach($aCategoryLists as $name => $text) {
+                                            $checked = in_array($name , $p_cate1_arr) == true ? 'checked' : '';
+                                            ?>
+                                            <label>
+                                                <input type="checkbox" name="p_cate1[]" value="<?php echo $name; ?>" <?php echo $checked ; ?> /> <?php echo $text; ?>
+                                            </label>
+                                        <?php } ?>
+
+                                        <?php// echo get_input_radio('p_cate1', $aCategoryLists , $product_row['p_cate1']); ?>
                                     </div>
                                 </div>
                             </div>

@@ -18,6 +18,17 @@ class push_model extends M_Model {
 
     }
 
+    public function setUseShoppingPush($arrayParams){
+
+        $sql = "UPDATE member_tb SET m_shopping_push_yn = '{$arrayParams['flag']}' WHERE m_num = '{$arrayParams['m_num']}'; ";
+        log_message('A',$sql);
+        $bResult = $this->db->query($sql);
+
+        return $bResult;
+
+    }
+
+
     /**
      * 게시물 목록 추출
      * @param array $query_array    : 쿼리배열
@@ -33,9 +44,9 @@ class push_model extends M_Model {
         //where 절
         if(zsDebug()){
             //$where_query = " where 1 ";
-            $where_query = " where ap_state = 3 ";
+            $where_query = " where ap_state = 3 AND ap_display_state = 'Y' ";
         }else{
-            $where_query = " where ap_state = 3 ";
+            $where_query = " where ap_state = 3 AND ap_display_state = 'Y' ";
         }
 
 

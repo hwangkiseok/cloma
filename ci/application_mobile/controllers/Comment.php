@@ -109,6 +109,14 @@ class Comment extends M_Controller
                 }
                 $query_data['cmt_table']        = $cmt_table;
                 $query_data['cmt_table_num']    = $cmt_table_num;
+
+                /**
+                 * @date 200708
+                 * @modify 황기석
+                 * @desc 특수문자(이모지) 제거
+                 */
+                $cmt_content = preg_replace("/\xF0[\x90-\xBF][\x80-\xBF]{2}|[\xF1-\xF3][\x80-\xBF]{3}|\xF4[\x80-\x8F][\x80-\xBF]{2}/", "", $cmt_content);
+                $cmt_content = preg_replace("/[ #\&\+\-%@=\/\\\:;,\.'\"\^`~\_|\!\?\*$#<>()\[\]\{\}]/i", "", $cmt_content);
                 $query_data['cmt_content']      = $cmt_content;
 
                 if( $this->comment_model->insert_comment($query_data) ) {

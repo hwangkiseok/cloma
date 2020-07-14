@@ -29,6 +29,13 @@ class App_popup_model extends A_Model {
             $where_query .= "and " . $query_array['where']['kfd'] . " like '%" . $this->db->escape_str($query_array['where']['kwd']) . "%' ";
         }
 
+
+        if( $query_array['where']['notice'] == 'Y' ) {
+            $where_query .= " AND apo_content_type = '3' ";
+        }else{
+            $where_query .= " AND apo_content_type IN ('1','2') ";
+        }
+
         //order by 절
         if( isset($query_array['orderby']) && !empty($query_array['orderby']) ) {
             $order_query = "order by " . $query_array['orderby'] . " ";

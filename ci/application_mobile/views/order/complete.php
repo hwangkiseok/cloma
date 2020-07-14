@@ -39,7 +39,7 @@
             }
             foreach ($aOrderInfo as $r) {
 
-                if($r['item_name'] == '장바구니 배송비') continue;
+                if($r['item_no'] == '0000000000') continue;
 
                 $r['option_info'] = json_decode($r['option_list'],true);
                 $tot_amt         += (int)$r['buy_amt'];

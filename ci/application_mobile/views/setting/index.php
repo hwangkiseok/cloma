@@ -1,19 +1,28 @@
 <div class="box">
     <div class="box-in setting">
 
-        <p class="tit">알림설정</p>
+        <p class="tit">푸시 알림 수신설정</p>
 
         <ul class="push_set">
 
             <?if(is_app() == true){?>
-            <li>
-                <div class="fl">알림설정</div>
-                <div class="fr chk-ani <?if($aMemberInfo['m_push_yn'] == 'Y'){?>active<?}?>">
-                    <span class="circle"><?if($aMemberInfo['m_push_yn'] == 'Y'){?>켜짐<?}else{?>꺼짐<?}?></span>
-                    <span class="hr-line"></span>
-                </div>
-                <div class="clear"></div>
-            </li>
+                <li>
+                    <div class="fl">할인/이벤트 정보</div>
+                    <div class="mark_push fr chk-ani <?if($aMemberInfo['m_push_yn'] == 'Y'){?>active<?}?>">
+                        <span class="circle"><?if($aMemberInfo['m_push_yn'] == 'Y'){?>켜짐<?}else{?>꺼짐<?}?></span>
+                        <span class="hr-line"></span>
+                    </div>
+                    <div class="clear"></div>
+                </li>
+
+                <li>
+                    <div class="fl">쇼핑정보</div>
+                    <div class="shopping_push fr chk-ani <?if($aMemberInfo['m_shopping_push_yn'] == 'Y'){?>active<?}?>">
+                        <span class="circle"><?if($aMemberInfo['m_shopping_push_yn'] == 'Y'){?>켜짐<?}else{?>꺼짐<?}?></span>
+                        <span class="hr-line"></span>
+                    </div>
+                    <div class="clear"></div>
+                </li>
             <?}?>
             <li>
                 <div class="fl">알림메시지보기</div>
@@ -66,6 +75,11 @@
     </div>
 </div>
 
+<?if(zsDebug()){?>
+
+    <button class="btn btn-full" onclick="go_link('/member')">디버그</button>
+
+<?}?>
 <script type="text/javascript">
 
     $(function(){
@@ -105,7 +119,7 @@
 
             }else{
 
-                var go_url = 'http://www.ftc.go.kr/bizCommPop.do?wrkr_no=398-87-00626';
+                var go_url = 'http://www.ftc.go.kr/bizCommPop.do?wrkr_no=<?=$this->config->item('biz_no')?>';
 
                 <?if(is_app()){?>
                 appNewWebBrowser(go_url);
@@ -119,19 +133,35 @@
 
         <? if(is_app() == true) {?>
 
-        $('.chk-ani').on('click',function(){
+        $('.mark_push').on('click',function(){
             if( $(this).hasClass('active') == true){
                 app_push_able('N');
                 push_toggle('N');
                 $(this).removeClass('active');
                 $(this).find('.circle').html('꺼짐');
             }else{
-                 app_push_able('Y');
+                app_push_able('Y');
                 push_toggle('Y');
                 $(this).addClass('active');
                 $(this).find('.circle').html('켜짐');
             };
         });
+
+        $('.shopping_push').on('click',function(){
+
+            if( $(this).hasClass('active') == true){
+                app_shopping_push_able('N');
+                shopping_push_toggle('N');
+                $(this).removeClass('active');
+                $(this).find('.circle').html('꺼짐');
+            }else{
+                app_shopping_push_able('Y');
+                shopping_push_toggle('Y');
+                $(this).addClass('active');
+                $(this).find('.circle').html('켜짐');
+            };
+        });
+
 
         <?}?>
     });
@@ -151,6 +181,11 @@
                 if( result.status != status_code['success'] ) {
                     alert('새고로침 후 다시 시도해주세요 !');
                     return false;
+                }else{
+                    var now = new Date();
+
+                    if(f == 'Y') showToast("["+get_ymd(now)+"] 푸시알림을 받도록 설정하셨습니다.");
+                    else showToast("["+get_ymd(now)+"] 푸시알림을 받지않도록 설정하셨습니다.");
                 }
 
             }
@@ -158,6 +193,37 @@
         });
 
     }
+
+    function shopping_push_toggle(f){
+
+        isShowLoader = false;
+
+        $.ajax({
+            url : '/setting/toggle_shopping_push',
+            data : {f:f},
+            type : 'post',
+            dataType : 'json',
+            async:false,
+            success : function(result) {
+
+                if( result.status != status_code['success'] ) {
+                    alert('새고로침 후 다시 시도해주세요 !');
+                    return false;
+                }else{
+                    var now = new Date();
+
+                    if(f == 'Y') showToast("["+get_ymd(now)+"] 푸시알림을 받도록 설정하셨습니다.");
+                    else showToast("["+get_ymd(now)+"] 푸시알림을 받지않도록 설정하셨습니다.");
+                }
+
+
+            }
+
+        });
+
+    }
+
+
 
 </script>
 

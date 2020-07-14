@@ -222,9 +222,94 @@ exit;
     }
 
 
-    public function take(){
-        $var = json_encode($_POST);
-        echo $var;
+
+    public function restock(){
+
+
+        //[{"referer":"null","status_date":"2020-06-30 09:31:24.0","buyer_name":"김명옥","item_no":"2003361783","receiver_tel":"010-5171-1132","buy_amt":5400,"provider":"snsform","status_cd":"61","partner_buyer_id":"5110","receiver_zip":"35379","delivery_amt":2500,"receiver_name":"김명옥","opt_cnt":1,"receiver_addr1":"대전 서구 관저동로90번길 47 (관저동, 느리울마을아파트11단지)","receiver_addr2":"1110동1201","buyer_hhp":"01051711132","cart_yn":"N","vcnt_acct_name":"(주)옷잘입는언니","basket_yn":"N","vcnt_bank_cd":"기업은행","invoice_no":"000","vcnt_acct_no":"62606286601011","item_name":"더위잡는쿨링반바지","register_date":"2020-06-30 09:31:24.0","payway_cd":"3","partner_seller_id":"soobinshop","img_url":"/SFDATA06/itemimg/2020/05/soobinshop_202005061851518996.jpg","option_list":[{"option_count":1,"option_price":2900,"option_name":"로라"}],"del_comp_cd":"00","trade_no":"200630423307","campaign":"top30_b"}]
+        $data = '[{"status_date":"2020-06-30 09:32:31.0","buyer_name":"홍지영","item_no":"2006454461","receiver_tel":"010-2807-0925","buy_amt":12400,"provider":"snsform","status_cd":"61","receiver_zip":"51103","delivery_amt":2500,"receiver_name":"홍지영","order_memo":"배송 전 연락바랍니다.","opt_cnt":10,"receiver_addr1":"경남 창원시 의창구 북면 신촌본포로 12-13 (신촌리, 춘광아파트)","receiver_addr2":"춘광아파트 501동 605호","buyer_hhp":"01028070925","vcnt_acct_name":"(주)옷잘입는언니","basket_yn":"N","vcnt_bank_cd":"기업은행","invoice_no":"000","vcnt_acct_no":"62606286601011","item_name":"[특가 990원]코튼실내화","register_date":"2020-06-30 09:32:31.0","payway_cd":"3","img_url":"/SFDATA06/itemimg/2020/06/soobinshop_202006081111218881.jpg","option_list":[{"option_count":1,"option_price":990,"option_name":"그린땡땡이"},{"option_count":1,"option_price":990,"option_name":"물고기"},{"option_count":1,"option_price":990,"option_name":"행복한식탁"},{"option_count":1,"option_price":990,"option_name":"초록정원"},{"option_count":1,"option_price":990,"option_name":"동물원"},{"option_count":1,"option_price":990,"option_name":"로봇마을"},{"option_count":1,"option_price":990,"option_name":"영국"},{"option_count":1,"option_price":990,"option_name":"꽃동산"},{"option_count":1,"option_price":990,"option_name":"앵두"},{"option_count":1,"option_price":990,"option_name":"나팔꽃"}],"del_comp_cd":"00","trade_no":"200630423318"}]';
+
+        $aSnsformOrderInfo_arr = json_decode($data,true);
+
+        zsView($aSnsformOrderInfo_arr);
+
+        $type = 'm';
+
+
+        foreach ($aSnsformOrderInfo_arr as $k => $aSnsformOrderInfo) {
+
+            $option_list = json_decode($aSnsformOrderInfo['option_list']);
+
+            $sql = "SELECT seq , option_info FROM snsform_product_tb WHERE item_no = '{$aSnsformOrderInfo['item_no']}'; ";
+
+            $oResult = $this->db->query($sql);
+            $aResult = $oResult->row_array();
+            $product_option_arr = json_decode($aResult['option_info'],true);
+
+            foreach ($option_list as $kk =>$rr) {
+
+                $name_arr       = explode(' | ',$rr['option_name']);
+                $item_depth     = count($name_arr);
+
+                foreach ($product_option_arr as $kkk => $rrr) {
+
+                    if($type == 'm'){
+
+                        if($item_depth == 1){
+
+                            if ( $rrr['option_depth1'] == $name_arr[0] ){
+                                $product_option_arr[$kkk]['option_count'] = (int)$product_option_arr[$kkk]['option_count']-(int)$rr['option_count'];
+                            };
+
+                        } else if($item_depth == 2){
+
+                            if ( $rrr['option_depth1'] == $name_arr[0] &&  $rrr['option_depth2'] == $name_arr[1] ){
+                                $product_option_arr[$kkk]['option_count'] = (int)$product_option_arr[$kkk]['option_count']-(int)$rr['option_count'];
+                            };
+
+                        } else if($item_depth == 3){
+
+                            if ( $rrr['option_depth1'] == $name_arr[0] &&  $rrr['option_depth2'] == $name_arr[1] && $rrr['option_depth3'] == $name_arr[2]){
+                                $product_option_arr[$kkk]['option_count'] = (int)$product_option_arr[$kkk]['option_count']-(int)$rr['option_count'];
+                            };
+
+                        }
+
+                    }else{ // p
+
+                        if($item_depth == 1){
+
+                            if ( $rrr['option_depth1'] == $name_arr[0] ){
+                                $product_option_arr[$kkk]['option_count'] = (int)$product_option_arr[$kkk]['option_count']+(int)$rr['option_count'];
+                            };
+
+                        } else if($item_depth == 2){
+
+                            if ( $rrr['option_depth1'] == $name_arr[0] &&  $rrr['option_depth2'] == $name_arr[1] ){
+                                $product_option_arr[$kkk]['option_count'] = (int)$product_option_arr[$kkk]['option_count']+(int)$rr['option_count'];
+                            };
+
+                        } else if($item_depth == 3){
+
+                            if ( $rrr['option_depth1'] == $name_arr[0] &&  $rrr['option_depth2'] == $name_arr[1] && $rrr['option_depth3'] == $name_arr[2]){
+                                $product_option_arr[$kkk]['option_count'] = (int)$product_option_arr[$kkk]['option_count']+(int)$rr['option_count'];
+                            };
+
+                        }
+
+                    }
+
+                }
+
+            }
+
+            $product_option_json = json_encode($product_option_arr,JSON_UNESCAPED_UNICODE);
+            $sql = "UPDATE snsform_product_tb SET option_info = '{$product_option_json}' WHERE seq = '{$aResult['seq']}' ";
+            zsView($sql);
+
+        }
+
+
     }
 
 
